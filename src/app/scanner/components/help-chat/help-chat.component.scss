@@ -1,0 +1,386 @@
+// Variables y mixins incorporados
+$primary-color: #3f51b5;
+$primary-light: #7986cb;
+$primary-dark: #2c387e;
+$secondary-color: #f50057;
+$secondary-dark: #ab003c;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$info-color: #2196f3;
+$bg-light: #f5f5f5;
+$bg-dark: #121212;
+$card-light: #ffffff;
+$card-dark: #1e1e1e;
+$bg-secondary-light: #eeeeee;
+$bg-secondary-dark: #2d2d2d;
+$text-primary-light: #212121;
+$text-secondary-light: #757575;
+$text-primary-dark: #ffffff;
+$text-secondary-dark: #aaaaaa;
+$border-light: #e0e0e0;
+$border-dark: #333333;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-circle: 50%;
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-lg-light: 0 10px 25px rgba(0, 0, 0, 0.15);
+$shadow-lg-dark: 0 10px 25px rgba(0, 0, 0, 0.3);
+$transition-normal: 0.3s ease;
+$z-index-modal: 1000;
+
+@use "sass:color";
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Estilos mejorados para help-chat
+.chat-container {
+  position: fixed;
+  bottom: $spacing-lg;
+  right: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: $z-index-modal;
+  
+  @media (max-width: 600px) {
+    bottom: $spacing-md;
+    right: $spacing-md;
+  }
+}
+
+// Animaciones
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.4);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba($primary-color, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chat-button {
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius-circle;
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  @include flex-center;
+  cursor: pointer;
+  box-shadow: $shadow-lg-light;
+  animation: pulse 2s infinite;
+  z-index: 11;
+  transition: all $transition-normal;
+  border: none;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  .dark-theme & {
+    background: linear-gradient(135deg, $primary-dark, $primary-color);
+    box-shadow: $shadow-lg-dark;
+  }
+  
+  i {
+    color: white;
+    font-size: 26px;
+    transition: transform $transition-normal;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+    
+    i {
+      transform: rotate(10deg);
+    }
+    
+    .dark-theme & {
+      box-shadow: 0 6px 20px rgba($primary-dark, 0.6);
+    }
+  }
+}
+
+.chat-panel {
+  background-color: $card-light;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg-light;
+  display: flex;
+  flex-direction: column;
+  height: 0;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-bottom: $spacing-md;
+  
+  .dark-theme & {
+    background-color: $card-dark;
+    box-shadow: $shadow-lg-dark;
+  }
+  
+  .open & {
+    height: 450px;
+    width: 320px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    animation: slideUp 0.4s forwards;
+  }
+}
+
+.chat-header {
+  padding: $spacing-md;
+  background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+  color: white;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+  .dark-theme & {
+    background: linear-gradient(135deg, $primary-dark, $primary-color);
+  }
+  
+  .chat-title {
+    display: flex;
+    align-items: center;
+    
+    i {
+      margin-right: $spacing-sm;
+      font-size: 22px;
+    }
+    
+    span {
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  background-color: rgba($bg-light, 0.5);
+  
+  .dark-theme & {
+    background-color: rgba($bg-dark, 0.5);
+  }
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba($primary-color, 0.2);
+    border-radius: 10px;
+    
+    .dark-theme & {
+      background-color: rgba($primary-light, 0.2);
+    }
+  }
+  
+  .message {
+    max-width: 85%;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-md;
+    word-break: break-word;
+    animation: fadeIn 0.3s forwards;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    
+    &.user-message {
+      align-self: flex-end;
+      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+      color: white;
+      border-radius: $border-radius-md $border-radius-md 0 $border-radius-md;
+      
+      .dark-theme & {
+        background: linear-gradient(135deg, $primary-dark, $primary-color);
+      }
+      
+      .message-time {
+        text-align: right;
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+    
+    &.bot-message {
+      align-self: flex-start;
+      background-color: white;
+      color: $text-primary-light;
+      border-radius: 0 $border-radius-md $border-radius-md $border-radius-md;
+      border-left: 3px solid $primary-color;
+      
+      .dark-theme & {
+        background-color: $bg-secondary-dark;
+        color: $text-primary-dark;
+        border-left-color: $primary-light;
+      }
+    }
+    
+    .message-content {
+      display: flex;
+      flex-direction: column;
+      
+      .message-text {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .message-time {
+        font-size: 11px;
+        margin-top: $spacing-xs;
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+.chat-input {
+  display: flex;
+  padding: $spacing-md;
+  border-top: 1px solid $border-light;
+  background-color: $card-light;
+  border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  
+  .dark-theme & {
+    border-top-color: $border-dark;
+    background-color: $card-dark;
+  }
+  
+  input {
+    flex: 1;
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-light;
+    border-radius: $border-radius-md;
+    outline: none;
+    font-size: 14px;
+    transition: all $transition-normal;
+    
+    .dark-theme & {
+      background-color: $bg-secondary-dark;
+      color: $text-primary-dark;
+      border-color: $border-dark;
+    }
+    
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+      
+      .dark-theme & {
+        border-color: $primary-light;
+        box-shadow: 0 0 0 2px rgba($primary-light, 0.15);
+      }
+    }
+    
+    &::placeholder {
+      color: $text-secondary-light;
+      
+      .dark-theme & {
+        color: $text-secondary-dark;
+      }
+    }
+  }
+  
+  button {
+    width: 38px;
+    height: 38px;
+    margin-left: $spacing-sm;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: $border-radius-circle;
+    @include flex-center;
+    cursor: pointer;
+    transition: all $transition-normal;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    
+    .dark-theme & {
+      background-color: $primary-dark;
+    }
+    
+    i {
+      font-size: 18px;
+      transition: transform $transition-normal;
+    }
+    
+    &:hover {
+      background-color: color.adjust($primary-color, $lightness: 5%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      
+      i {
+        transform: rotate(15deg);
+      }
+      
+      .dark-theme & {
+        background-color: color.adjust($primary-dark, $lightness: 10%);
+      }
+    }
+    
+    &:active {
+      transform: scale(0.95) translateY(0);
+    }
+  }
+}
+
+// Añadiendo una animación para el botón cuando el chat está cerrado
+.closed .chat-button {
+  animation: bounce 2s ease infinite;
+}

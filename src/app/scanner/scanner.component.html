@@ -1,0 +1,256 @@
+<!---
+
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">Registro de Asistencia</h1>
+      <button (click)="toggleTheme()" class="theme-btn" aria-label="Cambiar tema">
+        <span *ngIf="darkMode()" class="theme-icon light-icon">☀️</span>
+        <span *ngIf="!darkMode()" class="theme-icon dark-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+  
+ 
+  <section class="scanner-section">
+ 
+    <div class="scanner-info" *ngIf="isScanning()">
+      <div class="scanner-status-info" [class.error]="scannerError()">
+        <span class="status-icon">{{ scannerError() ? '❌' : '📷' }}</span>
+        <span class="status-text">{{ scannerStatus() }}</span>
+      </div>
+      <div *ngIf="videoWidth && videoHeight" class="resolution-info">
+        <span class="resolution-icon">📏</span>
+        <span class="resolution-text">{{ videoWidth }}x{{ videoHeight }}</span>
+      </div>
+    </div>
+    
+ 
+    <div class="camera-selector" *ngIf="availableCameras().length > 1">
+      <label for="camera-select" class="select-label">Seleccionar cámara:</label>
+      <div class="select-wrapper">
+        <select 
+          id="camera-select" 
+          [disabled]="isScanning()" 
+          (change)="onCameraChange($event)"
+          class="camera-select"
+        >
+          <option *ngFor="let camera of availableCameras()" [value]="camera.deviceId">
+            {{ camera.label || 'Cámara ' + (camera.deviceId ? '#' + camera.deviceId.substr(0, 5) : '') }}
+          </option>
+        </select>
+        <span class="select-arrow"></span>
+      </div>
+    </div>
+    
+
+    <div class="video-container" #qrRegionElement>
+      <video #videoElement class="scanner-preview" [class.scanning]="isScanning()" playsinline></video>
+      <canvas #canvasElement style="display: none;"></canvas>
+      
+   
+      <div class="scanner-overlay" *ngIf="isScanning()">
+        <div class="scanner-animation">
+          <div class="scanner-line"></div>
+        </div>
+        <div class="scanner-corners">
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+        </div>
+      </div>
+      
+
+      <div class="scanner-status" [class.error]="scannerError()">
+        {{ scannerStatus() }}
+      </div>
+    </div>
+
+
+    <div class="scanner-controls">
+      <button 
+        class="control-btn primary-btn" 
+        [class.active]="isScanning()" 
+        (click)="toggleScanner()"
+        aria-label="Controlar escáner"
+      >
+        <span class="btn-icon">{{ isScanning() ? '⏸️' : '▶️' }}</span>
+        <span class="btn-text">{{ isScanning() ? 'Pausar escáner' : 'Iniciar escáner' }}</span>
+      </button>
+      
+      <button 
+        *ngIf="isScanning() && hasTorch()"
+        class="control-btn torch-btn" 
+        [class.active]="torchEnabled" 
+        (click)="toggleTorch()"
+        aria-label="Controlar linterna"
+      >
+        <span class="btn-icon">{{ torchEnabled ? '💡' : '🔦' }}</span>
+        <span class="btn-text">{{ torchEnabled ? 'Apagar linterna' : 'Encender linterna' }}</span>
+      </button>
+    </div>
+  </section>
+
+
+  <section class="results-section" *ngIf="lastScanResult()">
+    <div class="section-header">
+      <h2 class="section-title">Último registro</h2>
+    </div>
+    
+    <div class="result-card" [class.success]="lastScanResult()?.status === 'success'" [class.error]="lastScanResult()?.status === 'error'">
+      <div class="result-header">
+        <div class="result-badge" [ngClass]="getEstadoClass(lastScanResult()?.estado || '')">
+          {{ lastScanResult()?.estado }}
+        </div>
+      </div>
+      
+      <div class="result-body">
+        <div class="student-info">
+          <div class="student-avatar">
+            <img [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+          </div>
+          <div class="student-details">
+            <p class="student-name">{{ lastScanResult()?.estudiante?.nombre }} {{ lastScanResult()?.estudiante?.apellido }}</p>
+            <p class="student-code">{{ lastScanResult()?.estudiante?.codigo }}</p>
+            <p class="student-grade">{{ lastScanResult()?.estudiante?.nivel }} {{ lastScanResult()?.estudiante?.grado }}° "{{ lastScanResult()?.estudiante?.seccion }}"</p>
+          </div>
+        </div>
+        
+        <div class="result-message">
+          {{ lastScanResult()?.mensaje }}
+        </div>
+        
+        <div class="time-info">
+          <div class="time-item">
+            <span class="time-label">Hora:</span>
+            <span class="time-value">{{ lastScanResult()?.hora }}</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">Fecha:</span>
+            <span class="time-value">{{ lastScanResult()?.fecha }}</span>
+          </div>
+          <div class="time-item">
+            <span class="time-label">Tipo:</span>
+            <span class="time-value type-badge" [class.entrada]="lastScanResult()?.tipo === 'entrada'" [class.salida]="lastScanResult()?.tipo !== 'entrada'">
+              {{ lastScanResult()?.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+            </span>
+          </div>
+        </div>
+        
+        <button class="details-btn" (click)="showDetails(lastScanResult()!)">
+          <span class="btn-icon">📋</span>
+          Ver detalles
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="history-section">
+    <div class="section-header">
+      <h2 class="section-title">Historial de registros</h2>
+    </div>
+    
+    <div class="history-list">
+      <div 
+        *ngFor="let registro of registrosRecientes(); let i = index" 
+        class="history-item animate-in" 
+        [class.success]="registro.status === 'success'" 
+        [class.error]="registro.status === 'error'"
+        [style.animation-delay]="i * 0.05 + 's'"
+        (click)="showDetails(registro)"
+      >
+        <div class="history-item-header">
+          <span class="history-time">{{ registro.hora }}</span>
+          <span class="history-badge" [ngClass]="getEstadoClass(registro.estado)">{{ registro.estado }}</span>
+        </div>
+        
+        <div class="history-item-body">
+          <div class="history-student-info">
+            <div class="history-avatar">
+              <img [src]="registro.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+            </div>
+            <div class="history-student-details">
+              <p class="history-student-name">{{ registro.estudiante.nombre }} {{ registro.estudiante.apellido }}</p>
+              <p class="history-student-grade">{{ registro.estudiante.nivel }} {{ registro.estudiante.grado }}° "{{ registro.estudiante.seccion }}"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div *ngIf="registrosRecientes().length === 0" class="empty-history">
+        <span class="empty-icon">📋</span>
+        <p class="empty-text">No hay registros recientes</p>
+        <p class="empty-subtext">Los registros aparecerán aquí después de escanear un código QR</p>
+      </div>
+    </div>
+  </section>
+
+  
+  
+
+  <div class="modal-overlay" *ngIf="showDetailsModal()" (click)="closeDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeDetailsModal()" aria-label="Cerrar modal">×</button>
+      
+      <div class="modal-header">
+        <h3 class="modal-title">Detalles del registro</h3>
+        <div class="modal-badge" [ngClass]="getEstadoClass(selectedRegistro()?.estado || '')">
+          {{ selectedRegistro()?.estado }}
+        </div>
+      </div>
+      
+      <div class="modal-body" *ngIf="selectedRegistro()">
+        <div class="modal-student-info">
+          <div class="modal-avatar">
+            <img [src]="selectedRegistro()?.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+          </div>
+          
+          <div class="modal-student-details">
+            <p class="modal-student-name">{{ selectedRegistro()?.estudiante?.nombre }} {{ selectedRegistro()?.estudiante?.apellido }}</p>
+            <p class="modal-student-code">Código: {{ selectedRegistro()?.estudiante?.codigo }}</p>
+            <p class="modal-student-grade">{{ selectedRegistro()?.estudiante?.nivel }} {{ selectedRegistro()?.estudiante?.grado }}° "{{ selectedRegistro()?.estudiante?.seccion }}"</p>
+          </div>
+        </div>
+        
+        <div class="modal-message">
+          <p>{{ selectedRegistro()?.mensaje }}</p>
+        </div>
+        
+        <div class="modal-info-grid">
+          <div class="modal-info-item">
+            <span class="info-label">ID Registro:</span>
+            <span class="info-value">{{ selectedRegistro()?.id }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Hora:</span>
+            <span class="info-value">{{ selectedRegistro()?.hora }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Fecha:</span>
+            <span class="info-value">{{ selectedRegistro()?.fecha }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Tipo:</span>
+            <span class="info-value type-badge" [class.entrada]="selectedRegistro()?.tipo === 'entrada'" [class.salida]="selectedRegistro()?.tipo !== 'entrada'">
+              {{ selectedRegistro()?.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="modal-print-btn">
+            <span class="btn-icon">🖨️</span>
+            Imprimir
+          </button>
+          <button class="modal-close-btn" (click)="closeDetailsModal()">
+            <span class="btn-icon">✖️</span>
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
+-->

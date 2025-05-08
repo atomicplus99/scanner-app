@@ -1,0 +1,62 @@
+<!-- src/app/components/last-result/last-result.component.html -->
+<section class="results-section" *ngIf="lastScanResult()">
+  <div class="section-header">
+    <h2 class="section-title">Último registro</h2>
+  </div>
+
+  <!-- En last-result.component.html -->
+  <div class="result-message" [class.error-message]="lastScanResult()?.status === 'error'">
+    {{ lastScanResult()?.mensaje }}
+  </div>
+
+  <div class="result-card" [class.success]="lastScanResult()?.status === 'success'"
+    [class.error]="lastScanResult()?.status === 'error'">
+    <div class="result-header">
+      <div class="result-badge" [ngClass]="getEstadoClass(lastScanResult()?.estado || '')">
+        {{ formatEstado(lastScanResult()?.estado || '') }}
+      </div>
+    </div>
+
+    <div class="result-body">
+      <div class="student-info">
+        <div class="student-avatar">
+          <img [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+        </div>
+        <div class="student-details">
+          <p class="student-name">{{ lastScanResult()?.estudiante?.nombre }} {{ lastScanResult()?.estudiante?.apellido
+            }}</p>
+          <p class="student-code">{{ lastScanResult()?.estudiante?.codigo }}</p>
+          <p class="student-grade">{{ formatGradoNivel(lastScanResult()?.estudiante?.nivel,
+            lastScanResult()?.estudiante?.grado, lastScanResult()?.estudiante?.seccion) }}</p>
+        </div>
+      </div>
+
+      <div class="result-message">
+        {{ lastScanResult()?.mensaje }}
+      </div>
+
+      <div class="time-info">
+        <div class="time-item">
+          <span class="time-label">Hora:</span>
+          <span class="time-value">{{ lastScanResult()?.hora }}</span>
+        </div>
+        <div class="time-item">
+          <span class="time-label">Fecha:</span>
+          <span class="time-value">{{ lastScanResult()?.fecha }}</span>
+        </div>
+        <div class="time-item">
+          <span class="time-label">Tipo:</span>
+          <span class="time-value type-badge" [class.entrada]="lastScanResult()?.tipo === 'entrada'"
+            [class.salida]="lastScanResult()?.tipo !== 'entrada'">
+            {{ lastScanResult()?.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+          </span>
+        </div>
+      </div>
+
+      <button class="details-btn" (click)="showDetails(lastScanResult()!)">
+        <span class="btn-icon">📋</span>
+        Ver detalles
+      </button>
+    </div>
+  </div>
+</section>

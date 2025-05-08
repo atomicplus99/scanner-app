@@ -1,0 +1,37 @@
+<div class="chat-container" [class.dark-theme]="darkMode()" [class]="getChatClass()">
+  <div class="chat-button" (click)="toggleChat()">
+    <i class="material-icons">{{ isChatOpen() ? 'close' : 'help' }}</i>
+  </div>
+  
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-title">
+        <i class="material-icons">support_agent</i>
+        <span>Asistente de Ayuda</span>
+      </div>
+    </div>
+    
+    <div class="chat-messages">
+      @for (message of chatMessages(); track message.timestamp) {
+        <div class="message" [class.user-message]="message.sender === 'user'" [class.bot-message]="message.sender === 'bot'">
+          <div class="message-content">
+            <div class="message-text">{{ message.text }}</div>
+            <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
+          </div>
+        </div>
+      }
+    </div>
+    
+    <div class="chat-input">
+      <input
+        type="text"
+        placeholder="Escribe tu pregunta aquí..."
+        [(ngModel)]="userInputText"
+        (keyup.enter)="sendMessage()"
+      >
+      <button (click)="sendMessage()">
+        <i class="material-icons">send</i>
+      </button>
+    </div>
+  </div>
+</div>

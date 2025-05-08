@@ -1,0 +1,500 @@
+// Variables y mixins incorporados
+$primary-color: #3f51b5;
+$primary-light: #7986cb;
+$primary-dark: #2c387e;
+$secondary-color: #f50057;
+$secondary-dark: #ab003c;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$info-color: #2196f3;
+$bg-light: #f5f5f5;
+$bg-dark: #121212;
+$card-light: #ffffff;
+$card-dark: #1e1e1e;
+$bg-secondary-light: #eeeeee;
+$bg-secondary-dark: #2d2d2d;
+$text-primary-light: #212121;
+$text-secondary-light: #757575;
+$text-primary-dark: #ffffff;
+$text-secondary-dark: #aaaaaa;
+$border-light: #e0e0e0;
+$border-dark: #333333;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-circle: 50%;
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-strong-light: 0 5px 15px rgba(0, 0, 0, 0.2);
+$shadow-strong-dark: 0 5px 15px rgba(0, 0, 0, 0.5);
+$transition-normal: 0.3s ease;
+$z-index-modal: 1000;
+
+@use "sass:color";
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin status-badge($color, $light-text: true) {
+  background-color: $color;
+  color: if($light-text, white, $text-primary-light);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba($color, 0.3);
+}
+
+// Estilos mejorados
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $z-index-modal;
+  padding: $spacing-md;
+  animation: fadeIn 0.3s ease forwards;
+  
+  .dark-theme & {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: $card-light;
+  border-radius: $border-radius-lg;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideUp 0.4s ease forwards;
+  
+  .dark-theme & {
+    background-color: $card-dark;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba($primary-color, 0.3);
+    border-radius: 20px;
+    
+    .dark-theme & {
+      background-color: rgba($primary-light, 0.3);
+    }
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  background: none;
+  border: none;
+  color: $text-secondary-light;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-circle;
+  @include flex-center;
+  transition: all $transition-normal;
+  z-index: 5;
+  
+  .dark-theme & {
+    color: $text-secondary-dark;
+  }
+  
+  &:hover {
+    background-color: rgba($error-color, 0.1);
+    color: $error-color;
+    transform: rotate(90deg);
+    
+    .dark-theme & {
+      background-color: rgba($error-color, 0.2);
+    }
+  }
+}
+
+.modal-header {
+  padding: $spacing-lg $spacing-xl $spacing-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: $spacing-lg;
+    right: $spacing-lg;
+    height: 1px;
+    background: linear-gradient(to right, $primary-color, transparent);
+    
+    .dark-theme & {
+      background: linear-gradient(to right, $primary-light, transparent);
+    }
+  }
+  
+  .modal-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: $primary-color;
+    
+    .dark-theme & {
+      color: $primary-light;
+    }
+  }
+  
+  .modal-badge {
+    @include status-badge($info-color);
+    
+    &.estado-puntual {
+      background: linear-gradient(135deg, $success-color, color.adjust($success-color, $lightness: 10%));
+      box-shadow: 0 2px 8px rgba($success-color, 0.4);
+    }
+    
+    &.estado-tardanza {
+      background: linear-gradient(135deg, $warning-color, color.adjust($warning-color, $lightness: 10%));
+      box-shadow: 0 2px 8px rgba($warning-color, 0.4);
+    }
+    
+    &.estado-falta {
+      background: linear-gradient(135deg, $error-color, color.adjust($error-color, $lightness: 10%));
+      box-shadow: 0 2px 8px rgba($error-color, 0.4);
+    }
+    
+    &.estado-error {
+      background: linear-gradient(135deg, $error-color, color.adjust($error-color, $lightness: -10%));
+      box-shadow: 0 2px 8px rgba($error-color, 0.4);
+    }
+  }
+}
+
+.modal-body {
+  padding: $spacing-lg;
+}
+
+.modal-student-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  background-color: rgba($primary-color, 0.03);
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  
+  .dark-theme & {
+    background-color: rgba($primary-dark, 0.1);
+  }
+}
+
+.modal-avatar {
+  margin-right: $spacing-lg;
+  
+  img {
+    width: 100px;
+    height: 100px;
+    border-radius: $border-radius-circle;
+    object-fit: cover;
+    border: 3px solid $primary-color;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all $transition-normal;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      border-color: $secondary-color;
+    }
+    
+    .dark-theme & {
+      border-color: $primary-light;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      
+      &:hover {
+        border-color: $secondary-color;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
+}
+
+.modal-student-details {
+  flex: 1;
+  
+  .modal-student-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 $spacing-xs;
+  }
+  
+  .modal-student-code {
+    font-size: 14px;
+    color: $text-secondary-light;
+    margin: 0 0 $spacing-xs;
+    
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+  
+  .modal-student-grade {
+    font-size: 14px;
+    font-weight: 500;
+    color: $primary-color;
+    margin: 0;
+    
+    .dark-theme & {
+      color: $primary-light;
+    }
+  }
+}
+
+.modal-message {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md;
+  background-color: rgba($info-color, 0.1);
+  border-left: 4px solid $info-color;
+  border-radius: $border-radius-sm;
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .dark-theme & {
+    background-color: rgba($info-color, 0.15);
+  }
+}
+
+.modal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.modal-info-item {
+  padding: $spacing-sm $spacing-md;
+  background-color: $bg-secondary-light;
+  border-radius: $border-radius-sm;
+  transition: all $transition-normal;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .dark-theme & {
+    background-color: $bg-secondary-dark;
+    
+    &:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .info-label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: $text-secondary-light;
+    margin-bottom: $spacing-xs;
+    letter-spacing: 0.5px;
+    
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+  
+  .info-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    
+    &.type-badge {
+      display: inline-block;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $border-radius-sm;
+      font-size: 13px;
+      text-transform: uppercase;
+      
+      &.entrada {
+        background-color: rgba($success-color, 0.1);
+        color: $success-color;
+        
+        .dark-theme & {
+          background-color: rgba($success-color, 0.2);
+        }
+      }
+      
+      &.salida {
+        background-color: rgba($info-color, 0.1);
+        color: $info-color;
+        
+        .dark-theme & {
+          background-color: rgba($info-color, 0.2);
+        }
+      }
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  
+  button {
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-md;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: none;
+    transition: all $transition-normal;
+    
+    .btn-icon {
+      margin-right: $spacing-sm;
+      font-size: 16px;
+    }
+    
+    &.modal-print-btn {
+      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 10%));
+      color: white;
+      
+      &:hover {
+        background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 5%));
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+      
+      .dark-theme & {
+        background: linear-gradient(135deg, $primary-dark, $primary-color);
+        
+        &:hover {
+          background: linear-gradient(135deg, color.adjust($primary-dark, $lightness: 5%), $primary-color);
+          box-shadow: 0 4px 8px rgba($primary-dark, 0.5);
+        }
+      }
+    }
+    
+    &.modal-close-btn {
+      background-color: transparent;
+      color: $text-secondary-light;
+      border: 1px solid $border-light;
+      
+      &:hover {
+        background-color: $bg-secondary-light;
+        color: $text-primary-light;
+        border-color: $text-secondary-light;
+      }
+      
+      .dark-theme & {
+        color: $text-secondary-dark;
+        border-color: $border-dark;
+        
+        &:hover {
+          background-color: $bg-secondary-dark;
+          color: $text-primary-dark;
+          border-color: $text-secondary-dark;
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 600px) {
+  .modal-header {
+    padding: $spacing-md;
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .modal-badge {
+      margin-top: $spacing-sm;
+      align-self: flex-start;
+    }
+  }
+  
+  .modal-body {
+    padding: $spacing-md;
+  }
+  
+  .modal-student-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .modal-avatar {
+    margin-right: 0;
+    margin-bottom: $spacing-md;
+  }
+  
+  .modal-info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

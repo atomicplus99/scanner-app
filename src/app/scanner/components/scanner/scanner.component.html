@@ -1,0 +1,111 @@
+<!-- src/app/components/scanner/scanner.component.html -->
+<section class="scanner-section" [class.dark-mode]="darkMode()">
+  <!-- Cabecera con información del escáner y estado -->
+  <div class="scanner-header">
+    <h2 class="scanner-title">
+      <span class="icon-scan">🔍</span>
+      <span>Escáner QR</span>
+    </h2>
+    
+    <div class="scanner-status-info" [class.error]="scannerError()" *ngIf="isScanning()">
+      <span class="status-icon">{{ scannerError() ? '❌' : '✓' }}</span>
+      <span class="status-text">{{ scannerStatus() }}</span>
+      
+      <div *ngIf="videoWidth() && videoHeight()" class="resolution-info">
+        <span class="resolution-icon">📐</span>
+        <span class="resolution-text">{{ videoWidth() }}x{{ videoHeight() }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Selector de cámara con diseño mejorado -->
+  <div class="camera-selector" *ngIf="availableCameras().length > 1">
+    <label for="camera-select" class="select-label">
+      <span class="camera-icon">📷</span>
+      <span>Seleccionar cámara</span>
+    </label>
+    
+    <div class="select-wrapper">
+      <select
+        id="camera-select"
+        [disabled]="isScanning()"
+        (change)="onCameraChange($event)"
+        class="camera-select"
+      >
+        <option *ngFor="let camera of availableCameras()" [value]="camera.deviceId">
+          {{ camera.label || 'Cámara ' + (camera.deviceId ? '#' + camera.deviceId.substr(0, 5) : '') }}
+        </option>
+      </select>
+      <div class="select-arrow"></div>
+    </div>
+  </div>
+  
+  <!-- Contenedor principal del escáner con efectos visuales -->
+  <div class="scanner-container">
+    <!-- Área de visualización del escáner -->
+    <div class="video-container" #qrRegionElement>
+      <video #videoElement class="scanner-preview" [class.scanning]="isScanning()" playsinline></video>
+      <canvas #canvasElement style="display: none;"></canvas>
+      
+      <!-- Overlay del escáner con animaciones -->
+      <div class="scanner-overlay" *ngIf="isScanning()">
+        <div class="scanner-frame">
+          <!-- Línea de escaneo animada -->
+          <div class="scanner-line"></div>
+          
+          <!-- Esquinas animadas -->
+          <div class="corner top-left"></div>
+          <div class="corner top-right"></div>
+          <div class="corner bottom-left"></div>
+          <div class="corner bottom-right"></div>
+          
+          <!-- Círculos de pulso -->
+          <div class="scan-pulse"></div>
+        </div>
+      </div>
+      
+      <!-- Indicador de estado flotante -->
+      <div class="floating-status" [class.error]="scannerError()" [class.active]="isScanning()">
+        <div class="status-icon">{{ scannerError() ? '❌' : '📷' }}</div>
+        <div class="status-message">{{ scannerStatus() }}</div>
+      </div>
+    </div>
+    
+    <!-- Panel de notificación para errores -->
+    <div class="notification-panel" *ngIf="scannerError()">
+      <div class="notification-icon">⚠️</div>
+      <div class="notification-message">{{ scannerError() }}</div>
+    </div>
+  </div>
+  
+  <!-- Controles del escáner con mejor diseño y efectos -->
+  <div class="scanner-controls">
+    <button
+      class="control-btn primary-btn"
+      [class.active]="isScanning()"
+      (click)="toggleScanner()"
+      aria-label="Controlar escáner"
+    >
+      <div class="btn-content">
+        <span class="btn-icon">{{ isScanning() ? '⏹️' : '▶️' }}</span>
+        <span class="btn-text">{{ isScanning() ? 'Detener escáner' : 'Iniciar escáner' }}</span>
+      </div>
+      <div class="btn-background"></div>
+    </button>
+    
+    <button
+      *ngIf="hasTorch()"
+      class="control-btn torch-btn"
+      [class.active]="torchEnabled()"
+      [disabled]="!isScanning()"
+      (click)="toggleTorch()"
+      aria-label="Controlar linterna"
+    >
+      <div class="btn-content">
+        <span class="btn-icon">{{ torchEnabled() ? '💡' : '🔦' }}</span>
+        <span class="btn-text">{{ torchEnabled() ? 'Apagar linterna' : 'Encender linterna' }}</span>
+      </div>
+      <div class="btn-background"></div>
+    </button>
+  </div>
+</section>

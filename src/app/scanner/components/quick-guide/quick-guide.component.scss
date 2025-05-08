@@ -1,0 +1,426 @@
+// Variables y mixins incorporados
+$primary-color: #3f51b5;
+$primary-light: #7986cb;
+$primary-dark: #2c387e;
+$secondary-color: #f50057;
+$secondary-dark: #ab003c;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$info-color: #2196f3;
+$bg-light: #f5f5f5;
+$bg-dark: #121212;
+$card-light: #ffffff;
+$card-dark: #1e1e1e;
+$bg-secondary-light: #eeeeee;
+$bg-secondary-dark: #2d2d2d;
+$text-primary-light: #212121;
+$text-secondary-light: #757575;
+$text-primary-dark: #ffffff;
+$text-secondary-dark: #aaaaaa;
+$border-light: #e0e0e0;
+$border-dark: #333333;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-circle: 50%;
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-lg-light: 0 8px 16px rgba(0, 0, 0, 0.1);
+$shadow-lg-dark: 0 8px 16px rgba(0, 0, 0, 0.3);
+$transition-normal: 0.3s ease;
+
+@use "sass:color";
+
+@mixin card($is-dark: false) {
+  background-color: if($is-dark, $card-dark, $card-light);
+  color: if($is-dark, $text-primary-dark, $text-primary-light);
+  border-radius: $border-radius-lg;
+  box-shadow: if($is-dark, $shadow-dark, $shadow-light);
+  overflow: hidden;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// Estilos mejorados para el componente quick-guide
+.guide-container {
+  @include card(false);
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+  transition: all $transition-normal;
+  border-radius: $border-radius-lg;
+  
+  .dark-theme & {
+    @include card(true);
+  }
+  
+  &:hover {
+    box-shadow: $shadow-lg-light;
+    
+    .dark-theme & {
+      box-shadow: $shadow-lg-dark;
+    }
+  }
+  
+  &.expanded {
+    .guide-content {
+      max-height: 600px;
+      opacity: 1;
+    }
+    
+    .guide-header {
+      border-bottom: 1px solid $border-light;
+      
+      .dark-theme & {
+        border-bottom-color: $border-dark;
+      }
+      
+      .toggle-icon {
+        transform: rotate(0deg);
+      }
+    }
+  }
+  
+  &.collapsed {
+    .guide-content {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    
+    .guide-header {
+      border-bottom: none;
+      
+      .toggle-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.guide-header {
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: linear-gradient(to right, rgba($info-color, 0.1), rgba($primary-color, 0.05));
+  position: relative;
+  transition: all $transition-normal;
+  
+  .dark-theme & {
+    background: linear-gradient(to right, rgba($info-color, 0.15), rgba($primary-dark, 0.1));
+  }
+  
+  &:hover {
+    background: linear-gradient(to right, rgba($info-color, 0.15), rgba($primary-color, 0.08));
+    
+    .dark-theme & {
+      background: linear-gradient(to right, rgba($info-color, 0.2), rgba($primary-dark, 0.15));
+    }
+    
+    .guide-title i {
+      animation: pulse 1s infinite;
+    }
+    
+    .toggle-icon {
+      color: $primary-color;
+      
+      .dark-theme & {
+        color: $primary-light;
+      }
+    }
+  }
+  
+  .guide-title {
+    display: flex;
+    align-items: center;
+    
+    i {
+      margin-right: $spacing-sm;
+      color: $info-color;
+      font-size: 22px;
+      transition: all $transition-normal;
+      
+      .dark-theme & {
+        color: color.adjust($info-color, $lightness: 10%);
+      }
+    }
+    
+    span {
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  .toggle-icon {
+    color: $text-secondary-light;
+    transition: all $transition-normal;
+    font-size: 22px;
+    
+    .dark-theme & {
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+.guide-content {
+  transition: all 0.4s ease-in-out;
+  overflow: hidden;
+  background-color: rgba($bg-light, 0.5);
+  
+  .dark-theme & {
+    background-color: rgba($bg-dark, 0.2);
+  }
+}
+
+.guide-tabs {
+  display: flex;
+  border-bottom: 1px solid $border-light;
+  background-color: rgba($bg-secondary-light, 0.5);
+  
+  .dark-theme & {
+    border-bottom-color: $border-dark;
+    background-color: rgba($bg-secondary-dark, 0.5);
+  }
+  
+  .guide-tab {
+    padding: $spacing-md;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all $transition-normal;
+    position: relative;
+    font-weight: 500;
+    
+    i {
+      font-size: 18px;
+      margin-right: $spacing-sm;
+      transition: all $transition-normal;
+    }
+    
+    span {
+      font-size: 14px;
+    }
+    
+    &.active {
+      color: $primary-color;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(to right, $primary-color, transparent);
+      }
+      
+      i {
+        color: $primary-color;
+        transform: scale(1.1);
+      }
+      
+      .dark-theme & {
+        color: $primary-light;
+        
+        &::after {
+          background: linear-gradient(to right, $primary-light, transparent);
+        }
+        
+        i {
+          color: $primary-light;
+        }
+      }
+    }
+    
+    &:hover:not(.active) {
+      background-color: rgba($primary-color, 0.05);
+      color: color.adjust($primary-color, $lightness: -10%);
+      
+      i {
+        transform: rotate(10deg);
+      }
+      
+      .dark-theme & {
+        background-color: rgba($primary-dark, 0.1);
+        color: color.adjust($primary-light, $lightness: -10%);
+      }
+    }
+  }
+}
+
+.guide-tab-content {
+  padding: $spacing-lg;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.guide-item {
+  display: flex;
+  transition: all $transition-normal;
+  animation: slideDown 0.5s ease-out;
+  animation-fill-mode: both;
+  border-radius: $border-radius-md;
+  padding: $spacing-md;
+  
+  &:hover {
+    background-color: rgba($bg-secondary-light, 0.5);
+    transform: translateX(5px);
+    
+    .dark-theme & {
+      background-color: rgba($bg-secondary-dark, 0.5);
+    }
+    
+    .guide-item-icon {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 5px 10px rgba($primary-color, 0.3);
+      
+      .dark-theme & {
+        box-shadow: 0 5px 10px rgba($primary-dark, 0.4);
+      }
+      
+      i {
+        animation: pulse 1.5s infinite;
+      }
+    }
+  }
+  
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+  
+  .guide-item-icon {
+    background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: 15%));
+    width: 48px;
+    height: 48px;
+    border-radius: $border-radius-circle;
+    @include flex-center;
+    margin-right: $spacing-md;
+    flex-shrink: 0;
+    transition: all $transition-normal;
+    box-shadow: 0 3px 6px rgba($primary-color, 0.2);
+    
+    .dark-theme & {
+      background: linear-gradient(135deg, $primary-dark, $primary-color);
+      box-shadow: 0 3px 6px rgba($primary-dark, 0.3);
+    }
+    
+    i {
+      color: white;
+      font-size: 22px;
+      transition: all $transition-normal;
+    }
+  }
+  
+  .guide-item-content {
+    flex: 1;
+    
+    .guide-item-title {
+      margin: 0 0 $spacing-sm;
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-primary-light;
+      
+      .dark-theme & {
+        color: $text-primary-dark;
+      }
+    }
+    
+    .guide-item-description {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: $text-secondary-light;
+      
+      .dark-theme & {
+        color: $text-secondary-dark;
+      }
+    }
+  }
+}
+
+// Mejoras responsivas
+@media (max-width: 600px) {
+  .guide-header {
+    padding: $spacing-sm $spacing-md;
+    
+    .guide-title {
+      i {
+        font-size: 20px;
+      }
+      
+      span {
+        font-size: 15px;
+      }
+    }
+    
+    .toggle-icon {
+      font-size: 20px;
+    }
+  }
+  
+  .guide-tab-content {
+    padding: $spacing-md;
+  }
+  
+  .guide-item {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .guide-item-icon {
+      margin-bottom: $spacing-sm;
+    }
+  }
+}

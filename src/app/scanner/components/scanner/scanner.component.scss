@@ -1,0 +1,766 @@
+// Variables y efectos
+$primary: #4a6bff;
+$primary-gradient: linear-gradient(135deg, #4a6bff, #38cfff);
+$primary-dark: #3452cc;
+$success: #36d29e;
+$success-gradient: linear-gradient(135deg, #36d29e, #2ecc71);
+$warning: #ff9f43;
+$warning-gradient: linear-gradient(135deg, #ff9f43, #ff7e1a);
+$error: #ff5252;
+$error-gradient: linear-gradient(135deg, #ff5252, #ff1a1a);
+$info: #1da1f2;
+$info-gradient: linear-gradient(135deg, #1da1f2, #0d95e8);
+
+$light-bg: #f8faff;
+$light-card: #ffffff;
+$light-border: rgba(32, 40, 62, 0.08);
+$light-text-primary: #2c3e50;
+$light-text-secondary: #78909c;
+
+$dark-bg: #151c2e;
+$dark-card: #1e2740;
+$dark-card-alt: #253255;
+$dark-border: rgba(255, 255, 255, 0.12);
+$dark-text-primary: #e9f0ff;
+$dark-text-secondary: #a3b8cc;
+
+$shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 8px 16px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.12);
+$shadow-focus: 0 0 0 3px rgba(74, 107, 255, 0.3);
+
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$border-radius-lg: 16px;
+$border-radius-xl: 24px;
+
+$transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@mixin neon-glow($color, $intensity: 1) {
+  box-shadow: 0 0 10px rgba($color, 0.5 * $intensity),
+              0 0 20px rgba($color, 0.3 * $intensity),
+              0 0 30px rgba($color, 0.1 * $intensity);
+}
+
+@mixin card($is-dark: false) {
+  background-color: if($is-dark, $dark-card, $light-card);
+  color: if($is-dark, $dark-text-primary, $light-text-primary);
+  border-radius: $border-radius-lg;
+  box-shadow: if($is-dark, 0 8px 16px rgba(0, 0, 0, 0.25), $shadow-md);
+  overflow: hidden;
+  transition: all $transition-normal;
+}
+
+// Animaciones
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes cornerGlow {
+  0%, 100% {
+    border-color: rgba(74, 107, 255, 0.7);
+    box-shadow: 0 0 5px rgba(74, 107, 255, 0.5);
+  }
+  50% {
+    border-color: rgba(74, 107, 255, 1);
+    box-shadow: 0 0 15px rgba(74, 107, 255, 0.8);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Componente principal
+.scanner-section {
+  @include card(false);
+  margin: $spacing-xl auto;
+  width: 100%;
+  max-width: 800px;
+  overflow: hidden;
+  position: relative;
+  animation: fadeInUp $transition-slow;
+  border: 1px solid $light-border;
+  
+  &.dark-mode {
+    @include card(true);
+    border: 1px solid $dark-border;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+// Cabecera del escáner
+.scanner-header {
+  padding: $spacing-md $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, rgba($primary, 0.05), rgba($primary, 0));
+  border-bottom: 1px solid $light-border;
+  
+  .dark-mode & {
+    background: linear-gradient(to right, rgba($primary, 0.15), rgba($primary, 0));
+    border-bottom: 1px solid $dark-border;
+  }
+}
+
+.scanner-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  color: $light-text-primary;
+  
+  .dark-mode & {
+    color: $dark-text-primary;
+  }
+  
+  .icon-scan {
+    font-size: 20px;
+    margin-right: $spacing-sm;
+    animation: pulse 3s infinite;
+  }
+}
+
+.scanner-status-info {
+  display: flex;
+  align-items: center;
+  background: rgba($success, 0.1);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: 14px;
+  font-weight: 500;
+  color: $success;
+  animation: fadeInUp $transition-normal;
+  
+  &.error {
+    background: rgba($error, 0.1);
+    color: $error;
+    @include neon-glow($error, 0.7);
+    animation: pulse 2s infinite;
+  }
+  
+  .status-icon {
+    margin-right: $spacing-sm;
+  }
+  
+  .dark-mode & {
+    background: rgba($success, 0.2);
+  }
+}
+
+.resolution-info {
+  margin-left: $spacing-md;
+  display: flex;
+  align-items: center;
+  background: rgba($info, 0.1);
+  padding: 3px $spacing-sm;
+  border-radius: $border-radius-sm;
+  font-size: 12px;
+  color: $info;
+  
+  .dark-mode & {
+    background: rgba($info, 0.2);
+  }
+  
+  .resolution-icon {
+    margin-right: 4px;
+    font-size: 12px;
+  }
+}
+
+// Selector de cámara
+.camera-selector {
+  padding: $spacing-md $spacing-lg;
+  background: rgba($light-bg, 0.7);
+  border-bottom: 1px solid $light-border;
+  display: flex;
+  align-items: center;
+  
+  .dark-mode & {
+    background: rgba($dark-card-alt, 0.5);
+    border-bottom: 1px solid $dark-border;
+  }
+  
+  .select-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: $light-text-primary;
+    margin-right: $spacing-lg;
+    
+    .dark-mode & {
+      color: $dark-text-primary;
+    }
+    
+    .camera-icon {
+      margin-right: $spacing-sm;
+    }
+  }
+  
+  .select-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 350px;
+    
+    .select-arrow {
+      position: absolute;
+      right: $spacing-md;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid $light-text-secondary;
+      pointer-events: none;
+      
+      .dark-mode & {
+        border-top-color: $dark-text-secondary;
+      }
+    }
+  }
+  
+  .camera-select {
+    width: 100%;
+    padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+    border: 1px solid $light-border;
+    border-radius: $border-radius-md;
+    background-color: $light-card;
+    color: $light-text-primary;
+    font-size: 14px;
+    appearance: none;
+    transition: all $transition-fast;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: $shadow-focus;
+    }
+    
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    .dark-mode & {
+      background-color: $dark-card-alt;
+      color: $dark-text-primary;
+      border-color: $dark-border;
+    }
+  }
+}
+
+// Contenedor del escáner
+.scanner-container {
+  position: relative;
+  padding: $spacing-md;
+  background: linear-gradient(to bottom, rgba($light-bg, 0.8), rgba($light-bg, 0.4));
+  
+  .dark-mode & {
+    background: linear-gradient(to bottom, rgba($dark-bg, 0.8), rgba($dark-bg, 0.4));
+  }
+}
+
+// Contenedor de video
+.video-container {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  border-radius: $border-radius-lg;
+  height: 400px;
+  box-shadow: $shadow-md;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $border-radius-lg;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .dark-mode & {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.scanner-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: filter $transition-normal;
+  
+  &.scanning {
+    filter: contrast(1.1) brightness(1.05) saturate(1.1);
+  }
+}
+
+// Overlay del escáner
+.scanner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  @include flex-center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.scanner-frame {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  border-radius: $spacing-sm;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg);
+  animation: breathe 4s infinite;
+  
+  .scanner-line {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, 
+      rgba($primary, 0),
+      rgba($primary, 1),
+      rgba($primary, 0));
+    box-shadow: 0 0 10px rgba($primary, 0.7);
+    animation: scanLine 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  
+  .corner {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-color: $primary;
+    border-style: solid;
+    border-width: 0;
+    animation: cornerGlow 2.5s infinite;
+    
+    &.top-left {
+      top: 0;
+      left: 0;
+      border-top-width: 3px;
+      border-left-width: 3px;
+      border-top-left-radius: $spacing-sm;
+    }
+    
+    &.top-right {
+      top: 0;
+      right: 0;
+      border-top-width: 3px;
+      border-right-width: 3px;
+      border-top-right-radius: $spacing-sm;
+    }
+    
+    &.bottom-left {
+      bottom: 0;
+      left: 0;
+      border-bottom-width: 3px;
+      border-left-width: 3px;
+      border-bottom-left-radius: $spacing-sm;
+    }
+    
+    &.bottom-right {
+      bottom: 0;
+      right: 0;
+      border-bottom-width: 3px;
+      border-right-width: 3px;
+      border-bottom-right-radius: $spacing-sm;
+    }
+  }
+  
+  .scan-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: $spacing-sm;
+    border: 2px dashed rgba($primary, 0.5);
+    animation: pulse 3s infinite;
+    
+    &::before, &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 1px solid rgba($primary, 0.3);
+      transform: translate(-50%, -50%);
+    }
+    
+    &::after {
+      animation: ripple 2s infinite;
+    }
+  }
+}
+
+// Indicador de estado flotante
+.floating-status {
+  position: absolute;
+  left: 50%;
+  bottom: $spacing-md;
+  transform: translateX(-50%) translateY(100%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $border-radius-md;
+  @include glass-effect;
+  display: flex;
+  align-items: center;
+  transition: transform $transition-normal;
+  z-index: 10;
+  
+  &.active {
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  &.error {
+    background: rgba($error, 0.8);
+  }
+  
+  .status-icon {
+    margin-right: $spacing-sm;
+  }
+  
+  .status-message {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Panel de notificación
+.notification-panel {
+  margin-top: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($error, 0.1);
+  border-left: 4px solid $error;
+  border-radius: $border-radius-md;
+  display: flex;
+  align-items: center;
+  animation: slideInRight $transition-normal;
+  
+  .dark-mode & {
+    background: rgba($error, 0.2);
+  }
+  
+  .notification-icon {
+    font-size: 18px;
+    margin-right: $spacing-md;
+  }
+  
+  .notification-message {
+    font-size: 14px;
+    color: $light-text-primary;
+    
+    .dark-mode & {
+      color: $dark-text-primary;
+    }
+  }
+}
+
+// Controles del escáner
+.scanner-controls {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  gap: $spacing-lg;
+  background: linear-gradient(to bottom, rgba($light-bg, 0.4), rgba($light-bg, 0.8));
+  border-top: 1px solid $light-border;
+  
+  .dark-mode & {
+    background: linear-gradient(to bottom, rgba($dark-card-alt, 0.4), rgba($dark-card-alt, 0.8));
+    border-top: 1px solid $dark-border;
+  }
+  
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.control-btn {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  border-radius: $border-radius-md;
+  flex: 1;
+  min-height: 50px;
+  cursor: pointer;
+  transition: all $transition-normal;
+  transform: translateZ(0);
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  &:active:not(:disabled) {
+    transform: scale(0.98) translateZ(0);
+  }
+  
+  .btn-content {
+    position: relative;
+    z-index: 2;
+    @include flex-center;
+    width: 100%;
+    height: 100%;
+    padding: $spacing-md $spacing-lg;
+  }
+  
+  .btn-icon {
+    font-size: 18px;
+    margin-right: $spacing-md;
+  }
+  
+  .btn-text {
+    font-weight: 600;
+    font-size: 15px;
+  }
+  
+  .btn-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    transition: all $transition-normal;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 80%);
+    opacity: 0;
+    transition: opacity $transition-normal;
+    z-index: 1;
+    transform: scale(1.5);
+  }
+  
+  &:hover:not(:disabled)::before {
+    opacity: 1;
+  }
+  
+  // Botón principal
+  &.primary-btn {
+    color: white;
+    box-shadow: 0 4px 10px rgba($primary, 0.3);
+    
+    .btn-background {
+      background: $primary-gradient;
+    }
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 15px rgba($primary, 0.5);
+      transform: translateY(-2px) translateZ(0);
+    }
+    
+    &.active {
+      .btn-background {
+        background: $success-gradient;
+      }
+      
+      box-shadow: 0 4px 10px rgba($success, 0.3);
+      
+      &:hover:not(:disabled) {
+        box-shadow: 0 6px 15px rgba($success, 0.5);
+      }
+    }
+  }
+  
+  // Botón de linterna
+  &.torch-btn {
+    color: white;
+    box-shadow: 0 4px 10px rgba($warning, 0.3);
+    
+    .btn-background {
+      background: $warning-gradient;
+    }
+    
+    &:hover:not(:disabled) {
+      box-shadow: 0 6px 15px rgba($warning, 0.5);
+      transform: translateY(-2px) translateZ(0);
+    }
+    
+    &.active {
+      .btn-background {
+        background: $info-gradient;
+      }
+      
+      box-shadow: 0 4px 10px rgba($info, 0.3);
+      
+      &:hover:not(:disabled) {
+        box-shadow: 0 6px 15px rgba($info, 0.5);
+      }
+    }
+    
+    &:disabled {
+      background: linear-gradient(135deg, #a6a6a6, #808080);
+    }
+  }
+}
+
+// Efectos adicionales y mejoras estéticas
+.scanner-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: $primary-gradient;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .scanner-section {
+    margin: $spacing-md;
+    width: calc(100% - #{$spacing-md * 2});
+  }
+  
+  .scanner-header {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .scanner-status-info {
+      margin-top: $spacing-md;
+    }
+  }
+  
+  .video-container {
+    height: 300px;
+  }
+  
+  .camera-selector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    
+    .select-label {
+      margin-bottom: $spacing-xs;
+    }
+    
+    .select-wrapper {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+}

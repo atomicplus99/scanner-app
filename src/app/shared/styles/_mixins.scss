@@ -1,0 +1,60 @@
+@use '_variables' as vars;
+@use "sass:color";
+
+// Mixin para tarjetas
+@mixin card($is-dark: false) {
+  background-color: if($is-dark, vars.$card-dark, vars.$card-light);
+  color: if($is-dark, vars.$text-primary-dark, vars.$text-primary-light);
+  border-radius: vars.$border-radius-md;
+  box-shadow: if($is-dark, vars.$shadow-dark, vars.$shadow-light);
+  overflow: hidden;
+}
+
+// Mixin para transiciones
+@mixin transition($properties...) {
+  transition-property: $properties;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+// Mixin para flexbox centrado
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Mixin para flex column
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Mixin para efecto hover (faltaba este)
+@mixin hover-effect($scale: 1.05, $shadow-increase: true) {
+  transition: transform vars.$transition-normal, box-shadow vars.$transition-normal;
+  
+  &:hover {
+    transform: scale($scale);
+    
+    @if $shadow-increase {
+      box-shadow: vars.$shadow-lg-light;
+      
+      .dark-theme & {
+        box-shadow: vars.$shadow-lg-dark;
+      }
+    }
+  }
+}
+
+// Mixin para status-badge (faltaba este)
+@mixin status-badge($color, $light-text: true) {
+  background-color: $color;
+  color: if($light-text, white, vars.$text-primary-light);
+  padding: vars.$spacing-xs vars.$spacing-sm;
+  border-radius: vars.$border-radius-sm;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  display: inline-block;
+}

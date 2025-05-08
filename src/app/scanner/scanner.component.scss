@@ -1,0 +1,1322 @@
+// :host {
+//   display: block;
+//   font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+// }
+
+// // Sistema de colores mejorado
+// $primary-color: #4361ee;
+// $primary-light: #4895ef;
+// $primary-dark: #3f37c9;
+// $success-color: #4caf50;
+// $success-dark: #388e3c;
+// $success-light: #a5d6a7;
+// $warning-color: #ff9800;
+// $warning-dark: #f57c00;
+// $warning-light: #ffe0b2;
+// $error-color: #f44336;
+// $error-dark: #d32f2f;
+// $error-light: #ffcdd2;
+// $info-color: #2196f3;
+// $info-dark: #1976d2;
+// $info-light: #bbdefb;
+
+// // Colores para tema claro
+// $bg-light: #f8f9fa;
+// $card-light: #ffffff;
+// $border-light: #eaeaea;
+// $text-primary-light: #212121;
+// $text-secondary-light: #757575;
+// $shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+// $shadow-medium-light: 0 8px 20px rgba(0, 0, 0, 0.12);
+// $shadow-strong-light: 0 12px 28px rgba(0, 0, 0, 0.15);
+
+// // Colores para tema oscuro
+// $bg-dark: #121212;
+// $card-dark: #1e1e2e;
+// $border-dark: #383844;
+// $text-primary-dark: #e4e4e4;
+// $text-secondary-dark: #b0b0b0;
+// $shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.3);
+// $shadow-medium-dark: 0 8px 20px rgba(0, 0, 0, 0.4);
+// $shadow-strong-dark: 0 12px 28px rgba(0, 0, 0, 0.5);
+
+// // Variables para bordes redondeados
+// $border-radius-sm: 6px;
+// $border-radius-md: 10px;
+// $border-radius-lg: 16px;
+// $border-radius-xl: 24px;
+// $border-radius-circle: 50%;
+
+// // Variables para transiciones
+// $transition-fast: 0.2s ease;
+// $transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+// $transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// // Variable para spacing y padding
+// $spacing-xs: 4px;
+// $spacing-sm: 8px;
+// $spacing-md: 16px;
+// $spacing-lg: 24px;
+// $spacing-xl: 32px;
+// $spacing-xxl: 48px;
+
+// // Aplicar configuración global
+// :global(.dark-theme-body) {
+//   background-color: $bg-dark;
+//   color: $text-primary-dark;
+//   transition: all $transition-normal;
+// }
+
+// :global(body) {
+//   background-color: $bg-light;
+//   color: $text-primary-light;
+//   transition: all $transition-normal;
+//   margin: 0;
+//   padding: $spacing-lg;
+//   min-height: 100vh;
+//   line-height: 1.6;
+
+//   @media (max-width: 768px) {
+//     padding: $spacing-md;
+//   }
+// }
+
+// // Mixins útiles
+// @mixin card($is-dark: false) {
+//   background-color: if($is-dark, $card-dark, $card-light);
+//   color: if($is-dark, $text-primary-dark, $text-primary-light);
+//   border-radius: $border-radius-lg;
+//   box-shadow: if($is-dark, $shadow-dark, $shadow-light);
+//   transition: all $transition-normal;
+
+//   &:hover {
+//     box-shadow: if($is-dark, $shadow-medium-dark, $shadow-medium-light);
+//   }
+// }
+
+// @mixin hover-effect($scale: 1.02) {
+//   transition: transform $transition-normal, box-shadow $transition-normal;
+  
+//   &:hover {
+//     transform: translateY(-2px) scale($scale);
+//   }
+// }
+
+// @mixin button-base($bg-color, $text-color: white) {
+//   background-color: $bg-color;
+//   color: $text-color;
+//   border: none;
+//   border-radius: $border-radius-md;
+//   padding: $spacing-sm $spacing-lg;
+//   font-weight: 500;
+//   cursor: pointer;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   gap: $spacing-sm;
+//   transition: all $transition-normal;
+//   box-shadow: 0 2px 5px rgba(darken($bg-color, 20%), 0.3);
+  
+//   &:hover {
+//     background-color: darken($bg-color, 7%);
+//     box-shadow: 0 4px 8px rgba(darken($bg-color, 20%), 0.4);
+//   }
+  
+//   &:active {
+//     transform: translateY(1px);
+//     box-shadow: 0 1px 3px rgba(darken($bg-color, 20%), 0.2);
+//   }
+  
+//   .btn-icon {
+//     font-size: 18px;
+//   }
+// }
+
+// @mixin status-badge($color, $is-dark: false) {
+//   background-color: if($is-dark, rgba($color, 0.15), rgba($color, 0.1));
+//   color: if($is-dark, lighten($color, 10%), $color);
+//   border: 1px solid if($is-dark, rgba($color, 0.3), rgba($color, 0.2));
+//   padding: $spacing-xs $spacing-md;
+//   border-radius: 30px;
+//   font-size: 12px;
+//   font-weight: 600;
+//   text-transform: uppercase;
+//   letter-spacing: 0.5px;
+//   display: inline-flex;
+//   align-items: center;
+// }
+
+// // Contenedor principal
+// .qr-scanner-container {
+//   max-width: 800px;
+//   margin: 0 auto;
+//   padding: $spacing-xl;
+//   @include card(false);
+//   border-radius: $border-radius-xl;
+//   overflow: hidden;
+  
+//   &.dark-theme {
+//     @include card(true);
+//   }
+  
+//   @media (max-width: 768px) {
+//     padding: $spacing-lg;
+//   }
+  
+//   @media (max-width: 480px) {
+//     padding: $spacing-md;
+//     border-radius: $border-radius-lg;
+//   }
+// }
+
+// // Header
+// .app-header {
+//   margin-bottom: $spacing-lg;
+  
+//   .header-content {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     padding-bottom: $spacing-md;
+//     border-bottom: 1px solid $border-light;
+    
+//     .dark-theme & {
+//       border-bottom-color: $border-dark;
+//     }
+//   }
+  
+//   .app-title {
+//     font-size: 28px;
+//     margin: 0;
+//     font-weight: 700;
+//     background: linear-gradient(45deg, $primary-color, $primary-light);
+//     background-clip: text;
+//     -webkit-background-clip: text;
+//     -webkit-text-fill-color: transparent;
+    
+//     .dark-theme & {
+//       background: linear-gradient(45deg, lighten($primary-light, 10%), $primary-light);
+//       background-clip: text;
+//       -webkit-background-clip: text;
+//     }
+    
+//     @media (max-width: 768px) {
+//       font-size: 24px;
+//     }
+//   }
+// }
+
+// // Botón de cambio de tema
+// .theme-btn {
+//   background: linear-gradient(45deg, #f5f5f5, #e0e0e0);
+//   border: none;
+//   cursor: pointer;
+//   font-size: 22px;
+//   padding: $spacing-sm;
+//   border-radius: $border-radius-circle;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   width: 48px;
+//   height: 48px;
+//   transition: all $transition-normal;
+//   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  
+//   .theme-icon {
+//     transition: transform $transition-normal;
+//   }
+  
+//   &:hover {
+//     transform: rotate(15deg);
+//     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+//     .theme-icon {
+//       transform: scale(1.2);
+//     }
+//   }
+
+//   .dark-theme & {
+//     background: linear-gradient(45deg, #32324a, #252538);
+//     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    
+//     &:hover {
+//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+//     }
+//   }
+// }
+
+// // Sección del scanner
+// .scanner-section {
+//   margin-bottom: $spacing-xl;
+// }
+
+// // Información del escáner
+// .scanner-info {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-bottom: $spacing-md;
+//   padding: $spacing-md;
+//   border-radius: $border-radius-md;
+//   background-color: rgba($info-color, 0.05);
+//   border-left: 3px solid $info-color;
+  
+//   .dark-theme & {
+//     background-color: rgba($info-color, 0.1);
+//   }
+  
+//   .scanner-status-info {
+//     display: flex;
+//     align-items: center;
+//     color: $info-color;
+//     font-weight: 500;
+    
+//     &.error {
+//       color: $error-color;
+//     }
+    
+//     .status-icon {
+//       margin-right: $spacing-sm;
+//       font-size: 18px;
+//     }
+//   }
+  
+//   .resolution-info {
+//     margin: 0;
+//     display: flex;
+//     align-items: center;
+//     font-size: 14px;
+//     color: $text-secondary-light;
+    
+//     .dark-theme & {
+//       color: $text-secondary-dark;
+//     }
+    
+//     .resolution-icon {
+//       margin-right: $spacing-xs;
+//     }
+//   }
+// }
+
+// // Selector de cámara
+// .camera-selector {
+//   margin-bottom: $spacing-lg;
+
+//   .select-label {
+//     display: block;
+//     margin-bottom: $spacing-sm;
+//     font-weight: 500;
+//     color: $text-primary-light;
+    
+//     .dark-theme & {
+//       color: $text-primary-dark;
+//     }
+//   }
+
+//   .select-wrapper {
+//     position: relative;
+//     width: 100%;
+    
+//     .select-arrow {
+//       position: absolute;
+//       right: 12px;
+//       top: 50%;
+//       transform: translateY(-50%);
+//       pointer-events: none;
+//       width: 0;
+//       height: 0;
+//       border-left: 6px solid transparent;
+//       border-right: 6px solid transparent;
+//       border-top: 6px solid $primary-color;
+      
+//       .dark-theme & {
+//         border-top-color: $primary-light;
+//       }
+//     }
+//   }
+
+//   .camera-select {
+//     width: 100%;
+//     padding: 12px $spacing-md;
+//     border-radius: $border-radius-md;
+//     border: 1px solid $border-light;
+//     background-color: #fff;
+//     font-size: 15px;
+//     cursor: pointer;
+//     transition: all $transition-normal;
+//     appearance: none;
+//     color: $text-primary-light;
+
+//     &:focus {
+//       outline: none;
+//       border-color: $primary-color;
+//       box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
+//     }
+
+//     .dark-theme & {
+//       background-color: #2a2a3a;
+//       border-color: $border-dark;
+//       color: $text-primary-dark;
+
+//       &:focus {
+//         border-color: $primary-light;
+//         box-shadow: 0 0 0 3px rgba($primary-light, 0.2);
+//       }
+//     }
+
+//     &:disabled {
+//       opacity: 0.6;
+//       cursor: not-allowed;
+//     }
+//   }
+// }
+
+// // Contenedor de video
+// .video-container {
+//   position: relative;
+//   aspect-ratio: 4/3;
+//   overflow: hidden;
+//   border-radius: $border-radius-lg;
+//   background-color: #2d2d2d;
+//   margin-bottom: $spacing-lg;
+//   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+//   max-height: 70vh;
+//   border: 1px solid $border-light;
+  
+//   .dark-theme & {
+//     background-color: #1a1a2a;
+//     border-color: $border-dark;
+//     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+//   }
+// }
+
+// // Vista previa del escáner
+// .scanner-preview {
+//   width: 100%;
+//   height: 100%;
+//   object-fit: cover;
+//   display: block;
+  
+//   &.scanning {
+//     filter: contrast(110%) brightness(105%);
+//   }
+// }
+
+// // Overlay del escáner
+// .scanner-overlay {
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   box-sizing: border-box;
+//   pointer-events: none;
+  
+//   .scanner-animation {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+    
+//     .scanner-line {
+//       position: absolute;
+//       width: 80%;
+//       height: 2px;
+//       background: linear-gradient(90deg, 
+//         rgba($primary-color, 0) 0%, 
+//         rgba($primary-color, 0.8) 50%, 
+//         rgba($primary-color, 0) 100%
+//       );
+//       animation: scan 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+//       box-shadow: 0 0 8px rgba($primary-color, 0.5);
+//     }
+//   }
+  
+//   .scanner-corners {
+//     position: absolute;
+//     top: 50%;
+//     left: 50%;
+//     width: 80%;
+//     height: 80%;
+//     transform: translate(-50%, -50%);
+//     pointer-events: none;
+    
+//     .corner {
+//       position: absolute;
+//       width: 40px;
+//       height: 40px;
+//       border-color: $primary-light;
+//       border-style: solid;
+//       border-width: 0;
+//       opacity: 0.8;
+      
+//       &.top-left {
+//         top: 0;
+//         left: 0;
+//         border-left-width: 3px;
+//         border-top-width: 3px;
+//         border-top-left-radius: 8px;
+//       }
+      
+//       &.top-right {
+//         top: 0;
+//         right: 0;
+//         border-right-width: 3px;
+//         border-top-width: 3px;
+//         border-top-right-radius: 8px;
+//       }
+      
+//       &.bottom-left {
+//         bottom: 0;
+//         left: 0;
+//         border-left-width: 3px;
+//         border-bottom-width: 3px;
+//         border-bottom-left-radius: 8px;
+//       }
+      
+//       &.bottom-right {
+//         bottom: 0;
+//         right: 0;
+//         border-right-width: 3px;
+//         border-bottom-width: 3px;
+//         border-bottom-right-radius: 8px;
+//       }
+//     }
+//   }
+// }
+
+// // Animación del escáner
+// @keyframes scan {
+//   0% {
+//     top: 20%;
+//     opacity: 0.5;
+//   }
+//   50% {
+//     top: 80%;
+//     opacity: 1;
+//   }
+//   100% {
+//     top: 20%;
+//     opacity: 0.5;
+//   }
+// }
+
+// // Estado del escáner
+// .scanner-status {
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   padding: $spacing-md;
+//   background-color: rgba(0, 0, 0, 0.7);
+//   color: white;
+// }
+
+// // Controls del escáner
+// .scanner-controls {
+//   display: flex;
+//   gap: $spacing-md;
+//   margin-bottom: $spacing-xl;
+  
+//   @media (max-width: 480px) {
+//     flex-direction: column;
+//   }
+  
+//   .control-btn {
+//     flex: 1;
+//     @include button-base($primary-color);
+//     padding: $spacing-md;
+//     border-radius: $border-radius-md;
+//     font-size: 16px;
+//     font-weight: 500;
+    
+//     &.active {
+//       background-color: $primary-dark;
+//     }
+    
+//     &.torch-btn {
+//       background-color: $warning-color;
+      
+//       &:hover {
+//         background-color: darken($warning-color, 7%);
+//       }
+      
+//       &.active {
+//         background-color: $warning-dark;
+//       }
+//     }
+//   }
+// }
+
+// // Sección de resultados
+// .results-section {
+//   margin-bottom: $spacing-xl;
+  
+//   .section-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     margin-bottom: $spacing-md;
+//   }
+  
+//   .section-title {
+//     font-size: 20px;
+//     font-weight: 600;
+//     margin: 0;
+//     color: $text-primary-light;
+    
+//     .dark-theme & {
+//       color: $text-primary-dark;
+//     }
+//   }
+// }
+
+// // Tarjeta de resultado
+// .result-card {
+//   @include card(false);
+//   padding: $spacing-lg;
+//   overflow: hidden;
+//   border-left: 5px solid $info-color;
+  
+//   &.success {
+//     border-left-color: $success-color;
+//   }
+  
+//   &.error {
+//     border-left-color: $error-color;
+//   }
+  
+//   .dark-theme & {
+//     @include card(true);
+    
+//     &.success {
+//       border-left-color: $success-color;
+//     }
+    
+//     &.error {
+//       border-left-color: $error-color;
+//     }
+//   }
+  
+//   @include hover-effect(1.01);
+  
+//   .result-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     margin-bottom: $spacing-md;
+//   }
+  
+//   .result-badge {
+//     @include status-badge($info-color, false);
+    
+//     .dark-theme & {
+//       @include status-badge($info-color, true);
+//     }
+    
+//     &.asistencia {
+//       @include status-badge($success-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($success-color, true);
+//       }
+//     }
+    
+//     &.tardanza {
+//       @include status-badge($warning-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($warning-color, true);
+//       }
+//     }
+    
+//     &.falta {
+//       @include status-badge($error-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($error-color, true);
+//       }
+//     }
+//   }
+// }
+
+// // Información del estudiante
+// .student-info {
+//   display: flex;
+//   gap: $spacing-md;
+//   margin-bottom: $spacing-lg;
+  
+//   .student-avatar {
+//     width: 70px;
+//     height: 70px;
+//     border-radius: $border-radius-circle;
+//     overflow: hidden;
+//     flex-shrink: 0;
+//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+//     border: 2px solid $border-light;
+    
+//     .dark-theme & {
+//       border-color: $border-dark;
+//       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+//     }
+    
+//     img {
+//       width: 100%;
+//       height: 100%;
+//       object-fit: cover;
+//     }
+//   }
+  
+//   .student-details {
+//     flex: 1;
+    
+//     .student-name {
+//       font-size: 18px;
+//       font-weight: 600;
+//       margin: 0 0 $spacing-xs;
+//       color: $text-primary-light;
+      
+//       .dark-theme & {
+//         color: $text-primary-dark;
+//       }
+//     }
+    
+//     .student-code {
+//       font-size: 14px;
+//       margin: 0 0 $spacing-xs;
+//       color: $text-secondary-light;
+      
+//       .dark-theme & {
+//         color: $text-secondary-dark;
+//       }
+//     }
+    
+//     .student-grade {
+//       font-size: 14px;
+//       margin: 0;
+//       color: $text-secondary-light;
+      
+//       .dark-theme & {
+//         color: $text-secondary-dark;
+//       }
+//     }
+//   }
+// }
+
+// // Mensaje de resultado
+// .result-message {
+//   padding: $spacing-md;
+//   background-color: rgba($info-color, 0.05);
+//   border-radius: $border-radius-md;
+//   margin-bottom: $spacing-lg;
+//   font-size: 15px;
+  
+//   .dark-theme & {
+//     background-color: rgba($info-color, 0.1);
+//   }
+  
+//   .success & {
+//     background-color: rgba($success-color, 0.05);
+    
+//     .dark-theme & {
+//       background-color: rgba($success-color, 0.1);
+//     }
+//   }
+  
+//   .error & {
+//     background-color: rgba($error-color, 0.05);
+    
+//     .dark-theme & {
+//       background-color: rgba($error-color, 0.1);
+//     }
+//   }
+// }
+
+// // Información de tiempo
+// .time-info {
+//   display: grid;
+//   grid-template-columns: repeat(3, 1fr);
+//   gap: $spacing-md;
+//   margin-bottom: $spacing-lg;
+  
+//   @media (max-width: 480px) {
+//     grid-template-columns: 1fr;
+//   }
+  
+//   .time-item {
+//     display: flex;
+//     flex-direction: column;
+    
+//     .time-label {
+//       font-size: 12px;
+//       color: $text-secondary-light;
+//       margin-bottom: $spacing-xs;
+      
+//       .dark-theme & {
+//         color: $text-secondary-dark;
+//       }
+//     }
+    
+//     .time-value {
+//       font-size: 14px;
+//       font-weight: 500;
+//       color: $text-primary-light;
+      
+//       .dark-theme & {
+//         color: $text-primary-dark;
+//       }
+      
+//       &.type-badge {
+//         display: inline-block;
+//         padding: $spacing-xs $spacing-sm;
+//         border-radius: 30px;
+//         font-size: 13px;
+//         font-weight: 600;
+//         text-align: center;
+        
+//         &.entrada {
+//           background-color: rgba($success-color, 0.1);
+//           color: $success-color;
+          
+//           .dark-theme & {
+//             background-color: rgba($success-color, 0.2);
+//             color: lighten($success-color, 10%);
+//           }
+//         }
+        
+//         &.salida {
+//           background-color: rgba($info-color, 0.1);
+//           color: $info-color;
+          
+//           .dark-theme & {
+//             background-color: rgba($info-color, 0.2);
+//             color: lighten($info-color, 10%);
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+// // Botón de detalles
+// .details-btn {
+//   @include button-base(transparent, $primary-color);
+//   border: 1px solid $primary-color;
+//   padding: $spacing-sm $spacing-md;
+//   font-size: 14px;
+//   border-radius: $border-radius-md;
+  
+//   &:hover {
+//     background-color: rgba($primary-color, 0.05);
+//   }
+  
+//   .dark-theme & {
+//     color: $primary-light;
+//     border-color: $primary-light;
+    
+//     &:hover {
+//       background-color: rgba($primary-light, 0.1);
+//     }
+//   }
+// }
+
+// // Sección de historial
+// .history-section {
+//   margin-bottom: $spacing-xl;
+  
+//   .section-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     margin-bottom: $spacing-md;
+//   }
+// }
+
+// // Lista de historial
+// .history-list {
+//   display: flex;
+//   flex-direction: column;
+//   gap: $spacing-md;
+// }
+
+// // Item de historial
+// .history-item {
+//   @include card(false);
+//   padding: $spacing-md;
+//   border-left: 4px solid $info-color;
+//   cursor: pointer;
+  
+//   &.success {
+//     border-left-color: $success-color;
+//   }
+  
+//   &.error {
+//     border-left-color: $error-color;
+//   }
+  
+//   .dark-theme & {
+//     @include card(true);
+//   }
+  
+//   @include hover-effect(1.02);
+  
+//   .history-item-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     margin-bottom: $spacing-sm;
+    
+//     .history-time {
+//       font-size: 13px;
+//       color: $text-secondary-light;
+      
+//       .dark-theme & {
+//         color: $text-secondary-dark;
+//       }
+//     }
+    
+//     .history-badge {
+//       @include status-badge($info-color, false);
+//       font-size: 10px;
+//       padding: $spacing-xs $spacing-sm;
+      
+//       .dark-theme & {
+//         @include status-badge($info-color, true);
+//       }
+      
+//       &.asistencia {
+//         @include status-badge($success-color, false);
+        
+//         .dark-theme & {
+//           @include status-badge($success-color, true);
+//         }
+//       }
+      
+//       &.tardanza {
+//         @include status-badge($warning-color, false);
+        
+//         .dark-theme & {
+//           @include status-badge($warning-color, true);
+//         }
+//       }
+      
+//       &.falta {
+//         @include status-badge($error-color, false);
+        
+//         .dark-theme & {
+//           @include status-badge($error-color, true);
+//         }
+//       }
+//     }
+//   }
+// }
+
+// // Información de estudiante en historial
+// .history-student-info {
+//   display: flex;
+//   gap: $spacing-md;
+  
+//   .history-avatar {
+//     width: 40px;
+//     height: 40px;
+//     border-radius: $border-radius-circle;
+//     overflow: hidden;
+//     flex-shrink: 0;
+//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+//     border: 1px solid $border-light;
+    
+//     .dark-theme & {
+//       border-color: $border-dark;
+//       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+//     }
+    
+//     img {
+//       width: 100%;
+//       height: 100%;
+//       object-fit: cover;
+//     }
+//   }
+  
+//   .history-student-details {
+//     .history-student-name {
+//       font-size: 15px;
+//       font-weight: 500;
+//       margin: 0 0 $spacing-xs;
+//       color: $text-primary-light;
+      
+//       .dark-theme & {
+//         color: $text-primary-dark;
+//       }
+//     }
+    
+//     .history-student-grade {
+//       font-size: 12px;
+//       margin: 0;
+//       color: $text-secondary-light;
+      
+//       .dark-theme & {
+//         color: $text-secondary-dark;
+//       }
+//     }
+//   }
+// }
+
+// // Estado vacío
+// .empty-history {
+//   padding: $spacing-xl;
+//   text-align: center;
+//   @include card(false);
+  
+//   .dark-theme & {
+//     @include card(true);
+//   }
+  
+//   .empty-icon {
+//     font-size: 36px;
+//     margin-bottom: $spacing-md;
+//     display: block;
+//     opacity: 0.5;
+//   }
+  
+//   .empty-text {
+//     font-size: 18px;
+//     font-weight: 500;
+//     margin: 0 0 $spacing-sm;
+//     color: $text-primary-light;
+    
+//     .dark-theme & {
+//       color: $text-primary-dark;
+//     }
+//   }
+  
+//   .empty-subtext {
+//     font-size: 14px;
+//     margin: 0;
+//     color: $text-secondary-light;
+    
+//     .dark-theme & {
+//       color: $text-secondary-dark;
+//     }
+//   }
+// }
+
+// // Animación de entrada
+// .animate-in {
+//   animation: fadeInUp 0.5s ease forwards;
+//   opacity: 0;
+//   transform: translateY(10px);
+// }
+
+// @keyframes fadeInUp {
+//   from {
+//     opacity: 0;
+//     transform: translateY(10px);
+//   }
+//   to {
+//     opacity: 1;
+//     transform: translateY(0);
+//   }
+// }
+
+// // Modal
+// .modal-overlay {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background-color: rgba(0, 0, 0, 0.5);
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   z-index: 1000;
+//   padding: $spacing-md;
+//   animation: fadeIn 0.3s ease;
+  
+//   .dark-theme & {
+//     background-color: rgba(0, 0, 0, 0.7);
+//   }
+// }
+
+// @keyframes fadeIn {
+//   from {
+//     opacity: 0;
+//   }
+//   to {
+//     opacity: 1;
+//   }
+// }
+
+// // Contenido del modal
+// .modal-content {
+//   background-color: $card-light;
+//   border-radius: $border-radius-lg;
+//   width: 100%;
+//   max-width: 550px;
+//   box-shadow: $shadow-strong-light;
+//   position: relative;
+//   animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+//   .dark-theme & {
+//     background-color: $card-dark;
+//     box-shadow: $shadow-strong-dark;
+//   }
+// }
+
+// @keyframes scaleIn {
+//   from {
+//     transform: scale(0.95);
+//     opacity: 0;
+//   }
+//   to {
+//     transform: scale(1);
+//     opacity: 1;
+//   }
+// }
+
+// // Botón para cerrar modal
+// .modal-close {
+//   position: absolute;
+//   top: $spacing-md;
+//   right: $spacing-md;
+//   background: transparent;
+//   border: none;
+//   font-size: 24px;
+//   cursor: pointer;
+//   width: 30px;
+//   height: 30px;
+//   border-radius: $border-radius-circle;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   color: $text-secondary-light;
+  
+//   &:hover {
+//     background-color: rgba(0, 0, 0, 0.05);
+//     color: $text-primary-light;
+//   }
+  
+//   .dark-theme & {
+//     color: $text-secondary-dark;
+    
+//     &:hover {
+//       background-color: rgba(255, 255, 255, 0.1);
+//       color: $text-primary-dark;
+//     }
+//   }
+// }
+
+// // Encabezado del modal
+// .modal-header {
+//   padding: $spacing-lg $spacing-lg $spacing-md;
+//   border-bottom: 1px solid $border-light;
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+  
+//   .dark-theme & {
+//     border-bottom-color: $border-dark;
+//   }
+  
+//   .modal-title {
+//     font-size: 20px;
+//     font-weight: 600;
+//     margin: 0;
+//   }
+  
+//   .modal-badge {
+//     @include status-badge($info-color, false);
+    
+//     .dark-theme & {
+//       @include status-badge($info-color, true);
+//     }
+    
+//     &.asistencia {
+//       @include status-badge($success-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($success-color, true);
+//       }
+//     }
+    
+//     &.tardanza {
+//       @include status-badge($warning-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($warning-color, true);
+//       }
+//     }
+    
+//     &.falta {
+//       @include status-badge($error-color, false);
+      
+//       .dark-theme & {
+//         @include status-badge($error-color, true);
+//       }
+//     }
+//   }
+// }
+
+// // Cuerpo del modal
+// .modal-body {
+//   padding: $spacing-lg;
+  
+//   .modal-student-info {
+//     display: flex;
+//     gap: $spacing-md;
+//     margin-bottom: $spacing-lg;
+    
+//     .modal-avatar {
+//       width: 90px;
+//       height: 90px;
+//       border-radius: $border-radius-circle;
+//       overflow: hidden;
+//       flex-shrink: 0;
+//       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+//       border: 3px solid #fff;
+      
+//       .dark-theme & {
+//         border-color: $bg-dark;
+//         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+//       }
+      
+//       img {
+//         width: 100%;
+//         height: 100%;
+//         object-fit: cover;
+//       }
+//     }
+    
+//     .modal-student-details {
+//       flex: 1;
+      
+//       .modal-student-name {
+//         font-size: 20px;
+//         font-weight: 600;
+//         margin: 0 0 $spacing-xs;
+//       }
+      
+//       .modal-student-code {
+//         font-size: 14px;
+//         margin: 0 0 $spacing-xs;
+//         color: $text-secondary-light;
+        
+//         .dark-theme & {
+//           color: $text-secondary-dark;
+//         }
+//       }
+      
+//       .modal-student-grade {
+//         font-size: 14px;
+//         margin: 0;
+//         color: $text-secondary-light;
+        
+//         .dark-theme & {
+//           color: $text-secondary-dark;
+//         }
+//       }
+//     }
+//   }
+  
+//   .modal-message {
+//     padding: $spacing-md;
+//     background-color: rgba($info-color, 0.05);
+//     border-radius: $border-radius-md;
+//     margin-bottom: $spacing-lg;
+    
+//     .dark-theme & {
+//       background-color: rgba($info-color, 0.1);
+//     }
+    
+//     p {
+//       margin: 0;
+//       font-size: 15px;
+//     }
+//   }
+  
+//   .modal-info-grid {
+//     display: grid;
+//     grid-template-columns: repeat(2, 1fr);
+//     gap: $spacing-md;
+//     margin-bottom: $spacing-lg;
+    
+//     @media (max-width: 480px) {
+//       grid-template-columns: 1fr;
+//     }
+    
+//     .modal-info-item {
+//       .info-label {
+//         display: block;
+//         font-size: 12px;
+//         color: $text-secondary-light;
+//         margin-bottom: $spacing-xs;
+        
+//         .dark-theme & {
+//           color: $text-secondary-dark;
+//         }
+//       }
+      
+//       .info-value {
+//         font-size: 15px;
+//         font-weight: 500;
+        
+//         &.type-badge {
+//           display: inline-block;
+//           padding: $spacing-xs $spacing-sm;
+//           border-radius: 30px;
+//           font-size: 13px;
+//           font-weight: 600;
+//           text-align: center;
+          
+//           &.entrada {
+//             background-color: rgba($success-color, 0.1);
+//             color: $success-color;
+            
+//             .dark-theme & {
+//               background-color: rgba($success-color, 0.2);
+//               color: lighten($success-color, 10%);
+//             }
+//           }
+          
+//           &.salida {
+//             background-color: rgba($info-color, 0.1);
+//             color: $info-color;
+            
+//             .dark-theme & {
+//               background-color: rgba($info-color, 0.2);
+//               color: lighten($info-color, 10%);
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+  
+//   .modal-actions {
+//     display: flex;
+//     justify-content: flex-end;
+//     gap: $spacing-md;
+    
+//     .modal-print-btn {
+//       @include button-base($primary-color);
+//     }
+    
+//     .modal-close-btn {
+//       @include button-base(transparent, $text-primary-light);
+//       border: 1px solid $border-light;
+      
+//       .dark-theme & {
+//         color: $text-primary-dark;
+//         border-color: $border-dark;
+        
+//         &:hover {
+//           background-color: rgba(255, 255, 255, 0.05);
+//         }
+//       }
+//     }
+//   }
+// }

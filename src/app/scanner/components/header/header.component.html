@@ -1,0 +1,9 @@
+<header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">Registro de Asistencia</h1>
+      <button (click)="toggleTheme()" class="theme-btn" aria-label="Cambiar tema">
+        <span *ngIf="darkMode()" class="theme-icon light-icon">☀️</span>
+        <span *ngIf="!darkMode()" class="theme-icon dark-icon">🌙</span>
+      </button>
+    </div>
+  </header>

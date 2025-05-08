@@ -1,0 +1,28 @@
+<!-- src/app/components/system-status/system-status.component.html -->
+<div class="system-status-container" [class.dark-theme]="darkMode()">
+    <div class="status-item">
+      <div class="status-icon">
+        <i class="material-icons">schedule</i>
+      </div>
+      <div class="status-info">
+        <span class="status-label">Hora actual:</span>
+        <span class="status-value">{{ formatTime(currentTime) }}</span>
+      </div>
+    </div>
+    
+    <div class="status-item">
+      <div class="status-icon">
+        <i class="material-icons" [class]="getConnectionClass()">{{ isServerConnected ? 'cloud_done' : 'cloud_off' }}</i>
+      </div>
+      <div class="status-info">
+        <span class="status-label">Servidor:</span>
+        <span class="status-value" [class]="getConnectionClass()">
+          {{ isServerConnected ? 'Conectado' : 'Desconectado' }}
+        </span>
+      </div>
+    </div>
+    
+    <div class="status-refresh" (click)="checkServerConnection()">
+      <i class="material-icons" [class.rotating]="checkingConnection">refresh</i>
+    </div>
+  </div>

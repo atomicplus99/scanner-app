@@ -1,0 +1,43 @@
+<!-- src/app/components/history/history.component.html -->
+<section class="history-section">
+    <div class="section-header">
+      <h2 class="section-title">Historial de registros</h2>
+    </div>
+    
+    <div class="history-list">
+      <div 
+        *ngFor="let registro of registrosRecientes(); let i = index" 
+        class="history-item animate-in" 
+        [class.success]="registro.status === 'success'" 
+        [class.error]="registro.status === 'error'"
+        [style.animation-delay]="i * 0.05 + 's'"
+        (click)="showDetails(registro)"
+      >
+        <div class="history-item-header">
+          <span class="history-time">{{ registro.hora }}</span>
+          <span class="history-badge" [ngClass]="getEstadoClass(registro.estado)">
+            {{ formatEstado(registro.estado) }}
+          </span>
+        </div>
+        
+        <div class="history-item-body">
+          <div class="history-student-info">
+            <div class="history-avatar">
+              <img [src]="registro.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+            </div>
+            <div class="history-student-details">
+                <p class="history-student-name">{{ formatStudentName(registro.estudiante.nombre, registro.estudiante.apellido) }}</p>
+                <p class="history-student-grade">{{ formatGradoNivel(registro.estudiante.nivel, registro.estudiante.grado, registro.estudiante.seccion) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Estado vacío mejorado -->
+      <div *ngIf="registrosRecientes().length === 0" class="empty-history">
+        <span class="empty-icon">📋</span>
+        <p class="empty-text">No hay registros recientes</p>
+        <p class="empty-subtext">Los registros aparecerán aquí después de escanear un código QR</p>
+      </div>
+    </div>
+  </section>

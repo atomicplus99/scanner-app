@@ -1,0 +1,62 @@
+<!-- src/app/components/details-modal/details-modal.component.html -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="close()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="close()" aria-label="Cerrar modal">×</button>
+      
+      <div class="modal-header">
+        <h3 class="modal-title">Detalles del registro</h3>
+        <div class="modal-badge" [ngClass]="getEstadoClass(registro?.estado || '')">
+            {{ formatEstado(registro?.estado || '') }}
+          </div>
+      </div>
+      
+      <div class="modal-body" *ngIf="registro">
+        <div class="modal-student-info">
+          <div class="modal-avatar">
+            <img [src]="registro.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+          </div>
+          
+          <div class="modal-student-details">
+            <p class="modal-student-name">{{ formatStudentName(registro.estudiante.nombre || '', registro.estudiante.apellido || '') }}</p>
+            <p class="modal-student-code">Código: {{ registro.estudiante.codigo }}</p>
+            <p class="modal-student-grade">{{ formatGradoNivel(registro.estudiante.nivel || '', registro.estudiante.grado || 0, registro.estudiante.seccion || '') }}</p>
+          </div>
+        </div>
+        <div class="modal-message">
+          <p>{{ registro.mensaje }}</p>
+        </div>
+        
+        <div class="modal-info-grid">
+          <div class="modal-info-item">
+            <span class="info-label">ID Registro:</span>
+            <span class="info-value">{{ formatId(registro.id || '') }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Hora:</span>
+            <span class="info-value">{{ registro.hora }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Fecha:</span>
+            <span class="info-value">{{ registro.fecha }}</span>
+          </div>
+          <div class="modal-info-item">
+            <span class="info-label">Tipo:</span>
+            <span class="info-value type-badge" [class.entrada]="registro.tipo === 'entrada'" [class.salida]="registro.tipo !== 'entrada'">
+              {{ registro.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="modal-print-btn" (click)="printDetails()">
+            <span class="btn-icon">🖨️</span>
+            Imprimir
+          </button>
+          <button class="modal-close-btn" (click)="close()">
+            <span class="btn-icon">✖️</span>
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

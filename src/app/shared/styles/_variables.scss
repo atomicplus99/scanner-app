@@ -1,0 +1,64 @@
+$primary-color: #3f51b5;
+$primary-light: #7986cb;
+$primary-dark: #2c387e;
+$secondary-color: #f50057;
+$secondary-dark: #ab003c;
+
+// Colores de estado
+$success-color: #4caf50;
+$warning-color: #ff9800;
+$error-color: #f44336;
+$info-color: #2196f3;
+
+// Colores de fondo
+$bg-light: #f5f5f5;
+$bg-dark: #121212;
+$card-light: #ffffff;
+$card-dark: #1e1e1e;
+$bg-secondary-light: #eeeeee;
+$bg-secondary-dark: #2d2d2d;
+
+// Colores de texto
+$text-primary-light: #212121;
+$text-secondary-light: #757575;
+$text-primary-dark: #ffffff;
+$text-secondary-dark: #aaaaaa;
+
+// Bordes
+$border-light: #e0e0e0;
+$border-dark: #333333;
+
+// Espaciado
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Bordes redondeados
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-circle: 50%;
+
+// Sombras
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-strong-light: 0 5px 15px rgba(0, 0, 0, 0.2);
+$shadow-strong-dark: 0 5px 15px rgba(0, 0, 0, 0.5);
+$shadow-sm-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg-light: 0 10px 15px rgba(0, 0, 0, 0.1);
+$shadow-sm-dark: 0 1px 3px rgba(0, 0, 0, 0.2);
+$shadow-md-dark: 0 4px 6px rgba(0, 0, 0, 0.2);
+$shadow-lg-dark: 0 10px 15px rgba(0, 0, 0, 0.2);
+
+// Transiciones
+$transition-fast: 0.15s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Z-index
+$z-index-header: 100;
+$z-index-modal: 1000;
+$z-index-spinner: 2000;

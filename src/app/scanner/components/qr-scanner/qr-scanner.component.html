@@ -1,0 +1,90 @@
+<!-- app.component.html (layout mejorado) -->
+<div class="app-container" [class.dark-theme]="darkMode()">
+  <!-- Cabecera con título y toggle de tema -->
+  <header class="app-header">
+    <app-header></app-header>
+  </header>
+  
+  <!-- Contenido principal -->
+  <main class="app-content">
+    <!-- Columna izquierda: Escáner y funcionalidades principales -->
+    <section class="scanner-column">
+      <!-- Panel de estado del sistema y guía rápida -->
+      <div class="system-panel">
+        <div class="system-status-wrapper">
+          <app-system-status></app-system-status>
+        </div>
+        <div class="quick-guide-wrapper">
+          <app-quick-guide></app-quick-guide>
+        </div>
+      </div>
+      
+      <!-- Panel principal del escáner -->
+      <div class="scanner-panel">
+        <header class="panel-header">
+          <h2 class="panel-title">
+            <span class="icon-scan">🔍</span>
+            <span class="title-text">Escáner QR</span>
+          </h2>
+        </header>
+        <div class="panel-content">
+          <app-scanner></app-scanner>
+        </div>
+      </div>
+      
+      <!-- Panel de último resultado -->
+      <div class="result-panel">
+        <header class="panel-header">
+          <h2 class="panel-title">
+            <span class="icon-result">📋</span>
+            <span class="title-text">Último registro</span>
+          </h2>
+        </header>
+        <div class="panel-content">
+          <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Columna derecha: Estadísticas e historial -->
+    <aside class="info-column">
+      <!-- Panel de estadísticas -->
+      <div class="stats-panel">
+        <header class="panel-header">
+          <h2 class="panel-title">
+            <span class="icon-stats">📊</span>
+            <span class="title-text">Estadísticas del día</span>
+          </h2>
+        </header>
+        <div class="panel-content">
+          <app-daily-stats></app-daily-stats>
+        </div>
+      </div>
+      
+      <!-- Panel de historial -->
+      <div class="history-panel">
+        <header class="panel-header">
+          <h2 class="panel-title">
+            <span class="icon-history">📜</span>
+            <span class="title-text">Historial de registros</span>
+          </h2>
+        </header>
+        <div class="panel-content">
+          <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
+        </div>
+      </div>
+    </aside>
+  </main>
+  
+  <!-- Modal de detalles -->
+  <app-details-modal
+    [registro]="selectedRegistro()"
+    [isVisible]="showDetailsModal()"
+    (closeModal)="closeDetailsModal()"
+  ></app-details-modal>
+  
+  <!-- Chat de ayuda flotante -->
+  <div class="help-chat-wrapper">
+    <app-help-chat></app-help-chat>
+  </div>
+</div>
