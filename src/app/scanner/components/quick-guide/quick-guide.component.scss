@@ -34,6 +34,9 @@ $shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
 $shadow-lg-light: 0 8px 16px rgba(0, 0, 0, 0.1);
 $shadow-lg-dark: 0 8px 16px rgba(0, 0, 0, 0.3);
 $transition-normal: 0.3s ease;
+$z-index-guide: 1050; // Incrementado para asegurar que esté por encima de otros elementos
+$z-index-overlay: 1040; // Incrementado para asegurar que esté por encima de otros elementos pero debajo de la guía
+$z-index-button: 1051; // Incrementado para asegurar que esté por encima de la guía cuando está cerrada
 
 @use "sass:color";
 
@@ -72,6 +75,17 @@ $transition-normal: 0.3s ease;
   }
 }
 
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -84,59 +98,127 @@ $transition-normal: 0.3s ease;
   }
 }
 
-// Estilos mejorados para el componente quick-guide
-.guide-container {
-  @include card(false);
-  margin-bottom: $spacing-md;
-  overflow: hidden;
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+// Botón flotante - En la esquina superior izquierda
+.guide-floating-button {
+  position: fixed;
+  top: 80px; // Posición desde arriba (debajo del header)
+  left: $spacing-xl; // Posición desde la izquierda
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius-circle;
+  background-color: $primary-color;
+  color: white;
+  @include flex-center;
+  cursor: pointer;
   transition: all $transition-normal;
-  border-radius: $border-radius-lg;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: $z-index-button;
+  animation: float 2s infinite ease-in-out;
   
   .dark-theme & {
-    @include card(true);
+    background-color: $primary-light;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 20px rgba($primary-light, 0.3);
   }
   
   &:hover {
-    box-shadow: $shadow-lg-light;
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     
     .dark-theme & {
-      box-shadow: $shadow-lg-dark;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 25px rgba($primary-light, 0.4);
+    }
+    
+    i {
+      animation: pulse 1s infinite;
     }
   }
   
+  i {
+    font-size: 24px;
+    transition: all $transition-normal;
+  }
+}
+
+// Overlay para cuando la guía está abierta
+.guide-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: $z-index-overlay;
+  animation: fadeIn 0.3s ease;
+  pointer-events: auto; // Asegura que capture eventos de clic
+}
+
+// Estilos mejorados para el componente quick-guide
+.guide-container {
+  position: fixed;
+  top: 80px; // Aparecer desde arriba (debajo del header)
+  left: $spacing-xl; // Aparecer desde la izquierda
+  width: 0;
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: $z-index-guide;
+  transition: all 0.3s ease-in-out;
+  pointer-events: none; // Inicialmente sin eventos para que no capture clics cuando está oculta
+  @include card(false);
+  max-width: 400px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-lg-light;
+  overflow: hidden; // Lo movimos aquí para no interferir con pointer-events
+  
+  .dark-theme & {
+    @include card(true);
+    box-shadow: $shadow-lg-dark, 0 0 15px rgba($primary-light, 0.2);
+  }
+  
   &.expanded {
+    width: 90%;
+    height: auto;
+    max-width: 400px;
+    opacity: 1;
+    visibility: visible;
+    animation: scaleIn 0.3s ease-out;
+    pointer-events: auto; // Habilita eventos de clic cuando está visible
+    
+    .guide-overlay {
+      display: block;
+    }
+    
     .guide-content {
       max-height: 600px;
       opacity: 1;
     }
-    
-    .guide-header {
-      border-bottom: 1px solid $border-light;
-      
-      .dark-theme & {
-        border-bottom-color: $border-dark;
-      }
-      
-      .toggle-icon {
-        transform: rotate(0deg);
-      }
-    }
   }
   
   &.collapsed {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; // Deshabilita eventos de clic cuando está oculta
+    
     .guide-content {
       max-height: 0;
       opacity: 0;
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-    
-    .guide-header {
-      border-bottom: none;
-      
-      .toggle-icon {
-        transform: rotate(180deg);
-      }
     }
   }
 }
@@ -146,33 +228,14 @@ $transition-normal: 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
   background: linear-gradient(to right, rgba($info-color, 0.1), rgba($primary-color, 0.05));
   position: relative;
   transition: all $transition-normal;
+  border-bottom: 1px solid $border-light;
   
   .dark-theme & {
     background: linear-gradient(to right, rgba($info-color, 0.15), rgba($primary-dark, 0.1));
-  }
-  
-  &:hover {
-    background: linear-gradient(to right, rgba($info-color, 0.15), rgba($primary-color, 0.08));
-    
-    .dark-theme & {
-      background: linear-gradient(to right, rgba($info-color, 0.2), rgba($primary-dark, 0.15));
-    }
-    
-    .guide-title i {
-      animation: pulse 1s infinite;
-    }
-    
-    .toggle-icon {
-      color: $primary-color;
-      
-      .dark-theme & {
-        color: $primary-light;
-      }
-    }
+    border-bottom-color: $border-dark;
   }
   
   .guide-title {
@@ -201,17 +264,30 @@ $transition-normal: 0.3s ease;
     color: $text-secondary-light;
     transition: all $transition-normal;
     font-size: 22px;
+    cursor: pointer;
     
     .dark-theme & {
       color: $text-secondary-dark;
+    }
+    
+    &:hover {
+      color: $primary-color;
+      transform: rotate(90deg);
+      
+      .dark-theme & {
+        color: $primary-light;
+      }
     }
   }
 }
 
 .guide-content {
   transition: all 0.4s ease-in-out;
-  overflow: hidden;
+  overflow: auto;
   background-color: rgba($bg-light, 0.5);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   
   .dark-theme & {
     background-color: rgba($bg-dark, 0.2);
@@ -222,6 +298,7 @@ $transition-normal: 0.3s ease;
   display: flex;
   border-bottom: 1px solid $border-light;
   background-color: rgba($bg-secondary-light, 0.5);
+  flex-shrink: 0;
   
   .dark-theme & {
     border-bottom-color: $border-dark;
@@ -297,6 +374,8 @@ $transition-normal: 0.3s ease;
 .guide-tab-content {
   padding: $spacing-lg;
   animation: fadeIn 0.4s ease-out;
+  overflow: auto;
+  flex: 1;
 }
 
 .guide-list {
@@ -393,6 +472,17 @@ $transition-normal: 0.3s ease;
 
 // Mejoras responsivas
 @media (max-width: 600px) {
+  .guide-container {
+    left: $spacing-md;
+    top: 75px;
+    max-width: calc(100% - #{$spacing-md * 2});
+  }
+  
+  .guide-floating-button {
+    left: $spacing-md;
+    top: 75px;
+  }
+  
   .guide-header {
     padding: $spacing-sm $spacing-md;
     
@@ -420,6 +510,7 @@ $transition-normal: 0.3s ease;
     align-items: flex-start;
     
     .guide-item-icon {
+      margin-right: 0;
       margin-bottom: $spacing-sm;
     }
   }

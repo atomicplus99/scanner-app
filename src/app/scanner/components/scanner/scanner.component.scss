@@ -1,7 +1,8 @@
 // Variables y efectos
 $primary: #4a6bff;
+$primary-alt: #5d7dfb;
 $primary-gradient: linear-gradient(135deg, #4a6bff, #38cfff);
-$primary-dark: #3452cc;
+$primary-glow: rgba(74, 107, 255, 0.5);
 $success: #36d29e;
 $success-gradient: linear-gradient(135deg, #36d29e, #2ecc71);
 $warning: #ff9f43;
@@ -12,12 +13,14 @@ $info: #1da1f2;
 $info-gradient: linear-gradient(135deg, #1da1f2, #0d95e8);
 
 $light-bg: #f8faff;
+$light-bg-alt: #eef3ff;
 $light-card: #ffffff;
 $light-border: rgba(32, 40, 62, 0.08);
 $light-text-primary: #2c3e50;
 $light-text-secondary: #78909c;
 
 $dark-bg: #151c2e;
+$dark-bg-alt: #1a2235;
 $dark-card: #1e2740;
 $dark-card-alt: #253255;
 $dark-border: rgba(255, 255, 255, 0.12);
@@ -37,6 +40,7 @@ $border-radius-xl: 24px;
 $transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 $transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 
 $spacing-xs: 4px;
 $spacing-sm: 8px;
@@ -51,10 +55,16 @@ $spacing-xl: 32px;
   justify-content: center;
 }
 
-@mixin glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+@mixin glass-effect($opacity: 0.1, $blur: 10px) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  .dark-mode & {
+    background: rgba(0, 0, 0, $opacity);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
 }
 
 @mixin neon-glow($color, $intensity: 1) {
@@ -169,13 +179,58 @@ $spacing-xl: 32px;
   }
 }
 
+@keyframes rotateIcon {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.6;
+    box-shadow: 0 0 10px 0 rgba($primary, 0.5);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 20px 5px rgba($primary, 0.8);
+  }
+}
+
 // Componente principal
 .scanner-section {
   @include card(false);
   margin: $spacing-xl auto;
   width: 100%;
   max-width: 800px;
-  overflow: hidden;
   position: relative;
   animation: fadeInUp $transition-slow;
   border: 1px solid $light-border;
@@ -189,11 +244,22 @@ $spacing-xl: 32px;
     transform: translateY(-3px);
     box-shadow: $shadow-lg;
   }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: $primary-gradient;
+    z-index: 1;
+  }
 }
 
 // Cabecera del escáner
 .scanner-header {
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-lg;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -204,11 +270,17 @@ $spacing-xl: 32px;
     background: linear-gradient(to right, rgba($primary, 0.15), rgba($primary, 0));
     border-bottom: 1px solid $dark-border;
   }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
 }
 
 .scanner-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -219,9 +291,23 @@ $spacing-xl: 32px;
   }
   
   .icon-scan {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     margin-right: $spacing-sm;
-    animation: pulse 3s infinite;
+    background: $primary-gradient;
+    border-radius: 50%;
+    color: white;
+    padding: $spacing-xs;
+    box-shadow: 0 3px 8px rgba($primary, 0.3);
+    
+    .scan-icon {
+      width: 20px;
+      height: 20px;
+      animation: pulse 3s infinite;
+    }
   }
 }
 
@@ -230,25 +316,48 @@ $spacing-xl: 32px;
   align-items: center;
   background: rgba($success, 0.1);
   padding: $spacing-xs $spacing-md;
-  border-radius: $border-radius-sm;
+  border-radius: $border-radius-md;
   font-size: 14px;
   font-weight: 500;
   color: $success;
   animation: fadeInUp $transition-normal;
+  transition: all $transition-normal;
+  @include glass-effect(0.15, 8px);
+  
+  &.success {
+    background: rgba($success, 0.15);
+    color: $success;
+    
+    .status-indicator {
+      background-color: $success;
+    }
+    
+    .dark-mode & {
+      background: rgba($success, 0.2);
+    }
+  }
   
   &.error {
-    background: rgba($error, 0.1);
+    background: rgba($error, 0.15);
     color: $error;
     @include neon-glow($error, 0.7);
     animation: pulse 2s infinite;
+    
+    .status-indicator {
+      background-color: $error;
+    }
+    
+    .dark-mode & {
+      background: rgba($error, 0.2);
+    }
   }
   
-  .status-icon {
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     margin-right: $spacing-sm;
-  }
-  
-  .dark-mode & {
-    background: rgba($success, 0.2);
+    animation: blink 1.5s infinite;
   }
 }
 
@@ -257,7 +366,7 @@ $spacing-xl: 32px;
   display: flex;
   align-items: center;
   background: rgba($info, 0.1);
-  padding: 3px $spacing-sm;
+  padding: 4px $spacing-sm;
   border-radius: $border-radius-sm;
   font-size: 12px;
   color: $info;
@@ -267,90 +376,113 @@ $spacing-xl: 32px;
   }
   
   .resolution-icon {
+    width: 14px;
+    height: 14px;
     margin-right: 4px;
-    font-size: 12px;
   }
 }
 
 // Selector de cámara
 .camera-selector {
   padding: $spacing-md $spacing-lg;
-  background: rgba($light-bg, 0.7);
+  background: rgba($light-bg-alt, 0.7);
   border-bottom: 1px solid $light-border;
-  display: flex;
-  align-items: center;
   
   .dark-mode & {
     background: rgba($dark-card-alt, 0.5);
     border-bottom: 1px solid $dark-border;
   }
+}
+
+.selector-container {
+  display: flex;
+  align-items: center;
   
-  .select-label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 500;
-    color: $light-text-primary;
-    margin-right: $spacing-lg;
-    
-    .dark-mode & {
-      color: $dark-text-primary;
-    }
-    
-    .camera-icon {
-      margin-right: $spacing-sm;
-    }
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.select-label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: $light-text-primary;
+  margin-right: $spacing-lg;
+  white-space: nowrap;
+  
+  .dark-mode & {
+    color: $dark-text-primary;
   }
   
-  .select-wrapper {
-    position: relative;
-    flex: 1;
-    max-width: 350px;
+  .camera-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: $spacing-sm;
+  }
+}
+
+.select-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 350px;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .select-arrow {
+    position: absolute;
+    right: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
     
-    .select-arrow {
-      position: absolute;
-      right: $spacing-md;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 5px solid $light-text-secondary;
-      pointer-events: none;
+    svg {
+      width: 16px;
+      height: 16px;
+      color: $light-text-secondary;
       
       .dark-mode & {
-        border-top-color: $dark-text-secondary;
+        color: $dark-text-secondary;
       }
     }
   }
+}
+
+.camera-select {
+  width: 100%;
+  padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+  border: 1px solid $light-border;
+  border-radius: $border-radius-md;
+  background-color: $light-card;
+  color: $light-text-primary;
+  font-size: 14px;
+  appearance: none;
+  transition: all $transition-fast;
   
-  .camera-select {
-    width: 100%;
-    padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
-    border: 1px solid $light-border;
-    border-radius: $border-radius-md;
-    background-color: $light-card;
-    color: $light-text-primary;
-    font-size: 14px;
-    appearance: none;
-    transition: all $transition-fast;
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: $shadow-focus;
+  }
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .dark-mode & {
+    background-color: $dark-card-alt;
+    color: $dark-text-primary;
+    border-color: $dark-border;
     
     &:focus {
-      outline: none;
-      border-color: $primary;
-      box-shadow: $shadow-focus;
-    }
-    
-    &:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-    
-    .dark-mode & {
-      background-color: $dark-card-alt;
-      color: $dark-text-primary;
-      border-color: $dark-border;
+      border-color: $primary-alt;
     }
   }
 }
@@ -358,11 +490,11 @@ $spacing-xl: 32px;
 // Contenedor del escáner
 .scanner-container {
   position: relative;
-  padding: $spacing-md;
-  background: linear-gradient(to bottom, rgba($light-bg, 0.8), rgba($light-bg, 0.4));
+  padding: $spacing-lg;
+  background: linear-gradient(to bottom, rgba($light-bg, 0.6), rgba($light-bg, 0.3));
   
   .dark-mode & {
-    background: linear-gradient(to bottom, rgba($dark-bg, 0.8), rgba($dark-bg, 0.4));
+    background: linear-gradient(to bottom, rgba($dark-bg, 0.6), rgba($dark-bg, 0.3));
   }
 }
 
@@ -376,6 +508,8 @@ $spacing-xl: 32px;
   box-shadow: $shadow-md;
   transform-style: preserve-3d;
   perspective: 1000px;
+  margin: 0 auto;
+  max-width: 100%;
   
   &::before {
     content: '';
@@ -392,6 +526,10 @@ $spacing-xl: 32px;
   
   .dark-mode & {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    height: 300px;
   }
 }
 
@@ -423,7 +561,7 @@ $spacing-xl: 32px;
   position: relative;
   width: 260px;
   height: 260px;
-  border-radius: $spacing-sm;
+  border-radius: $border-radius-sm;
   transform-style: preserve-3d;
   transform: rotateX(0deg);
   animation: breathe 4s infinite;
@@ -431,7 +569,7 @@ $spacing-xl: 32px;
   .scanner-line {
     position: absolute;
     width: 100%;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(to right, 
       rgba($primary, 0),
       rgba($primary, 1),
@@ -442,8 +580,8 @@ $spacing-xl: 32px;
   
   .corner {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-color: $primary;
     border-style: solid;
     border-width: 0;
@@ -484,8 +622,10 @@ $spacing-xl: 32px;
   
   .scan-pulse {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
     border-radius: $spacing-sm;
     border: 2px dashed rgba($primary, 0.5);
     animation: pulse 3s infinite;
@@ -508,32 +648,125 @@ $spacing-xl: 32px;
   }
 }
 
+// Partículas de escaneo
+.particle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: $primary;
+  border-radius: 50%;
+  opacity: 0;
+  animation: floatParticle 3s infinite linear;
+  
+  &.p1 {
+    top: 20%;
+    left: 20%;
+    width: 6px;
+    height: 6px;
+    --tx: 50px;
+    --ty: 30px;
+    --r: 45deg;
+    animation-delay: 0s;
+  }
+  
+  &.p2 {
+    top: 70%;
+    left: 30%;
+    width: 10px;
+    height: 10px;
+    --tx: 80px;
+    --ty: -40px;
+    --r: -60deg;
+    animation-delay: 0.5s;
+  }
+  
+  &.p3 {
+    top: 40%;
+    left: 80%;
+    --tx: -60px;
+    --ty: 50px;
+    --r: 120deg;
+    animation-delay: 1s;
+  }
+  
+  &.p4 {
+    top: 80%;
+    left: 70%;
+    width: 7px;
+    height: 7px;
+    --tx: -40px;
+    --ty: -60px;
+    --r: -90deg;
+    animation-delay: 1.5s;
+  }
+  
+  &.p5 {
+    top: 30%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    --tx: 30px;
+    --ty: 80px;
+    --r: 180deg;
+    animation-delay: 2s;
+  }
+}
+
 // Indicador de estado flotante
 .floating-status {
   position: absolute;
   left: 50%;
   bottom: $spacing-md;
   transform: translateX(-50%) translateY(100%);
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
   padding: $spacing-sm $spacing-lg;
   border-radius: $border-radius-md;
-  @include glass-effect;
+  @include glass-effect(0.2, 10px);
   display: flex;
   align-items: center;
-  transition: transform $transition-normal;
+  transition: transform $transition-bounce;
   z-index: 10;
   
   &.active {
     transform: translateX(-50%) translateY(0);
   }
   
+  &.success {
+    color: $success;
+    box-shadow: 0 3px 10px rgba($success, 0.2);
+    
+    .status-icon svg {
+      stroke: $success;
+    }
+  }
+  
   &.error {
-    background: rgba($error, 0.8);
+    color: $error;
+    box-shadow: 0 3px 10px rgba($error, 0.3);
+    
+    .status-icon svg {
+      stroke: $error;
+    }
   }
   
   .status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: $spacing-sm;
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
   }
   
   .status-message {
@@ -545,21 +778,41 @@ $spacing-xl: 32px;
 // Panel de notificación
 .notification-panel {
   margin-top: $spacing-md;
-  padding: $spacing-md;
+  padding: $spacing-md $spacing-lg;
   background: rgba($error, 0.1);
   border-left: 4px solid $error;
   border-radius: $border-radius-md;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   animation: slideInRight $transition-normal;
+  box-shadow: 0 3px 10px rgba($error, 0.1);
   
   .dark-mode & {
-    background: rgba($error, 0.2);
+    background: rgba($error, 0.15);
   }
   
   .notification-icon {
-    font-size: 18px;
     margin-right: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $error;
+    }
+  }
+  
+  .notification-content {
+    flex: 1;
+  }
+  
+  .notification-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 2px;
+    color: $error;
   }
   
   .notification-message {
@@ -578,7 +831,7 @@ $spacing-xl: 32px;
   justify-content: space-between;
   padding: $spacing-lg;
   gap: $spacing-lg;
-  background: linear-gradient(to bottom, rgba($light-bg, 0.4), rgba($light-bg, 0.8));
+  background: linear-gradient(to bottom, rgba($light-bg-alt, 0.4), rgba($light-bg-alt, 0.8));
   border-top: 1px solid $light-border;
   
   .dark-mode & {
@@ -622,13 +875,23 @@ $spacing-xl: 32px;
   }
   
   .btn-icon {
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-right: $spacing-md;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+      color: white;
+    }
   }
   
   .btn-text {
     font-weight: 600;
     font-size: 15px;
+    white-space: nowrap;
   }
   
   .btn-background {
@@ -713,23 +976,56 @@ $spacing-xl: 32px;
     }
     
     &:disabled {
-      background: linear-gradient(135deg, #a6a6a6, #808080);
+      background: #a6a6a6;
     }
   }
 }
 
-// Efectos adicionales y mejoras estéticas
-.scanner-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: $primary-gradient;
-  z-index: 1;
+// Indicador de listo
+.scanner-ready-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md 0;
+  background: rgba($light-bg, 0.5);
+  border-top: 1px solid $light-border;
+  animation: fadeInUp $transition-normal;
+  
+  .dark-mode & {
+    background: rgba($dark-bg, 0.5);
+    border-top: 1px solid $dark-border;
+  }
+  
+  .ready-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: $success;
+    margin-right: $spacing-sm;
+    position: relative;
+    animation: glowPulse 2s infinite;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 50%;
+      border: 1px solid rgba($success, 0.5);
+      animation: ripple 2s infinite;
+    }
+  }
+  
+  .ready-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: $success;
+  }
 }
 
+// Ajustes responsivos
 @media (max-width: 768px) {
   .scanner-section {
     margin: $spacing-md;
@@ -737,30 +1033,26 @@ $spacing-xl: 32px;
   }
   
   .scanner-header {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: $spacing-md;
+  }
+  
+  .camera-selector,
+  .scanner-container,
+  .scanner-controls {
+    padding: $spacing-md;
+  }
+  
+  .scanner-title {
+    font-size: 18px;
     
-    .scanner-status-info {
-      margin-top: $spacing-md;
+    .icon-scan {
+      width: 32px;
+      height: 32px;
     }
   }
   
-  .video-container {
-    height: 300px;
-  }
-  
-  .camera-selector {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-sm;
-    
-    .select-label {
-      margin-bottom: $spacing-xs;
-    }
-    
-    .select-wrapper {
-      max-width: 100%;
-      width: 100%;
-    }
+  .scanner-frame {
+    width: 220px;
+    height: 220px;
   }
 }

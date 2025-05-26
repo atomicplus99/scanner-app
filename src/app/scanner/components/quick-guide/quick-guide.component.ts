@@ -1,8 +1,6 @@
 // src/app/components/quick-guide/quick-guide.component.ts
-import { Component, signal, inject, ViewEncapsulation } from '@angular/core';
+import { Component, signal, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../../../services/theme.service';
-
 
 interface GuideItem {
   icon: string;
@@ -16,16 +14,38 @@ interface GuideItem {
   imports: [CommonModule],
   templateUrl: './quick-guide.component.html',
   styleUrls: ['./quick-guide.component.scss'],
- 
 })
-export class QuickGuideComponent {
-  private themeService = inject(ThemeService);
-  
-  // Para acceso en el template
-  get darkMode() { return this.themeService.darkMode; }
-  
+export class QuickGuideComponent implements OnInit {
   isExpanded = signal<boolean>(false);
   selectedTab = signal<string>('scanner');
+  
+  // Evitar que los clics en el contenedor se propaguen al documento
+  @HostListener('click', ['$event'])
+  onClick(event: Event): void {
+    event.stopPropagation();
+  }
+  
+  // Cerrar la guía al presionar Escape
+  @HostListener('document:keydown.escape')
+  onEscapePress(): void {
+    if (this.isExpanded()) {
+      this.toggleGuide();
+    }
+  }
+  
+  // Cerrar la guía si se hace clic fuera de ella
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    // Si la guía está abierta y el clic no fue en el botón flotante o en la guía
+    if (this.isExpanded() && !(event.target as HTMLElement).closest('.guide-container, .guide-floating-button')) {
+      this.toggleGuide();
+    }
+  }
+  
+  ngOnInit(): void {
+    // Asegurarse de que la guía esté cerrada al inicio
+    this.isExpanded.set(false);
+  }
   
   scannerGuide: GuideItem[] = [
     {

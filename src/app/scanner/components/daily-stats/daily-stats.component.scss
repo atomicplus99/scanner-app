@@ -1,47 +1,64 @@
-// Variables necesarias
+// daily-stats.component.scss - Adaptado al layout principal
+
+// Utilizando las variables del app.component.scss
 $success-color: #4caf50;
 $warning-color: #ff9800;
 $error-color: #f44336;
 $info-color: #2196f3;
 
 $card-bg-light: #f0f0f0;
-$card-bg-dark: #2a2a2a;
+$card-bg-dark: #32305d; // Cambiado para Deep Space theme
+$border-radius-md: 8px;
+$border-radius-circle: 50%;
 
 $text-primary-light: #212121;
 $text-secondary-light: #757575;
-$text-primary-dark: #ffffff;
-$text-secondary-dark: #aaaaaa;
+$text-primary-dark: #e9efff; // Cambiado para Deep Space theme
+$text-secondary-dark: #b0a8e2; // Cambiado para Deep Space theme
 
-$border-radius-md: 8px;
-$border-radius-circle: 50%;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+$transition-normal: 0.3s ease;
 
 // Estilos del componente
 .stats-content {
   width: 100%;
   max-height: 350px;
   overflow-y: auto;
-  padding-right: 8px; // Espacio para la barra de desplazamiento
-  margin-bottom: 20px; // Agregamos margen inferior para bajar la barra de desplazamiento
-
-  // Estilo para la barra de desplazamiento
+  padding-right: 8px;
+  
+  // Estilos para la barra de desplazamiento
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
+    height: 6px;
   }
-
+  
   &::-webkit-scrollbar-track {
     background: transparent;
     margin-top: 16px;
     margin-bottom: 16px;
   }
-
+  
   &::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
   }
-
+  
+  // Versión oscura para la barra de desplazamiento
   .dark-theme & {
     &::-webkit-scrollbar-thumb {
-      background-color: rgba(255, 255, 255, 0.2);
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+      
+      &:hover {
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.3));
+      }
     }
   }
 }
@@ -49,35 +66,60 @@ $border-radius-circle: 50%;
 .stats-cards-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-bottom: 16px; // Espacio adicional al final para alejar la barra
+  gap: $spacing-md;
+  padding-bottom: $spacing-md;
 }
 
 .stats-row {
   display: flex;
-  gap: 16px;
+  gap: $spacing-md;
   width: 100%;
+  
+  @media (max-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
   
   @media (max-width: 500px) {
     flex-direction: column;
-    gap: 8px;
+    gap: $spacing-sm;
   }
 }
 
 .stat-card {
   background-color: $card-bg-light;
   border-radius: $border-radius-md;
-  padding: 16px;
+  padding: $spacing-md;
   display: flex;
   align-items: center;
   flex: 1;
+  transition: all $transition-normal;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
   
   .dark-theme & {
     background-color: $card-bg-dark;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
   }
   
   &.wide {
     width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    min-width: calc(50% - $spacing-md/2);
+    
+    &.wide {
+      min-width: 100%;
+    }
   }
 }
 
@@ -85,31 +127,47 @@ $border-radius-circle: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: $border-radius-circle;
-  margin-right: 16px;
+  margin-right: $spacing-md;
   flex-shrink: 0;
   
   span {
-    font-size: 18px;
+    font-size: 20px;
     color: white;
   }
   
   &.success {
     background-color: $success-color;
+    
+    .dark-theme & {
+      box-shadow: 0 0 10px rgba($success-color, 0.5);
+    }
   }
   
   &.warning {
     background-color: $warning-color;
+    
+    .dark-theme & {
+      box-shadow: 0 0 10px rgba($warning-color, 0.5);
+    }
   }
   
   &.error {
     background-color: $error-color;
+    
+    .dark-theme & {
+      box-shadow: 0 0 10px rgba($error-color, 0.5);
+    }
   }
   
   &.info {
     background-color: $info-color;
+    
+    .dark-theme & {
+      box-shadow: 0 0 10px rgba($info-color, 0.5);
+    }
   }
 }
 
@@ -118,19 +176,31 @@ $border-radius-circle: 50%;
   flex-direction: column;
   
   .stat-value {
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 24px;
+    font-weight: 700;
     line-height: 1.2;
     color: $text-primary-light;
+    transition: color $transition-normal;
     
     .dark-theme & {
       color: $text-primary-dark;
+      
+      // Efecto de texto brillante en tema oscuro
+      background: linear-gradient(45deg, $text-primary-dark, $text-secondary-dark);
+      background-size: 200% auto;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShine 3s linear infinite;
     }
   }
   
   .stat-label {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
     color: $text-secondary-light;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     
     .dark-theme & {
       color: $text-secondary-dark;
@@ -138,20 +208,93 @@ $border-radius-circle: 50%;
   }
 }
 
-// Asegurar que funcione bien en contenedores pequeños
+@keyframes textShine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+// Efectos especiales para tema oscuro
+.dark-theme {
+  .stat-card {
+    position: relative;
+    overflow: hidden;
+    
+    // Efecto destello al pasar el ratón
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+      );
+      transform: skewX(-25deg);
+      transition: all 0.75s ease;
+    }
+    
+    &:hover::before {
+      left: 125%;
+    }
+    
+    // Efecto brillo interior sutil
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at top right,
+        rgba(255, 255, 255, 0.1),
+        transparent 70%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+  
+  // Efecto resplandor en iconos
+  .stat-icon {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: inherit;
+      filter: blur(8px);
+      opacity: 0.5;
+      z-index: -1;
+    }
+  }
+}
+
+// Ajustes para dispositivos más pequeños
 @media (max-width: 600px) {
   .stats-row {
-    gap: 8px;
+    gap: $spacing-sm;
   }
   
   .stat-card {
-    padding: 12px;
+    padding: $spacing-sm;
   }
   
   .stat-icon {
     width: 32px;
     height: 32px;
-    margin-right: 12px;
+    margin-right: $spacing-sm;
     
     span {
       font-size: 16px;

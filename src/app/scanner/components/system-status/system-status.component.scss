@@ -1,25 +1,29 @@
 // Variables y mixins incorporados
-$primary-color: #3f51b5;
-$primary-light: #7986cb;
-$primary-dark: #2c387e;
-$secondary-color: #f50057;
-$secondary-dark: #ab003c;
-$success-color: #4caf50;
-$warning-color: #ff9800;
-$error-color: #f44336;
-$info-color: #2196f3;
-$bg-light: #f5f5f5;
-$bg-dark: #121212;
-$card-light: #ffffff;
-$card-dark: #1e1e1e;
-$bg-secondary-light: #eeeeee;
-$bg-secondary-dark: #2d2d2d;
-$text-primary-light: #212121;
-$text-secondary-light: #757575;
-$text-primary-dark: #ffffff;
-$text-secondary-dark: #aaaaaa;
-$border-light: #e0e0e0;
-$border-dark: #333333;
+$primary-color: #4a6bff;      // Azul principal
+$primary-light: #7986cb;      // Azul claro
+$primary-dark: #3452cc;       // Azul oscuro
+$secondary-color: #f50057;    // Rosa
+$secondary-dark: #ab003c;     // Rosa oscuro
+$success-color: #4caf50;      // Verde
+$warning-color: #ff9800;      // Ámbar
+$error-color: #f44336;        // Rojo
+$info-color: #2196f3;         // Azul info
+
+$bg-light: #f5f5f5;           // Fondo claro
+$bg-dark: #080618;            // Fondo oscuro - azul oscuro espacial
+$card-light: #ffffff;         // Tarjetas modo claro
+$card-dark: #101036;          // Tarjetas modo oscuro - azul espacial
+$bg-secondary-light: #eeeeee; // Secundario claro
+$bg-secondary-dark: #161640;  // Secundario oscuro - azul profundo
+
+$text-primary-light: #212121; // Texto principal modo claro
+$text-secondary-light: #757575; // Texto secundario modo claro
+$text-primary-dark: #e6f0ff;  // Texto principal modo oscuro
+$text-secondary-dark: #8e9cbb; // Texto secundario modo oscuro
+
+$border-light: #e0e0e0;       // Bordes modo claro
+$border-dark: rgba(74, 107, 255, 0.15); // Bordes modo oscuro
+
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -30,7 +34,7 @@ $border-radius-md: 8px;
 $border-radius-lg: 12px;
 $border-radius-circle: 50%;
 $shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.3);
+$shadow-dark: 0 2px 10px rgba(0, 0, 0, 0.5);
 $transition-normal: 0.3s ease;
 
 @use "sass:color";
@@ -39,6 +43,41 @@ $transition-normal: 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@mixin neon-glow($color, $intensity: 1) {
+  box-shadow: 0 0 5px rgba($color, $intensity * 0.2),
+              0 0 10px rgba($color, $intensity * 0.1);
+}
+
+@mixin tech-border($is-dark: false) {
+  $border-color: if($is-dark, $primary-color, $primary-light);
+  border: 1px solid rgba($border-color, 0.2);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      115deg,
+      rgba($border-color, if($is-dark, 0.4, 0.1)),
+      rgba($border-color, if($is-dark, 0.1, 0.05)),
+      rgba($border-color, if($is-dark, 0.2, 0.1))
+    );
+    mask: linear-gradient(#fff 0 0) content-box,
+          linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
 }
 
 // Animaciones
@@ -55,6 +94,12 @@ $transition-normal: 0.3s ease;
     transform: scale(1);
     opacity: 0.8;
   }
+}
+
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 5px rgba($primary-color, 0.3); }
+  50% { text-shadow: 0 0 15px rgba($primary-color, 0.6), 0 0 20px rgba($primary-color, 0.4); }
+  100% { text-shadow: 0 0 5px rgba($primary-color, 0.3); }
 }
 
 @keyframes rotate {
@@ -77,52 +122,116 @@ $transition-normal: 0.3s ease;
   }
 }
 
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes serverPulse {
+  0% { 
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+  100% { 
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}
+
 // Estilos mejorados para system-status
 .system-status-container {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(to right, rgba($primary-color, 0.12), rgba($primary-color, 0.05));
+  background: linear-gradient(to right, rgba(255, 255, 255), rgba(255,255,255));
   border-radius: $border-radius-md;
-  padding: $spacing-sm $spacing-md;
+  padding: $spacing-md $spacing-lg;
   margin-bottom: $spacing-md;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: $shadow-light;
   transition: all $transition-normal;
   animation: slideIn 0.4s ease-out;
   position: relative;
   overflow: hidden;
+  @include tech-border(false);
   
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 3px;
-    height: 100%;
-    background: linear-gradient($success-color, $primary-color);
+    opacity: 0.1;
   }
   
   .dark-theme & {
-    background: linear-gradient(to right, rgba($primary-dark, 0.25), rgba($primary-dark, 0.1));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to right, rgba($card-dark, 0.95), rgba($card-dark, 0.9));
+    box-shadow: $shadow-dark, 0 0 10px rgba($primary-color, 0.1);
+    @include tech-border(true);
     
     &::before {
-      background: linear-gradient($success-color, $primary-light);
+      opacity: 0.2;
+    }
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(rgba($primary-color, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba($primary-color, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
     }
   }
   
   &:hover {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
     
     .dark-theme & {
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba($primary-color, 0.15);
     }
     
     .status-icon i {
       &.connected {
-        animation: pulse 1.5s infinite;
+        animation: pulse 2s infinite;
+        
+        .dark-theme & {
+          animation: glowPulse 2s infinite;
+        }
       }
+    }
+    
+    &::before {
+      opacity: 0.5;
+      
+      .dark-theme & {
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  // Indicador de pulso del servidor
+  .server-pulse-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: $success-color;
+    box-shadow: 0 0 5px rgba($success-color, 0.3);
+    animation: serverPulse 2s infinite;
+    z-index: 1;
+    
+    .dark-theme & {
+      @include neon-glow($success-color, 1.5);
     }
   }
   
@@ -147,12 +256,34 @@ $transition-normal: 0.3s ease;
   padding: $spacing-xs $spacing-sm;
   transition: all $transition-normal;
   border-radius: $border-radius-sm;
+  position: relative;
+  z-index: 1;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.03);
     
     .dark-theme & {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+  }
+  
+  &.server-status {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: $success-color;
+      border-radius: 2px;
+      box-shadow: 0 0 5px rgba($success-color, 0.3);
+      
+      .dark-theme & {
+        @include neon-glow($success-color, 1);
+      }
     }
   }
   
@@ -161,31 +292,43 @@ $transition-normal: 0.3s ease;
     height: 36px;
     @include flex-center;
     border-radius: $border-radius-circle;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(74, 107, 255, 0.05);
     margin-right: $spacing-sm;
     transition: all $transition-normal;
+    border: 1px solid rgba($primary-color, 0.1);
     
     .dark-theme & {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba($primary-color, 0.2);
+      @include neon-glow($primary-color, 0.3);
+    }
+    
+    &.active {
+      border-color: rgba($success-color, 0.2);
+      background-color: rgba($success-color, 0.05);
+      
+      .dark-theme & {
+        border-color: rgba($success-color, 0.3);
+        background-color: rgba($success-color, 0.1);
+        @include neon-glow($success-color, 0.5);
+      }
     }
     
     i {
       font-size: 20px;
-      color: $text-secondary-light;
+      color: $primary-color;
       transition: all $transition-normal;
       
       .dark-theme & {
-        color: $text-secondary-dark;
+        color: $primary-light;
       }
       
       &.connected {
         color: $success-color;
-        text-shadow: 0 0 5px rgba($success-color, 0.3);
-      }
-      
-      &.disconnected {
-        color: $error-color;
-        text-shadow: 0 0 5px rgba($error-color, 0.3);
+        
+        .dark-theme & {
+          text-shadow: 0 0 5px rgba($success-color, 0.5);
+        }
       }
     }
   }
@@ -209,13 +352,18 @@ $transition-normal: 0.3s ease;
     .status-value {
       font-size: 14px;
       font-weight: 600;
+      color: $text-primary-light;
+      
+      .dark-theme & {
+        color: $text-primary-dark;
+      }
       
       &.connected {
         color: $success-color;
-      }
-      
-      &.disconnected {
-        color: $error-color;
+        
+        .dark-theme & {
+          text-shadow: 0 0 5px rgba($success-color, 0.3);
+        }
       }
     }
   }
@@ -227,25 +375,353 @@ $transition-normal: 0.3s ease;
   height: 36px;
   @include flex-center;
   border-radius: $border-radius-circle;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba($primary-color, 0.05);
   transition: all $transition-normal;
+  border: 1px solid rgba($primary-color, 0.1);
+  position: relative;
+  z-index: 1;
   
   .dark-theme & {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba($primary-color, 0.2);
+    @include neon-glow($primary-color, 0.3);
   }
   
   &:hover {
-    background-color: rgba($primary-color, 0.2);
+    background-color: rgba($primary-color, 0.1);
     transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     
     .dark-theme & {
-      background-color: rgba($primary-dark, 0.3);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      background-color: rgba($primary-color, 0.2);
+      @include neon-glow($primary-color, 1);
+      transform: translateY(-2px) rotate(15deg);
+    }
+    
+    i {
+      color: $primary-dark;
+      
+      .dark-theme & {
+        color: $primary-light;
+        animation: glowPulse 2s infinite;
+      }
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  i {
+    font-size: 20px;
+    color: $primary-color;
+    transition: all $transition-normal;
+    
+    .dark-theme & {
+      color: $primary-light;
+    }
+    
+    &.rotating {
+      animation: rotate 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      color: $primary-dark;
+      
+      .dark-theme & {
+        color: $primary-light;
+        text-shadow: 0 0 10px rgba($primary-color, 0.8);
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 5px rgba($primary-color, 0.3); }
+  50% { text-shadow: 0 0 20px rgba($primary-color, 0.8), 0 0 30px rgba($primary-color, 0.5); }
+  100% { text-shadow: 0 0 5px rgba($primary-color, 0.3); }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes borderFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes serverPulse {
+  0% { 
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% { 
+    transform: scale(1.1);
+    opacity: 0.6;
+  }
+  100% { 
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}
+
+// Estilos mejorados para system-status
+.system-status-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, rgba($primary-color, 0.12), rgba($primary-color, 0.05));
+  border-radius: $border-radius-md;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all $transition-normal;
+  animation: slideIn 0.4s ease-out;
+  position: relative;
+  overflow: hidden;
+  @include tech-border;
+  
+  &::before {
+    opacity: 0.2;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      linear-gradient(rgba($primary-color, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba($primary-color, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.2;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .dark-theme & {
+    background: linear-gradient(to right, rgba($card-dark, 0.95), rgba($card-dark, 0.9));
+    box-shadow: $shadow-dark, 0 0 15px rgba($primary-color, 0.1);
+    
+    &::before {
+      opacity: 0.3;
+    }
+  }
+  
+  &:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), 0 0 10px rgba($primary-color, 0.1);
+    transform: translateY(-2px);
+    
+    .dark-theme & {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 15px rgba($primary-color, 0.15);
+    }
+    
+    .status-icon i {
+      &.connected {
+        animation: glowPulse 2s infinite;
+      }
+    }
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+  
+  // Indicador de pulso del servidor
+  .server-pulse-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $success-color;
+    @include neon-glow($success-color, 1.5);
+    animation: serverPulse 2s infinite;
+    z-index: 1;
+  }
+  
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    padding: $spacing-xs $spacing-sm;
+    
+    .status-item {
+      width: 45%;
+      margin-bottom: $spacing-xs;
+    }
+    
+    .status-refresh {
+      width: 10%;
+    }
+  }
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-sm;
+  transition: all $transition-normal;
+  border-radius: $border-radius-sm;
+  position: relative;
+  z-index: 1;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    
+    .dark-theme & {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  &.server-status {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: $success-color;
+      border-radius: 2px;
+      @include neon-glow($success-color, 1);
+    }
+  }
+  
+  .status-icon {
+    width: 40px;
+    height: 40px;
+    @include flex-center;
+    border-radius: $border-radius-circle;
+    background-color: rgba(255, 255, 255, 0.05);
+    margin-right: $spacing-sm;
+    transition: all $transition-normal;
+    border: 1px solid rgba($primary-color, 0.2);
+    @include neon-glow($primary-color, 0.3);
+    
+    .dark-theme & {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    &.active {
+      border-color: rgba($success-color, 0.3);
+      @include neon-glow($success-color, 0.5);
+      background-color: rgba($success-color, 0.1);
+    }
+    
+    i {
+      font-size: 20px;
+      color: $primary-color;
+      transition: all $transition-normal;
+      
+      .dark-theme & {
+        color: $primary-light;
+      }
+      
+      &.connected {
+        color: $success-color;
+        text-shadow: 0 0 5px rgba($success-color, 0.5);
+        animation: glowPulse 3s infinite;
+      }
+    }
+  }
+  
+  .status-info {
+    display: flex;
+    flex-direction: column;
+    
+    .status-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: $text-secondary-light;
+      margin-bottom: 2px;
+      letter-spacing: 0.5px;
+      
+      .dark-theme & {
+        color: $text-secondary-dark;
+      }
+    }
+    
+    .status-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-primary-light;
+      
+      .dark-theme & {
+        color: $text-primary-dark;
+      }
+      
+      &.connected {
+        color: $success-color;
+        text-shadow: 0 0 5px rgba($success-color, 0.3);
+      }
+    }
+  }
+}
+
+.status-refresh {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  @include flex-center;
+  border-radius: $border-radius-circle;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all $transition-normal;
+  border: 1px solid rgba($primary-color, 0.2);
+  position: relative;
+  z-index: 1;
+  @include neon-glow($primary-color, 0.3);
+  
+  .dark-theme & {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  
+  &:hover {
+    background-color: rgba($primary-color, 0.1);
+    transform: translateY(-2px) rotate(15deg);
+    @include neon-glow($primary-color, 1);
+    
+    .dark-theme & {
+      background-color: rgba($primary-color, 0.2);
     }
     
     i {
       color: $primary-color;
+      animation: glowPulse 2s infinite;
       
       .dark-theme & {
         color: $primary-light;
@@ -259,16 +735,17 @@ $transition-normal: 0.3s ease;
   
   i {
     font-size: 20px;
-    color: $text-secondary-light;
+    color: $primary-color;
     transition: all $transition-normal;
     
     .dark-theme & {
-      color: $text-secondary-dark;
+      color: $primary-light;
     }
     
     &.rotating {
       animation: rotate 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
       color: $primary-color;
+      text-shadow: 0 0 10px rgba($primary-color, 0.8);
       
       .dark-theme & {
         color: $primary-light;

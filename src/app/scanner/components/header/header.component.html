@@ -1,9 +1,40 @@
 <header class="app-header">
-    <div class="header-content">
+  <div class="header-content">
+    <div class="header-left">
+      <div class="logo-container">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-line">
+            <path d="M3 3h18v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V3Z"/>
+            <path d="M3 11v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V11"/>
+            <path d="M7 15h.01"/>
+            <path d="M11 15h.01"/>
+            <path d="M15 15h.01"/>
+            <path d="M7 19h.01"/>
+            <path d="M11 19h.01"/>
+            <path d="M15 19h.01"/>
+          </svg>
+        </span>
+        
+        
+      </div>
       <h1 class="app-title">Registro de Asistencia</h1>
+    </div>
+    
+    <div class="header-actions">
+      <div class="app-status">
+        <span class="status-indicator"></span>
+        <span class="status-text">Sistema activo</span>
+      </div>
+      
       <button (click)="toggleTheme()" class="theme-btn" aria-label="Cambiar tema">
-        <span *ngIf="darkMode()" class="theme-icon light-icon">☀️</span>
-        <span *ngIf="!darkMode()" class="theme-icon dark-icon">🌙</span>
+        <div class="theme-icon-container">
+          <span *ngIf="darkMode()" class="theme-icon light-icon">☀️</span>
+          <span *ngIf="!darkMode()" class="theme-icon dark-icon">🌙</span>
+        </div>
+        <span class="theme-label">{{ darkMode() ? 'Modo claro' : 'Modo oscuro' }}</span>
       </button>
     </div>
-  </header>
+  </div>
+  
+  <div class="header-decoration"></div>
+</header>

@@ -13,8 +13,8 @@ $warning-color: #ff9800;
 $error-color: #f44336;
 $info-color: #2196f3;
 
-// Colores de fondo
-$bg-light: #f5f5f5;
+// Colores de fondo - AMIGABLE
+$bg-light: #f5f9ff; // Fondo claro con toque azulado
 $bg-dark: #121212;
 $card-light: #ffffff;
 $card-dark: #1e1e1e;
@@ -101,11 +101,34 @@ $transition-slow: 0.5s ease;
   flex-direction: column;
   min-height: 100vh;
   background-color: $bg-light;
+  background-image: 
+    linear-gradient(120deg, rgba(230, 240, 255, 0.7), rgba(245, 249, 255, 0.7)),
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234a6bff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  position: relative;
   transition: background-color $transition-normal, color $transition-normal;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(74, 107, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(121, 134, 203, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(74, 107, 255, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
   
   &.dark-theme {
     background-color: $bg-dark;
+    background-image: none;
     color: $text-primary-dark;
+    
+    &::before {
+      display: none;
+    }
   }
 }
 
@@ -119,6 +142,8 @@ $transition-slow: 0.5s ease;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto; // Centrar contenido
+  position: relative;
+  z-index: 1;
   
   @media (min-width: 992px) {
     flex-direction: row;
@@ -157,7 +182,8 @@ $transition-slow: 0.5s ease;
   @include card(false);
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-light;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: $border-radius-lg;
   margin-bottom: $spacing-md;
   animation: fadeIn 0.3s ease-out;
   animation-delay: 0.1s;
@@ -167,24 +193,6 @@ $transition-slow: 0.5s ease;
     @include card(true);
     border-color: $border-dark;
   }
-  
-  // Disposición en fila para pantallas grandes
-  @media (min-width: 768px) {
-    flex-direction: row;
-    
-    app-system-status {
-      flex: 1;
-      border-right: 1px solid $border-light;
-      
-      .dark-theme & {
-        border-right-color: $border-dark;
-      }
-    }
-    
-    app-quick-guide {
-      flex: 2;
-    }
-  }
 }
 
 // Panel del escáner
@@ -192,7 +200,8 @@ $transition-slow: 0.5s ease;
   @include card(false);
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-light;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: $border-radius-lg;
   margin-bottom: $spacing-md;
   animation: fadeIn 0.3s ease-out;
   animation-delay: 0.2s;
@@ -208,6 +217,7 @@ $transition-slow: 0.5s ease;
     width: 100%;
     height: 3px;
     background: linear-gradient(to right, $primary-color, $primary-light);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
   }
   
   .dark-theme & {
@@ -228,8 +238,9 @@ $transition-slow: 0.5s ease;
     font-weight: 600;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
     background: linear-gradient(to right, rgba($primary-color, 0.05), transparent);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
     
     .dark-theme & {
       border-bottom-color: $border-dark;
@@ -252,7 +263,8 @@ $transition-slow: 0.5s ease;
   @include card(false);
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-light;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: $border-radius-lg;
   animation: fadeIn 0.3s ease-out;
   animation-delay: 0.3s;
   animation-fill-mode: backwards;
@@ -271,8 +283,9 @@ $transition-slow: 0.5s ease;
     font-weight: 600;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
     background: linear-gradient(to right, rgba($primary-color, 0.05), transparent);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
     
     .dark-theme & {
       border-bottom-color: $border-dark;
@@ -295,7 +308,8 @@ $transition-slow: 0.5s ease;
   @include card(false);
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-light;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: $border-radius-lg;
   margin-bottom: $spacing-md;
   animation: fadeIn 0.3s ease-out;
   animation-delay: 0.2s;
@@ -315,8 +329,9 @@ $transition-slow: 0.5s ease;
     font-weight: 600;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
     background: linear-gradient(to right, rgba($primary-color, 0.05), transparent);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
     
     .dark-theme & {
       border-bottom-color: $border-dark;
@@ -339,7 +354,8 @@ $transition-slow: 0.5s ease;
   @include card(false);
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-light;
+  border: 1px solid rgba($primary-color, 0.1);
+  border-radius: $border-radius-lg;
   flex: 1; // Ocupa espacio disponible en la columna
   animation: fadeIn 0.3s ease-out;
   animation-delay: 0.3s;
@@ -359,8 +375,9 @@ $transition-slow: 0.5s ease;
     font-weight: 600;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid rgba($primary-color, 0.1);
     background: linear-gradient(to right, rgba($primary-color, 0.05), transparent);
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
     
     .dark-theme & {
       border-bottom-color: $border-dark;
@@ -393,12 +410,31 @@ $transition-slow: 0.5s ease;
   }
 }
 
-// Estilos para componentes ayuda flotante
+// Estilos para los componentes flotantes
 app-help-chat {
   position: fixed;
   right: $spacing-lg;
   bottom: $spacing-lg;
   z-index: 100;
+  
+  @media (max-width: 600px) {
+    right: $spacing-md;
+    bottom: $spacing-md;
+  }
+}
+
+
+// Componente Quick Guide (flotante) en la parte superior derecha
+app-quick-guide {
+  position: fixed;
+  left: $spacing-lg;
+  top: calc(60px + #{$spacing-lg}); // Posicionado debajo del header, pero en la izquierda
+  z-index: 100;
+  
+  @media (max-width: 600px) {
+    left: $spacing-md;
+    top: calc(60px + #{$spacing-md});
+  }
 }
 
 // Media queries adicionales
@@ -415,7 +451,6 @@ app-help-chat {
   }
   
   app-system-status,
-  app-quick-guide,
   app-scanner,
   app-last-result,
   app-daily-stats,
@@ -432,6 +467,11 @@ app-help-chat {
   app-help-chat {
     right: $spacing-md;
     bottom: $spacing-md;
+  }
+  
+  app-quick-guide {
+    right: $spacing-md;
+    top: calc(60px + #{$spacing-md});
   }
 }
 
@@ -474,8 +514,9 @@ app-help-chat {
   align-items: center;
   justify-content: space-between;
   padding: $spacing-md;
-  border-bottom: 1px solid $border-light;
+  border-bottom: 1px solid rgba($primary-color, 0.1);
   background: linear-gradient(to right, rgba($primary-color, 0.05), transparent);
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
   
   .dark-theme & {
     border-bottom-color: $border-dark;
@@ -498,34 +539,8 @@ app-help-chat {
 .system-status-wrapper {
   padding: $spacing-md;
   
-  @media (min-width: 768px) {
-    flex: 1;
-    border-right: 1px solid $border-light;
-    
-    .dark-theme & {
-      border-right-color: $border-dark;
-    }
-  }
-  
   @media (max-width: 600px) {
     padding: $spacing-sm;
-  }
-}
-
-.quick-guide-wrapper {
-  padding: $spacing-md;
-  
-  @media (min-width: 768px) {
-    flex: 2;
-  }
-  
-  @media (max-width: 600px) {
-    padding: $spacing-sm;
-    border-top: 1px solid $border-light;
-    
-    .dark-theme & {
-      border-top-color: $border-dark;
-    }
   }
 }
 

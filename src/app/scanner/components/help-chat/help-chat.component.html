@@ -1,32 +1,67 @@
+<!-- src/app/components/help-chat/help-chat.component.html -->
+
 <div class="chat-container" [class.dark-theme]="darkMode()" [class]="getChatClass()">
+  <!-- Botón flotante para abrir/cerrar el chat -->
   <div class="chat-button" (click)="toggleChat()">
     <i class="material-icons">{{ isChatOpen() ? 'close' : 'help' }}</i>
+    <div class="unread-badge" *ngIf="unreadMessages() > 0 && !isChatOpen()">
+      {{ unreadMessages() }}
+    </div>
   </div>
   
-  <div class="chat-panel">
+  <!-- Panel del chat -->
+  <div class="chat-panel" [@slideIn] *ngIf="isChatOpen()">
     <div class="chat-header">
       <div class="chat-title">
         <i class="material-icons">support_agent</i>
-        <span>Asistente de Ayuda</span>
+        <span>Andres Bot</span>
       </div>
     </div>
     
-    <div class="chat-messages">
+    <!-- Contenedor de mensajes con animaciones -->
+    <div class="chat-messages" #chatContainer>
       @for (message of chatMessages(); track message.timestamp) {
-        <div class="message" [class.user-message]="message.sender === 'user'" [class.bot-message]="message.sender === 'bot'">
+        <div 
+          class="message" 
+          [class.user-message]="message.sender === 'user'" 
+          [class.bot-message]="message.sender === 'bot'"
+          [@fadeIn]>
           <div class="message-content">
-            <div class="message-text">{{ message.text }}</div>
+            <div class="message-text" [innerHTML]="message.text | replace:'\n':'<br>'"></div>
             <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
+            
+            <!-- Opciones de respuesta para mensajes del bot -->
+            @if (message.sender === 'bot' && message.options && message.options.length > 0) {
+              <div class="message-options">
+                @for (option of message.options; track option.value) {
+                  <button 
+                    class="option-button" 
+                    (click)="selectOption(option.value)"
+                    [@fadeIn]>
+                    {{ option.text }}
+                  </button>
+                }
+              </div>
+            }
           </div>
         </div>
       }
+      
+      <!-- Indicador de escritura -->
+      <div class="typing-indicator" *ngIf="isTyping()">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
     </div>
     
+    <!-- Input para escribir mensaje -->
     <div class="chat-input">
-      <input
+      <input 
         type="text"
         placeholder="Escribe tu pregunta aquí..."
-        [(ngModel)]="userInputText"
+        [ngModel]="userInputText()"
+        (ngModelChange)="userInputText.set($event)"
         (keyup.enter)="sendMessage()"
       >
       <button (click)="sendMessage()">
