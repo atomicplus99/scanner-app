@@ -1,61 +1,108 @@
-<!-- src/app/components/last-result/last-result.component.html -->
-<section class="results-section" *ngIf="lastScanResult()">
-  <div class="section-header">
-    <h2 class="section-title">Último registro</h2>
+<!-- Last Result Component con Tailwind CSS - Textos blancos para mejor visibilidad -->
+<section class="h-full bg-gray-800" *ngIf="lastScanResult()">
+  <!-- Header -->
+  <div class="p-4 border-b border-gray-700">
+    <h2 class="text-lg font-semibold text-white flex items-center space-x-2">
+      <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>Último registro</span>
+    </h2>
   </div>
 
-  <!-- En last-result.component.html -->
-  <div class="result-message" [class.error-message]="lastScanResult()?.status === 'error'">
-    {{ lastScanResult()?.mensaje }}
+  <!-- Mensaje de resultado -->
+  <div class="p-4 mx-4 mt-4 rounded-lg border bg-gray-700 border-gray-600">
+    <p class="text-sm font-medium text-white">{{ lastScanResult()?.mensaje }}</p>
   </div>
 
-  <div class="result-card" [class.success]="lastScanResult()?.status === 'success'"
-    [class.error]="lastScanResult()?.status === 'error'">
-    <div class="result-header">
-      <div class="result-badge" [ngClass]="getEstadoClass(lastScanResult()?.estado || '')">
-        {{ formatEstado(lastScanResult()?.estado || '') }}
+  <!-- Card principal -->
+  <div class="m-4 bg-gray-700 rounded-xl border-2 transition-all duration-200"
+       [class.border-green-400]="lastScanResult()?.status === 'success'"
+       [class.border-red-400]="lastScanResult()?.status === 'error'"
+       [class.border-gray-600]="lastScanResult()?.status !== 'success' && lastScanResult()?.status !== 'error'">
+    
+    <!-- Header del card -->
+    <div class="p-4 border-b border-gray-600">
+      <div class="flex items-center justify-between">
+        <span class="px-3 py-1 rounded-full text-xs font-medium text-white"
+              [ngClass]="getEstadoClass(lastScanResult()?.estado || '')">
+          {{ formatEstado(lastScanResult()?.estado || '') }}
+        </span>
+        
+        <div class="flex items-center space-x-1">
+          <div class="w-2 h-2 rounded-full"
+               [class.bg-green-400]="lastScanResult()?.status === 'success'"
+               [class.bg-red-400]="lastScanResult()?.status === 'error'">
+          </div>
+          <span class="text-xs text-white">
+            {{ lastScanResult()?.status === 'success' ? 'Exitoso' : 'Error' }}
+          </span>
+        </div>
       </div>
     </div>
 
-    <div class="result-body">
-      <div class="student-info">
-        <div class="student-avatar">
-          <img [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.png'" alt="Foto del estudiante">
+    <!-- Cuerpo del card -->
+    <div class="p-4 space-y-4">
+      <!-- Información del estudiante -->
+      <div class="flex items-start space-x-4 p-3 bg-gray-600 rounded-lg">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 rounded-full overflow-hidden bg-gray-500 border-2 border-gray-400">
+            <img 
+              [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.png'" 
+              alt="Foto del estudiante"
+              class="w-full h-full object-cover"
+            >
+          </div>
         </div>
-        <div class="student-details">
-          <p class="student-name">{{ lastScanResult()?.estudiante?.nombre }} {{ lastScanResult()?.estudiante?.apellido
-            }}</p>
-          <p class="student-code">{{ lastScanResult()?.estudiante?.codigo }}</p>
-          <p class="student-grade">{{ formatGradoNivel(lastScanResult()?.estudiante?.nivel,
-            lastScanResult()?.estudiante?.grado, lastScanResult()?.estudiante?.seccion) }}</p>
+        
+        <div class="flex-1 min-w-0">
+          <h3 class="text-base font-semibold text-white truncate">
+            {{ lastScanResult()?.estudiante?.nombre }} {{ lastScanResult()?.estudiante?.apellido }}
+          </h3>
+          <p class="text-sm text-white mt-1">
+            {{ lastScanResult()?.estudiante?.codigo }}
+          </p>
+          <p class="text-sm text-white">
+            {{ formatGradoNivel(lastScanResult()?.estudiante?.nivel, lastScanResult()?.estudiante?.grado, lastScanResult()?.estudiante?.seccion) }}
+          </p>
         </div>
       </div>
 
-      <div class="result-message">
-        {{ lastScanResult()?.mensaje }}
-      </div>
-
-      <div class="time-info">
-        <div class="time-item">
-          <span class="time-label">Hora:</span>
-          <span class="time-value">{{ lastScanResult()?.hora }}</span>
+      <!-- Información de tiempo -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1">
+          <span class="text-xs font-medium text-white uppercase tracking-wider">Hora</span>
+          <p class="text-sm font-semibold text-white">{{ lastScanResult()?.hora }}</p>
         </div>
-        <div class="time-item">
-          <span class="time-label">Fecha:</span>
-          <span class="time-value">{{ lastScanResult()?.fecha }}</span>
+        
+        <div class="space-y-1">
+          <span class="text-xs font-medium text-white uppercase tracking-wider">Fecha</span>
+          <p class="text-sm font-semibold text-white">{{ lastScanResult()?.fecha }}</p>
         </div>
-        <div class="time-item">
-          <span class="time-label">Tipo:</span>
-          <span class="time-value type-badge" [class.entrada]="lastScanResult()?.tipo === 'entrada'"
-            [class.salida]="lastScanResult()?.tipo !== 'entrada'">
+        
+        <div class="space-y-1 col-span-2">
+          <span class="text-xs font-medium text-white uppercase tracking-wider">Tipo</span>
+          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white"
+                [class.bg-green-900]="lastScanResult()?.tipo === 'entrada'"
+                [class.bg-orange-900]="lastScanResult()?.tipo !== 'entrada'">
+            <div class="w-2 h-2 rounded-full mr-1"
+                 [class.bg-green-500]="lastScanResult()?.tipo === 'entrada'"
+                 [class.bg-orange-500]="lastScanResult()?.tipo !== 'entrada'">
+            </div>
             {{ lastScanResult()?.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
           </span>
         </div>
       </div>
 
-      <button class="details-btn" (click)="showDetails(lastScanResult()!)">
-        <span class="btn-icon">📋</span>
-        Ver detalles
+      <!-- Botón de detalles -->
+      <button 
+        (click)="showDetails(lastScanResult()!)"
+        class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span>Ver detalles</span>
       </button>
     </div>
   </div>

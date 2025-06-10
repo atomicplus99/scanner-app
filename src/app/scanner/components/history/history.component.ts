@@ -10,7 +10,6 @@ import { Formatters } from '../../../shared/utils/formatter';
     standalone: true,
     imports: [CommonModule],
     templateUrl: './history.component.html',
-    styleUrls: ['./history.component.scss']
   })
   export class HistoryComponent {
     @Output() showDetailsEvent = new EventEmitter<Registro>();

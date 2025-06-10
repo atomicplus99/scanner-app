@@ -11,7 +11,7 @@ import { Formatters } from '../../../shared/utils/formatter';
     standalone: true,
     imports: [CommonModule],
     templateUrl: './last-result.component.html',
-    styleUrls: ['./last-result.component.scss']
+
   })
   export class LastResultComponent {
     @Output() showDetailsEvent = new EventEmitter<Registro>();

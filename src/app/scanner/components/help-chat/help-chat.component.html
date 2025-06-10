@@ -1,72 +1,142 @@
-<!-- src/app/components/help-chat/help-chat.component.html -->
-
-<div class="chat-container" [class.dark-theme]="darkMode()" [class]="getChatClass()">
-  <!-- Botón flotante para abrir/cerrar el chat -->
-  <div class="chat-button" (click)="toggleChat()">
-    <i class="material-icons">{{ isChatOpen() ? 'close' : 'help' }}</i>
-    <div class="unread-badge" *ngIf="unreadMessages() > 0 && !isChatOpen()">
-      {{ unreadMessages() }}
-    </div>
-  </div>
-  
-  <!-- Panel del chat -->
-  <div class="chat-panel" [@slideIn] *ngIf="isChatOpen()">
-    <div class="chat-header">
-      <div class="chat-title">
-        <i class="material-icons">support_agent</i>
-        <span>Andres Bot</span>
-      </div>
+<!-- Help Chat Component con Tailwind CSS - SIN PIPE REPLACE -->
+<div class="fixed bottom-6 right-6 z-50">
+  <!-- Botón flotante -->
+  <button 
+    (click)="toggleChat()"
+    class="relative w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
+    [class.rotate-45]="isChatOpen()"
+  >
+    <!-- Icono de ayuda -->
+    <div class="absolute inset-0 flex items-center justify-center transition-transform duration-300" [class.scale-0]="isChatOpen()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
     </div>
     
-    <!-- Contenedor de mensajes con animaciones -->
-    <div class="chat-messages" #chatContainer>
-      @for (message of chatMessages(); track message.timestamp) {
-        <div 
-          class="message" 
-          [class.user-message]="message.sender === 'user'" 
-          [class.bot-message]="message.sender === 'bot'"
-          [@fadeIn]>
-          <div class="message-content">
-            <div class="message-text" [innerHTML]="message.text | replace:'\n':'<br>'"></div>
-            <div class="message-time">{{ message.timestamp | date:'shortTime' }}</div>
-            
-            <!-- Opciones de respuesta para mensajes del bot -->
-            @if (message.sender === 'bot' && message.options && message.options.length > 0) {
-              <div class="message-options">
-                @for (option of message.options; track option.value) {
-                  <button 
-                    class="option-button" 
-                    (click)="selectOption(option.value)"
-                    [@fadeIn]>
-                    {{ option.text }}
-                  </button>
-                }
-              </div>
-            }
+    <!-- Icono de cerrar -->
+    <div class="absolute inset-0 flex items-center justify-center transition-transform duration-300" [class.scale-0]="!isChatOpen()">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </div>
+    
+    <!-- Badge de mensajes no leídos -->
+    <div 
+      *ngIf="unreadMessages() > 0 && !isChatOpen()" 
+      class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse"
+    >
+      {{ unreadMessages() > 9 ? '9+' : unreadMessages() }}
+    </div>
+  </button>
+
+  <!-- Panel del chat -->
+  <div 
+    *ngIf="isChatOpen()" 
+    class="absolute bottom-16 right-0 w-80 h-[32rem] max-h-[80vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col"
+  >
+    <!-- Header del chat -->
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 flex items-center space-x-3">
+      <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="font-semibold">Andrés Bot</div>
+        <div class="text-xs opacity-90">Asistente virtual</div>
+      </div>
+      <div class="ml-auto">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Área de mensajes -->
+    <div 
+      #chatContainer
+      class="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50 dark:bg-gray-900/50 min-h-0"
+      style="scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent;"
+    >
+      <div 
+        *ngFor="let message of chatMessages(); let i = index"
+        class="flex"
+        [class.justify-end]="message.sender === 'user'"
+        [class.justify-start]="message.sender === 'bot'"
+      >
+        <div class="max-w-xs">
+          <!-- Mensaje del usuario -->
+          <div 
+            *ngIf="message.sender === 'user'"
+            class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-2xl rounded-br-md shadow-md"
+          >
+            <div class="text-sm whitespace-pre-line">{{ message.text }}</div>
+            <div class="text-xs opacity-80 mt-1">{{ message.timestamp | date:'shortTime' }}</div>
+          </div>
+
+          <!-- Mensaje del bot -->
+          <div *ngIf="message.sender === 'bot'" class="space-y-3">
+            <div class="bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 p-3 rounded-2xl rounded-bl-md shadow-md border border-gray-200 dark:border-gray-600">
+              <div class="text-sm whitespace-pre-line">{{ message.text }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ message.timestamp | date:'shortTime' }}</div>
+            </div>
+
+            <!-- Opciones de respuesta -->
+            <div *ngIf="message.options && message.options.length > 0" class="space-y-2">
+              <button
+                *ngFor="let option of message.options; let i = index"
+                (click)="selectOption(option.value)"
+                class="block w-full text-left p-2 text-sm bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 transition-colors duration-200 hover:shadow-sm"
+              >
+                {{ option.text }}
+              </button>
+            </div>
           </div>
         </div>
-      }
-      
+      </div>
+
       <!-- Indicador de escritura -->
-      <div class="typing-indicator" *ngIf="isTyping()">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
+      <div *ngIf="isTyping()" class="flex justify-start">
+        <div class="bg-white dark:bg-gray-700 p-3 rounded-2xl rounded-bl-md shadow-md border border-gray-200 dark:border-gray-600">
+          <div class="flex space-x-1">
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <!-- Input para escribir mensaje -->
-    <div class="chat-input">
-      <input 
-        type="text"
-        placeholder="Escribe tu pregunta aquí..."
-        [ngModel]="userInputText()"
-        (ngModelChange)="userInputText.set($event)"
-        (keyup.enter)="sendMessage()"
-      >
-      <button (click)="sendMessage()">
-        <i class="material-icons">send</i>
-      </button>
+
+    <!-- Input de mensaje -->
+    <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <div class="flex items-center space-x-2">
+        <input
+          type="text"
+          placeholder="Escribe tu pregunta..."
+          [ngModel]="userInputText()"
+          (ngModelChange)="userInputText.set($event)"
+          (keyup.enter)="sendMessage()"
+          class="flex-1 px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+        >
+        <button
+          (click)="sendMessage()"
+          [disabled]="!userInputText().trim()"
+          class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 text-white rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Agregar estos métodos al componente TypeScript: -->
+<!--
+trackByTimestamp(index: number, message: ChatMessage): Date {
+  return message.timestamp;
+}
+
+trackByValue(index: number, option: ChatOption): string {
+  return option.value;
+}
+-->

@@ -10,7 +10,7 @@ import { ThemeService } from '../../../services/theme.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './scanner.component.html',
-  styleUrls: ['./scanner.component.scss']
+
 })
 export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef<HTMLVideoElement>;
@@ -39,10 +39,9 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
   ngAfterViewInit(): void {
-    // Inicialización retrasada para permitir que la vista se renderice completamente
-    setTimeout(() => {
-      this.adjustQrRegion();
-    }, 100);
+    // Ya no necesitamos ajustar el QR region - Tailwind maneja el layout
+    // Solo verificamos que los elementos estén disponibles
+    console.log('Scanner component initialized');
   }
 
   ngOnDestroy(): void {
@@ -54,26 +53,27 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:resize')
   onWindowResize(): void {
-    // Prevenir múltiples ejecuciones durante el redimensionamiento
+    // Limpiar timeout anterior
     if (this.resizeTimeout) {
       clearTimeout(this.resizeTimeout);
     }
     
+    // Solo reiniciar el scanner si es necesario para ajustar la cámara
     this.resizeTimeout = setTimeout(() => {
-      if (this.qrRegionElement) {
-        this.adjustQrRegion();
+      if (this.isScanning()) {
+        console.log('Window resized, scanner active');
+        // El video se ajustará automáticamente con las clases de Tailwind
       }
     }, 200);
   }
   
   @HostListener('window:orientationchange')
   onOrientationChange(): void {
-    // Manejar cambios de orientación específicamente
+    // Manejar cambios de orientación
     setTimeout(() => {
-      this.adjustQrRegion();
-      
       // Si el escáner estaba activo, reiniciar para ajustar la vista
       if (this.isScanning()) {
+        console.log('Orientation changed, restarting scanner');
         this.scannerService.stopScanner();
         setTimeout(() => {
           if (this.videoElement && this.canvasElement) {
@@ -98,10 +98,8 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
             this.canvasElement.nativeElement
           );
           
-          // Asegurar que el tamaño se ajuste correctamente después de iniciar
-          setTimeout(() => {
-            this.adjustQrRegion();
-          }, 200);
+          console.log('Scanner started successfully');
+          // Ya no necesitamos ajustar manualmente - Tailwind se encarga
         } catch (error) {
           console.error('Error al iniciar el escáner', error);
         }
@@ -133,46 +131,26 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.scannerService.toggleTorch();
   }
 
-  private adjustQrRegion(): void {
-    if (!this.qrRegionElement || !this.videoElement?.nativeElement) return;
+  // MÉTODO SIMPLIFICADO - Ya no modifica estilos, solo logs para debug
+  private logVideoInfo(): void {
+    if (!this.videoElement?.nativeElement) return;
 
     const videoEl = this.videoElement.nativeElement;
-    const containerEl = this.qrRegionElement.nativeElement;
-    const containerWidth = containerEl.parentElement?.clientWidth || window.innerWidth - 32;
     
-    // Si el video no tiene dimensiones aún, esperar
-    if (!videoEl.videoWidth || !videoEl.videoHeight) {
-      videoEl.onloadedmetadata = () => this.adjustQrRegion();
-      return;
-    }
-
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const videoRatio = videoEl.videoHeight / videoEl.videoWidth;
-
-    if (isPortrait) {
-      // Modo vertical - optimizar para pantallas estrechas
-      const calculatedHeight = Math.min(
-        containerWidth * videoRatio,
-        window.innerHeight * 0.5
-      );
-      
-      containerEl.style.width = `${containerWidth}px`;
-      containerEl.style.height = `${calculatedHeight}px`;
+    // Solo log información del video para debugging
+    if (videoEl.videoWidth && videoEl.videoHeight) {
+      console.log('Video info:', {
+        width: videoEl.videoWidth,
+        height: videoEl.videoHeight,
+        ratio: videoEl.videoWidth / videoEl.videoHeight
+      });
     } else {
-      // Modo horizontal - optimizar para pantallas anchas
-      const maxHeight = window.innerHeight * 0.6;
-      const calculatedHeight = Math.min(containerWidth * videoRatio, maxHeight);
-      const calculatedWidth = calculatedHeight / videoRatio;
-      
-      containerEl.style.width = `${calculatedWidth}px`;
-      containerEl.style.height = `${calculatedHeight}px`;
-      
-      // Centrar horizontalmente si es necesario
-      if (calculatedWidth < containerWidth) {
-        containerEl.style.margin = '0 auto';
-      } else {
-        containerEl.style.margin = '0';
-      }
+      videoEl.onloadedmetadata = () => this.logVideoInfo();
     }
+  }
+
+  // Método opcional para debug - puedes llamarlo si necesitas información del video
+  getVideoInfo(): void {
+    this.logVideoInfo();
   }
 }

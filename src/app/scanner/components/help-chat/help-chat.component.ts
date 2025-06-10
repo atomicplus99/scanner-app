@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../services/theme.service';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { ReplacePipe } from './help-chat.pipe';
+
 
 interface ChatMessage {
   sender: 'user' | 'bot';
@@ -22,39 +22,24 @@ interface ChatOption {
 @Component({
   selector: 'app-help-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReplacePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './help-chat.component.html',
-  styleUrls: ['./help-chat.component.scss'],
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('200ms ease-out', style({ opacity: 1 }))
-      ])
-    ]),
-    trigger('slideIn', [
-      transition(':enter', [
-        style({ transform: 'translateY(10px)', opacity: 0 }),
-        animate('200ms ease-out', style({ transform: 'translateY(0)', opacity: 1 }))
-      ])
-    ])
-  ]
 })
 export class HelpChatComponent implements OnInit {
   private themeService = inject(ThemeService);
-  
+
   @ViewChild('chatContainer') chatContainer!: ElementRef;
-  
+
   // Estado reactivo con señales
   isChatOpen = signal<boolean>(false);
   chatMessages = signal<ChatMessage[]>([]);
   userInputText = signal<string>('');
   unreadMessages = signal<number>(0);
   isTyping = signal<boolean>(false);
-  
+
   // Estado computado
   darkMode = computed(() => this.themeService.darkMode());
-  
+
   // Categorías principales de opciones
   mainOptions: ChatOption[] = [
     { text: 'Cómo usar el escáner', value: 'scanner-help' },
@@ -63,14 +48,14 @@ export class HelpChatComponent implements OnInit {
     { text: 'Información de horarios', value: 'schedule-info' },
     { text: 'Otras consultas', value: 'other' }
   ];
-  
+
   // Respuestas predefinidas para cada categoría
   private responseTree: { [key: string]: { text: string, options?: ChatOption[] } } = {
     'welcome': {
       text: '¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?',
       options: this.mainOptions
     },
-    
+
     // Categoría: Cómo usar el escáner
     'scanner-help': {
       text: 'El escáner QR permite registrar entradas y salidas de estudiantes. ¿Qué te gustaría saber?',
@@ -96,7 +81,7 @@ export class HelpChatComponent implements OnInit {
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    
+
     // Categoría: Problemas con el escaneo
     'scanner-issues': {
       text: '¿Qué problema estás experimentando con el escáner?',
@@ -131,7 +116,7 @@ export class HelpChatComponent implements OnInit {
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    
+
     // Categoría: Significado de los estados
     'status-info': {
       text: '¿Sobre qué estado necesitas información?',
@@ -166,7 +151,7 @@ export class HelpChatComponent implements OnInit {
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    
+
     // Categoría: Información de horarios
     'schedule-info': {
       text: '¿Qué información de horarios necesitas?',
@@ -201,7 +186,7 @@ export class HelpChatComponent implements OnInit {
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    
+
     // Otras opciones
     'system-status': {
       text: 'El estado del sistema se muestra en el panel superior de la aplicación. Allí puedes ver información sobre la conexión al servidor, estado de la cámara y cualquier problema actual del sistema.',
@@ -250,36 +235,47 @@ export class HelpChatComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // Iniciar con mensaje de bienvenida
+    console.log('Iniciando chat bot...'); // Debug
     this.sendBotMessage('welcome');
-  }
 
+    // Debug: verificar que las opciones se cargan
+    setTimeout(() => {
+      console.log('Mensajes actuales:', this.chatMessages());
+    }, 1000);
+  }
   toggleChat(): void {
     const newState = !this.isChatOpen();
     this.isChatOpen.set(newState);
-    
+
     if (newState) {
       // Si se abre el chat, resetear contador de no leídos
       this.unreadMessages.set(0);
-      
+
+      // ASEGURAR que hay mensaje de bienvenida si no hay mensajes
+      if (this.chatMessages().length === 0) {
+        setTimeout(() => {
+          this.sendBotMessage('welcome');
+        }, 100);
+      }
+
       // Focus en el input cuando se abre
       setTimeout(() => {
         const inputElement = document.querySelector('.chat-input input') as HTMLInputElement;
         if (inputElement) inputElement.focus();
-      }, 200);
+      }, 300);
     }
   }
 
   sendMessage(): void {
     const text = this.userInputText().trim();
     if (!text) return;
-    
+
     // Agregar mensaje del usuario
     this.addUserMessage(text);
-    
+
     // Limpiar input
     this.userInputText.set('');
-    
+
     // Simular respuesta del bot
     this.isTyping.set(true);
     setTimeout(() => {
@@ -293,7 +289,7 @@ export class HelpChatComponent implements OnInit {
   selectOption(value: string): void {
     // Buscar la opción completa para mostrar su texto
     let selectedText = '';
-    
+
     // Buscar en todas las opciones disponibles
     Object.values(this.responseTree).forEach(response => {
       if (response.options) {
@@ -303,20 +299,23 @@ export class HelpChatComponent implements OnInit {
         }
       }
     });
-    
+
     if (!selectedText) {
       selectedText = value; // Fallback si no encontramos el texto
     }
-    
+
     // Agregar la selección como mensaje del usuario
     this.addUserMessage(selectedText);
-    
+
     // Simular respuesta del bot
     this.isTyping.set(true);
     setTimeout(() => {
       this.sendBotMessage(value);
       this.isTyping.set(false);
-      this.scrollToBottom();
+      // FORZAR scroll después de que se rendericen las opciones
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 50);
     }, 700);
   }
 
@@ -329,18 +328,20 @@ export class HelpChatComponent implements OnInit {
         timestamp: new Date()
       }
     ]);
-    
+
     this.scrollToBottom();
   }
 
   private sendBotMessage(responseKey: string): void {
     const response = this.responseTree[responseKey] || this.responseTree['welcome'];
-    
-    // Si el chat está cerrado, incrementar contador de no leídos
+
+    console.log('Response:', response);
+    console.log('Options:', response.options);
+
     if (!this.isChatOpen()) {
       this.unreadMessages.update(count => count + 1);
     }
-    
+
     this.chatMessages.update(messages => [
       ...messages,
       {
@@ -350,13 +351,16 @@ export class HelpChatComponent implements OnInit {
         options: response.options
       }
     ]);
-    
-    this.scrollToBottom();
+
+    // FORZAR re-render del DOM
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 0);
   }
 
   private processUserInput(text: string): void {
     const input = text.toLowerCase();
-    
+
     // Procesamiento simple basado en palabras clave
     if (input.includes('escáner') || input.includes('scanner') || input.includes('escanear')) {
       if (input.includes('problema') || input.includes('error') || input.includes('no funciona')) {
@@ -391,5 +395,12 @@ export class HelpChatComponent implements OnInit {
         element.scrollTop = element.scrollHeight;
       }
     }, 100);
+  }
+  trackByTimestamp(index: number, message: ChatMessage): Date {
+    return message.timestamp;
+  }
+
+  trackByValue(index: number, option: ChatOption): string {
+    return option.value;
   }
 }

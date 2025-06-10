@@ -8,7 +8,6 @@ import { ThemeService } from '../../../services/theme.service';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
   private themeService = inject(ThemeService);

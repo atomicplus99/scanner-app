@@ -1,40 +1,125 @@
-<header class="app-header">
-  <div class="header-content">
-    <div class="header-left">
-      <div class="logo-container">
-        <span class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-line">
-            <path d="M3 3h18v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V3Z"/>
-            <path d="M3 11v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V11"/>
-            <path d="M7 15h.01"/>
-            <path d="M11 15h.01"/>
-            <path d="M15 15h.01"/>
-            <path d="M7 19h.01"/>
-            <path d="M11 19h.01"/>
-            <path d="M15 19h.01"/>
-          </svg>
-        </span>
-        
-        
-      </div>
-      <h1 class="app-title">Registro de Asistencia</h1>
-    </div>
-    
-    <div class="header-actions">
-      <div class="app-status">
-        <span class="status-indicator"></span>
-        <span class="status-text">Sistema activo</span>
-      </div>
-      
-      <button (click)="toggleTheme()" class="theme-btn" aria-label="Cambiar tema">
-        <div class="theme-icon-container">
-          <span *ngIf="darkMode()" class="theme-icon light-icon">☀️</span>
-          <span *ngIf="!darkMode()" class="theme-icon dark-icon">🌙</span>
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <!-- Logo y título -->
+      <div class="flex items-center space-x-6">
+        <div class="flex-shrink-0">
+          <div class="w-14 h-14 bg-gradient-to-br from-blue-500 via-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-xl border-2 border-white dark:border-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3h18v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V3Z"/>
+              <path d="M3 11v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V11"/>
+              <path d="M7 15h.01"/>
+              <path d="M11 15h.01"/>
+              <path d="M15 15h.01"/>
+              <path d="M7 19h.01"/>
+              <path d="M11 19h.01"/>
+              <path d="M15 19h.01"/>
+            </svg>
+          </div>
         </div>
-        <span class="theme-label">{{ darkMode() ? 'Modo claro' : 'Modo oscuro' }}</span>
-      </button>
+        
+        <div class="hidden sm:block">
+          <div class="space-y-1">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white bg-gradient-to-r from-blue-600 via-purple-600 to-purple-700 bg-clip-text text-transparent">
+              Registro de Asistencia de Estudiantes
+            </h1>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center space-x-2">
+              <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-6m-2-5h6m-6 0V9a2 2 0 012-2h2a2 2 0 012 2v6.5"/>
+              </svg>
+              <span>Colegio Andrés de los Reyes</span>
+            </p>
+          </div>
+        </div>
+        
+        <!-- Título móvil mejorado -->
+        <div class="block sm:hidden">
+          <div class="space-y-1">
+            <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+              QR Scanner
+            </h1>
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              Andrés de los Reyes
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones del header -->
+      <div class="flex items-center space-x-4">
+        <!-- Estado del sistema mejorado -->
+        <div class="hidden md:flex items-center space-x-3 px-4 py-2.5 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
+          <div class="relative">
+            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div class="absolute inset-0 w-3 h-3 bg-green-400 rounded-full animate-ping opacity-75"></div>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm font-semibold text-green-700 dark:text-green-300">Sistema activo</span>
+            <span class="text-xs text-green-600 dark:text-green-400">Conectado</span>
+          </div>
+        </div>
+
+        <!-- Indicador móvil mejorado -->
+        <div class="md:hidden flex items-center space-x-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          <div class="relative">
+            <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
+            <div class="absolute inset-0 w-2.5 h-2.5 bg-green-400 rounded-full animate-ping opacity-75"></div>
+          </div>
+          <span class="text-xs font-medium text-green-700 dark:text-green-300">Activo</span>
+        </div>
+
+        <!-- Información adicional -->
+      
+
+        <!-- Botón de tema comentado - NO MODIFICAR -->
+        <!-- Botón de tema 
+        <button 
+          (click)="toggleTheme()" 
+          class="group relative p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          aria-label="Cambiar tema"
+        >
+           Contenedor con animación 
+          <div class="relative w-6 h-6 overflow-hidden">
+             Ícono de sol (modo claro) 
+            <div 
+              class="absolute inset-0 transform transition-transform duration-300 ease-in-out"
+              [class.rotate-0]="!darkMode()"
+              [class.-rotate-90]="darkMode()"
+              [class.opacity-100]="!darkMode()"
+              [class.opacity-0]="darkMode()"
+            >
+              <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+            </div>
+            
+             Ícono de luna (modo oscuro)
+            <div 
+              class="absolute inset-0 transform transition-transform duration-300 ease-in-out"
+              [class.rotate-0]="darkMode()"
+              [class.rotate-90]="!darkMode()"
+              [class.opacity-100]="darkMode()"
+              [class.opacity-0]="!darkMode()"
+            >
+              <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </div>
+          </div>
+        
+
+           Tooltip 
+          <div class="absolute right-0 top-full mt-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-gray-700 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+            {{ darkMode() ? 'Modo claro' : 'Modo oscuro' }}
+          </div>
+        </button>-->
+      </div>
     </div>
   </div>
+
+  <!-- Decoración inferior con gradiente mejorado -->
+  <div class="h-1 bg-gradient-to-r from-blue-500 via-purple-500 via-pink-500 to-purple-600"></div>
   
-  <div class="header-decoration"></div>
+  <!-- Sombra inferior sutil -->
+  <div class="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent"></div>
 </header>

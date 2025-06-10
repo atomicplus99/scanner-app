@@ -11,7 +11,6 @@ import { Formatters } from '../../../shared/utils/formatter';
     standalone: true,
     imports: [CommonModule],
     templateUrl: './details-modal.component.html',
-    styleUrls: ['./details-modal.component.scss']
   })
   export class DetailsModalComponent {
     @Input() registro: Registro | null = null;

@@ -17,7 +17,7 @@ import { Formatters } from '../shared/utils/formatter';
 export class ScannerService {
   // Inyectar ApiService en lugar de HttpClient directamente
   private apiService = inject(ApiService);
-  
+
   private destroy$ = new Subject<void>();
   private isBrowser: boolean;
   private controlStream: MediaStream | null = null;
@@ -66,7 +66,7 @@ export class ScannerService {
   }
 
   // MÉTODOS PÚBLICOS
-  
+
   async toggleScanner(videoElement?: HTMLVideoElement, canvasElement?: HTMLCanvasElement): Promise<void> {
     if (this.isScanning()) {
       this.stopScanner();
@@ -123,20 +123,20 @@ export class ScannerService {
 
       // Asignar stream al video
       videoElement.srcObject = this.controlStream;
-      
+
       try {
         await videoElement.play();
-        
+
         // Registrar tamaño
         videoElement.onloadedmetadata = () => {
           this.videoWidth.set(videoElement.videoWidth);
           this.videoHeight.set(videoElement.videoHeight);
-          
+
           // Establecer canvas
           canvasElement.width = videoElement.videoWidth;
           canvasElement.height = videoElement.videoHeight;
         };
-        
+
         // Iniciar escaneo
         setTimeout(() => {
           this.startJsQrScanner(videoElement, canvasElement);
@@ -156,7 +156,7 @@ export class ScannerService {
 
   stopScanner(): void {
     if (!this.isBrowser) return;
-    
+
     // Detener intervalo
     if (this.scanningInterval) {
       clearInterval(this.scanningInterval);
@@ -197,7 +197,7 @@ export class ScannerService {
     }
 
     const newTorchState = !this.torchEnabled();
-    
+
     try {
       videoTrack.applyConstraints({
         advanced: [{ torch: newTorchState } as MediaTrackConstraintSet]
@@ -246,7 +246,7 @@ export class ScannerService {
 
   onCameraChange(deviceId: string): void {
     this.selectedCamera.set(deviceId);
-    
+
     if (this.isScanning()) {
       this.stopScanner();
       // El componente debe llamar a startScanner después
@@ -256,10 +256,10 @@ export class ScannerService {
   // MÉTODOS PRIVADOS
 
   private loadSounds(): void {
-    this.scanSuccessSound = new Audio('assets/sounds/success-beep.mp3');
+    this.scanSuccessSound = new Audio('assets/sounds/beep-succes.mp3');
     this.scanSuccessSound.preload = 'auto';
 
-    this.scanErrorSound = new Audio('assets/sounds/error-beep.mp3');
+    this.scanErrorSound = new Audio('assets/sounds/beep-error.mp3');
     this.scanErrorSound.preload = 'auto';
   }
 
@@ -358,17 +358,17 @@ export class ScannerService {
 
   private processQrCode(qrCode: string): void {
     this.scannerStatus.set('Enviando datos...');
-  
+
     // Usar ApiService para enviar el código QR
     this.apiService.scanQrCode(qrCode).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor:', response);
-        
+
         // Reproducir sonido de éxito
         if (this.scanSuccessSound) {
           this.scanSuccessSound.play().catch(err => console.log('Error de sonido', err));
         }
-        
+
         // Crear un registro con la respuesta
         const registro: Registro = {
           id: response.asistencia.id_asistencia,
@@ -388,24 +388,31 @@ export class ScannerService {
           mensaje: response.mensaje,
           imgProfile: this.getImageUrl(response.asistencia.alumno.usuario.profile_image)
         };
-  
+
         this.updateRegistros(registro);
-        this.scannerStatus.set('Código QR procesado correctamente');
+        this.scannerStatus.set('✅ Código QR procesado correctamente');
+
+        // CAMBIO: Reiniciar después de mostrar éxito (igual que en error)
+        setTimeout(() => {
+          if (this.isScanning()) {
+            this.scannerStatus.set('Listo para escanear...');
+          }
+        }, 2000); // Reducido a 2 segundos
       },
       error: (error: any) => {
         console.error('Error al procesar código QR:', error);
-  
+
         // Reproducir sonido de error
         if (this.scanErrorSound) {
           this.scanErrorSound.play().catch(err => console.log('Error de sonido', err));
         }
-  
+
         // Obtener el mensaje de error del servidor si está disponible
         let errorMessage = 'Error desconocido al procesar el código QR';
         if (error.message) {
           errorMessage = error.message;
         }
-  
+
         // Crear un registro de error para mostrar visualmente
         const registro: Registro = {
           id: 'error-' + Date.now(),
@@ -419,23 +426,23 @@ export class ScannerService {
           },
           hora: Formatters.formatTime(new Date().toISOString()),
           fecha: Formatters.formatDate(new Date().toISOString()),
-          tipo: 'entrada', // O 'salida' dependiendo del contexto
+          tipo: 'entrada',
           status: 'error',
           estado: 'ERROR',
-          mensaje: errorMessage, // Mostrar el mensaje de error del servidor
-          imgProfile: 'assets/images/error-icon.png'
+          mensaje: errorMessage,
+          imgProfile: 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`)
         };
-  
+
         // Actualizar la UI con el error
         this.updateRegistros(registro);
-        this.scannerStatus.set(errorMessage);
-  
-        // Reiniciar el escáner después de un tiempo
+        this.scannerStatus.set(`❌ ${errorMessage}`);
+
+        // CAMBIO: Mismo manejo que en éxito - continúa escaneando
         setTimeout(() => {
           if (this.isScanning()) {
-            this.scannerStatus.set('Listo para escanear');
+            this.scannerStatus.set('Listo para escanear...');
           }
-        }, 4000); // Damos un poco más de tiempo para que el usuario lea el mensaje
+        }, 3000); // Un poco más de tiempo para leer el error
       }
     });
   }
@@ -481,15 +488,15 @@ export class ScannerService {
         return '';
     }
   }
-  
+
   formatEstado(estado: string): string {
     return Formatters.formatEstado(estado);
   }
-  
+
   formatGradoNivel(nivel: string, grado: number, seccion: string): string {
     return Formatters.formatGradoNivel(nivel, grado, seccion);
   }
-  
+
   formatStudentName(nombre: string, apellido: string): string {
     return Formatters.formatStudentName(nombre, apellido);
   }

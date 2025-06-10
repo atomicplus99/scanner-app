@@ -1,42 +1,214 @@
-<div class="app-container" [class.dark-theme]="darkMode()">
+<!-- Layout Principal Responsive con Tailwind - TEMA OSCURO SIN ESPACIOS BLANCOS -->
+<div class="h-screen bg-gray-900 dark:bg-gray-900 transition-colors duration-300 overflow-hidden" [class.dark]="darkMode()">
+  <!-- Header -->
   <app-header></app-header>
-  <div class="app-content">
-    <div class="scanner-column">
-      <div class="scanner-panel">
-        <h2 class="panel-title">
-          <span class="icon-scan"></span>
-          Escanear QR de alumno
-        </h2>
-        <app-scanner></app-scanner>
+  
+  <!-- Main Content - ALTURA COMPLETA -->
+  <main class="h-[calc(100vh-64px)] bg-gray-900 px-4 py-6 overflow-auto">
+    <div class="container mx-auto h-full">
+      <!-- Layout Móvil/Tablet (hasta lg) -->
+      <div class="block xl:hidden space-y-6 h-full">
+        <!-- Scanner Panel Móvil -->
+        <div class="bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold">Escanear QR de alumno</h2>
+                <p class="text-sm opacity-90">Registrar asistencia</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 bg-gray-800">
+            <app-scanner></app-scanner>
+          </div>
+        </div>
+
+        <!-- Last Result Panel Móvil -->
+        <div class="bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden">
+          <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <span class="text-lg">📋</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold">Último registro</h2>
+                <p class="text-sm opacity-90">Resultado del escaneo</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 bg-gray-800">
+            <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+          </div>
+        </div>
+
+        <!-- History Panel Móvil -->
+        <div class="bg-gray-800 dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <span class="text-lg">📜</span>
+              </div>
+              <div>
+                <h2 class="text-lg font-bold">Historial de registros</h2>
+                <p class="text-sm opacity-90">Últimas actividades</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-4 bg-gray-800">
+            <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
+          </div>
+        </div>
       </div>
 
-      <div class="result-panel">
-        <h2 class="panel-title">
-          <span class="icon-result">📋</span>
-          Último registro
-        </h2>
-        <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+      <!-- Layout Desktop (xl en adelante) -->
+      <div class="hidden xl:grid xl:grid-cols-5 xl:gap-6 h-full">
+        <!-- Columna Izquierda: Scanner (2 columnas de ancho) -->
+        <div class="xl:col-span-2 space-y-6 h-full">
+          <!-- Scanner Panel Desktop -->
+          <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-600 overflow-hidden h-fit">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold">Escanear QR de alumno</h2>
+                  <p class="text-sm opacity-90">Registrar asistencia</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 bg-gray-800">
+              <app-scanner></app-scanner>
+            </div>
+          </div>
+
+          <!-- Last Result Panel Desktop -->
+          <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden flex-1">
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span class="text-lg">📋</span>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold">Último registro</h2>
+                  <p class="text-sm opacity-90">Resultado del escaneo</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-4 h-full overflow-auto bg-gray-800">
+              <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: History Panel (3 columnas de ancho) -->
+        <div class="xl:col-span-3">
+          <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden h-full flex flex-col">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span class="text-lg">📜</span>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-bold">Historial de registros</h2>
+                    <p class="text-sm opacity-90">Últimas actividades</p>
+                  </div>
+                </div>
+                <!-- Indicador de total de registros -->
+                <div class="bg-white/20 px-3 py-1 rounded-full">
+                  <span class="text-sm font-medium">Tiempo real</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 p-4 overflow-hidden bg-gray-800">
+              <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout Tablet (lg a xl) -->
+      <div class="hidden lg:block xl:hidden h-full">
+        <div class="grid lg:grid-cols-2 lg:gap-6 h-full">
+          <!-- Columna Izquierda: Scanner -->
+          <div class="space-y-6">
+            <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden">
+              <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-bold">Escanear QR de alumno</h2>
+                    <p class="text-sm opacity-90">Registrar asistencia</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-800">
+                <app-scanner></app-scanner>
+              </div>
+            </div>
+
+            <!-- Last Result Panel Tablet -->
+            <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden">
+              <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-4">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <span class="text-lg">📋</span>
+                  </div>
+                  <div>
+                    <h2 class="text-lg font-bold">Último registro</h2>
+                    <p class="text-sm opacity-90">Resultado del escaneo</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-800">
+                <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: History -->
+          <div class="bg-gray-800 dark:bg-gray-800 rounded-xl shadow-lg border border-gray-700 dark:border-gray-700 overflow-hidden h-full flex flex-col">
+            <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white p-4">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span class="text-lg">📜</span>
+                </div>
+                <div>
+                  <h2 class="text-lg font-bold">Historial de registros</h2>
+                  <p class="text-sm opacity-90">Últimas actividades</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex-1 p-4 overflow-hidden bg-gray-800">
+              <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="info-column">
-      <!-- Estadísticas diarias -->
-      <div class="stats-panel">
-        <h2 class="panel-title">
-          <span class="icon-stats">📊</span>
-          Estadísticas del día
-        </h2>
-        <app-daily-stats></app-daily-stats>
-      </div>
-      <div class="history-panel">
-        <h2 class="panel-title">
-          <span class="icon-history">📜</span>
-          Historial de registros
-        </h2>
-        <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
-      </div>
-    </div>
-  </div>
-  <app-details-modal [registro]="selectedRegistro()" [isVisible]="showDetailsModal()"
-    (closeModal)="closeDetailsModal()"></app-details-modal>
+  </main>
+
+  <!-- Modals y componentes flotantes -->
+  <app-details-modal 
+    [registro]="selectedRegistro()" 
+    [isVisible]="showDetailsModal()"
+    (closeModal)="closeDetailsModal()">
+  </app-details-modal>
+  
   <app-help-chat></app-help-chat>
 </div>

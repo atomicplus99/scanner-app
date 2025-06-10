@@ -10,9 +10,6 @@ import { Registro } from '../../../models/registro.model';
 import { ScannerComponent } from '../scanner/scanner.component';
 import { DetailsModalComponent } from '../details-modal/details-modal.component';
 import { HttpClientModule } from '@angular/common/http';
-import { SystemStatusComponent } from '../system-status/system-status.component';
-import { QuickGuideComponent } from '../quick-guide/quick-guide.component';
-import { DailyStatsComponent } from '../daily-stats/daily-stats.component';
 import { HelpChatComponent } from '../help-chat/help-chat.component';
 import { ScannerService } from '../../../services/scanner.service';
 
@@ -28,14 +25,13 @@ import { ScannerService } from '../../../services/scanner.service';
     LastResultComponent,
     HistoryComponent,
     DetailsModalComponent,
-    SystemStatusComponent,
-    QuickGuideComponent,
-    DailyStatsComponent,
+    // SystemStatusComponent,
+    // QuickGuideComponent,
+    // DailyStatsComponent,
     HelpChatComponent,
     
   ],
   templateUrl: './qr-scanner.component.html',
-  styleUrls: ['./qr-scanner.component.scss'],
  
 })
 export class QrScannerComponent implements OnInit {
