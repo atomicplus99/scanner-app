@@ -1,59 +1,176 @@
-# QrLectorAppAndresHuaral
+# 📱 QR Lector App - Andres Huaral
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.2.
+Aplicación Angular para escanear códigos QR y registrar asistencia, configurada para funcionar en red local con HTTPS para acceso a la cámara.
 
-## Development server
+## 📋 **Requisitos Previos**
 
-To start a local development server, run:
+- Node.js 18+ 
+- npm o yarn
+- Angular CLI
+- PowerShell (Windows) para script automático
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🚀 **Instalación**
 
 ```bash
-ng generate component component-name
+# Clonar el repositorio
+git clone https://github.com/TU_USUARIO/qr-lector-app-andres-huaral.git
+cd qr-lector-app-andres-huaral
+
+# Instalar dependencias
+npm install
+
+# Instalar Angular CLI globalmente (si no lo tienes)
+npm install -g @angular/cli
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🚀 **Configuración Rápida para Nueva Red**
+
+### **Paso 1: Configurar Environment**
+
+1. **Copia el archivo de ejemplo:**
+   ```bash
+   cp src/environments/environment.example.ts src/environments/environment.ts
+   ```
+
+2. **Edita `environment.ts` y cambia `TU_IP` por tu IP real:**
+   ```typescript
+   apiUrl: 'https://192.168.1.108:30001'  // Tu IP real
+   ```
+
+3. **O usa el script automático (Windows):**
+   ```bash
+   powershell -ExecutionPolicy Bypass -File quick-setup.ps1
+   ```
+
+**El script automático hace:**
+- ✅ Detecta tu IP actual en la red
+- ✅ Actualiza `environment.ts` con la nueva IP
+- ✅ Genera certificados SSL para HTTPS
+- ✅ Configura todo para funcionar en tu red local
+
+### **Paso 2: Lanzar Aplicación en Desarrollo**
 
 ```bash
-ng generate --help
+npm run start -- --ssl --host 0.0.0.0
 ```
 
-## Building
+**O usando la ruta completa de Node.js:**
+```bash
+"C:\Program Files\nodejs\node.exe" "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" run start -- --ssl --host 0.0.0.0
+```
 
-To build the project run:
+### **Paso 3: Lanzar Aplicación en Producción**
 
 ```bash
-ng build
+# Construir para producción
+npm run build -- --configuration production
+
+# Lanzar con HTTPS
+npm run start -- --ssl --host 0.0.0.0 --configuration production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🌐 **URLs de Acceso**
 
-## Running unit tests
+### **Desarrollo:**
+- **Local:** `https://localhost:4200`
+- **Red local:** `https://TU_IP:4200`
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### **Producción:**
+- **Local:** `https://localhost:4200`
+- **Red local:** `https://TU_IP:4200`
+
+### **Backend:**
+- **API:** `https://TU_IP:30001`
+
+## 🔧 **Configuración del Backend**
+
+**IMPORTANTE:** Tu backend debe estar configurado para HTTPS en el puerto 30001.
+
+### **Verificar conectividad:**
+- Abre en tu navegador: `https://TU_IP:30001`
+- Debe cargar sin errores de certificado
+
+## 📱 **Características**
+
+- ✅ **HTTPS habilitado** - Para acceso a la cámara
+- ✅ **Red local** - Accesible desde cualquier dispositivo en la red
+- ✅ **Configuración automática** - Script detecta IP automáticamente
+- ✅ **Certificados SSL** - Generados automáticamente
+- ✅ **Modo desarrollo y producción** - Ambos con HTTPS
+
+## 🚨 **Solución de Problemas**
+
+### **Error "Mixed Content":**
+- **Causa:** Frontend HTTPS intentando conectar a backend HTTP
+- **Solución:** Asegúrate de que tu backend use HTTPS en puerto 30001
+
+### **Cámara no funciona:**
+- **Causa:** Aplicación no está en HTTPS
+- **Solución:** Usa siempre `--ssl` al lanzar
+
+### **No se puede conectar desde celular:**
+- **Causa:** IP incorrecta o firewall bloqueando
+- **Solución:** Ejecuta `quick-setup.ps1` para detectar IP automáticamente
+
+### **Error 404 en endpoints:**
+- **Causa:** Rutas del backend no coinciden
+- **Solución:** Verifica que tu backend tenga las rutas `/asistencia/scan` configuradas
+
+## 🔄 **Cuando Cambies de Red WiFi**
+
+1. **Ejecuta el script automático:**
+   ```bash
+   powershell -ExecutionPolicy Bypass -File quick-setup.ps1
+   ```
+
+2. **El script detectará automáticamente:**
+   - Tu nueva IP
+   - Actualizará la configuración
+   - Regenerará certificados SSL si es necesario
+
+3. **Relanza la aplicación:**
+   ```bash
+   npm run start -- --ssl --host 0.0.0.0
+   ```
+
+## 📋 **Comandos de Verificación**
+
+### **Verificar IP actual:**
+```bash
+ipconfig | findstr "IPv4"
+```
+
+### **Verificar certificados SSL:**
+```bash
+dir ssl\
+```
+
+### **Verificar configuración:**
+```bash
+type src\environments\environment.ts
+```
+
+## 🎯 **Resumen de Comandos Principales**
 
 ```bash
-ng test
+# Configuración automática (cada vez que cambies de red)
+powershell -ExecutionPolicy Bypass -File quick-setup.ps1
+
+# Desarrollo con HTTPS
+npm run start -- --ssl --host 0.0.0.0
+
+# Producción con HTTPS
+npm run build -- --configuration production
+npm run start -- --ssl --host 0.0.0.0 --configuration production
 ```
 
-## Running end-to-end tests
+## 📞 **Soporte**
 
-For end-to-end (e2e) testing, run:
+Si tienes problemas:
+1. Ejecuta `quick-setup.ps1` para reconfigurar automáticamente
+2. Verifica que tu backend esté en HTTPS en puerto 30001
+3. Asegúrate de usar siempre `--ssl` al lanzar la aplicación
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**¡Tu aplicación QR está lista para funcionar en cualquier red local con configuración automática!** 🚀📱

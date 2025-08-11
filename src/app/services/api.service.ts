@@ -1,15 +1,16 @@
 // src/app/services/api.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 import { AsistenciaResponse } from '../models/registro.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000'; // URL base del servidor sin la ruta específica
+  private apiUrl = environment.apiUrl;
   
   /**
    * Envía el código QR escaneado al servidor para registrar asistencia
@@ -17,22 +18,17 @@ export class ApiService {
    * @returns Observable con la respuesta del servidor
    */
   scanQrCode(qrCode: string): Observable<AsistenciaResponse> {
-    console.log('Enviando código QR al servidor:', qrCode); // Log para depuración
-    
-    // Asegurarse de que el payload tiene el formato correcto
+    console.log('Enviando código QR al servidor:', qrCode);
     const payload = { codigo_qr: qrCode.trim() };
-    
-    // Configurar headers adecuados
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
-    
-    // Enviar la solicitud con el formato y headers correctos
     return this.http.post<AsistenciaResponse>(
       `${this.apiUrl}/asistencia/scan`, 
       payload,
       { headers: headers }
     ).pipe(
+      tap(() => console.log('Se hizo peticion')),
       catchError(this.handleError)
     );
   }

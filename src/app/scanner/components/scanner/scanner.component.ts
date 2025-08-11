@@ -107,28 +107,25 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  onCameraChange(event: Event): void {
+  async onCameraChange(event: Event): Promise<void> {
     const select = event.target as HTMLSelectElement;
     const cameraId = select.value;
     
-    this.scannerService.onCameraChange(cameraId);
-    
-    // Si el escáner está activo, reiniciarlo con la nueva cámara
-    if (this.isScanning()) {
-      this.scannerService.stopScanner();
-      setTimeout(() => {
-        if (this.videoElement && this.canvasElement) {
-          this.scannerService.startScanner(
-            this.videoElement.nativeElement, 
-            this.canvasElement.nativeElement
-          );
-        }
-      }, 300);
-    }
+    // Usar el nuevo método mejorado del service que maneja todo automáticamente
+    await this.scannerService.onCameraChange(
+      cameraId, 
+      this.videoElement?.nativeElement, 
+      this.canvasElement?.nativeElement
+    );
   }
+
 
   toggleTorch(): void {
     this.scannerService.toggleTorch();
+  }
+
+  async retryInitialization(): Promise<void> {
+    await this.scannerService.retryInitialization();
   }
 
   // MÉTODO SIMPLIFICADO - Ya no modifica estilos, solo logs para debug

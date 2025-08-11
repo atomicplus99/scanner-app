@@ -4,7 +4,7 @@ import { Component, signal, computed, OnInit, ViewChild, ElementRef, inject } fr
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../../services/theme.service';
-import { trigger, transition, style, animate } from '@angular/animations';
+
 
 
 interface ChatMessage {

@@ -53,8 +53,67 @@ export class ScannerService {
   // Método público para inicializar
   initialize(): void {
     if (this.isBrowser) {
+      this.logEnvironmentInfo();
       this.checkCameraPermission();
-      this.listAvailableCameras();
+    }
+  }
+
+  // Información sobre el entorno de ejecución
+  private logEnvironmentInfo(): void {
+    console.log('🌐 Información del entorno:');
+    console.log('  - Protocolo:', window.location.protocol);
+    console.log('  - Host:', window.location.host);
+    console.log('  - URL completa:', window.location.href);
+    console.log('  - User Agent:', navigator.userAgent);
+    console.log('  - MediaDevices disponible:', !!navigator.mediaDevices);
+    console.log('  - getUserMedia disponible:', !!(navigator.mediaDevices?.getUserMedia));
+    
+    if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+      console.warn('⚠️ ADVERTENCIA: Para acceder a la cámara desde otros dispositivos, se necesita HTTPS');
+      console.warn('💡 Solución: Configura HTTPS o usa localhost para pruebas');
+    }
+  }
+
+  // Verificar soporte de MediaDevices
+  private checkMediaDevicesSupport(): boolean {
+    if (!navigator) {
+      console.error('❌ Navigator no disponible');
+      return false;
+    }
+
+    if (!navigator.mediaDevices) {
+      console.error('❌ navigator.mediaDevices no disponible');
+      console.warn('💡 Sugerencia: La aplicación debe ejecutarse en HTTPS para acceder a la cámara');
+      return false;
+    }
+
+    if (!navigator.mediaDevices.getUserMedia) {
+      console.error('❌ getUserMedia no disponible');
+      return false;
+    }
+
+    if (!navigator.mediaDevices.enumerateDevices) {
+      console.error('❌ enumerateDevices no disponible');
+      return false;
+    }
+
+    return true;
+  }
+
+  // Método público para reintentar detección de cámaras
+  async retryInitialization(): Promise<void> {
+    if (!this.isBrowser) return;
+    
+    console.log('🔄 Reintentando inicialización de cámaras...');
+    this.scannerError.set(false);
+    this.scannerStatus.set('Detectando cámaras...');
+    
+    try {
+      await this.checkCameraPermission();
+      console.log('✅ Reinicialización exitosa');
+    } catch (error) {
+      console.error('❌ Error en reinicialización:', error);
+      this.setErrorStatus('Error al reinicializar cámaras');
     }
   }
 
@@ -79,6 +138,172 @@ export class ScannerService {
     }
   }
 
+  private async tryMultipleConstraints(deviceId?: string): Promise<MediaStream> {
+    // Verificar soporte de MediaDevices
+    if (!this.checkMediaDevicesSupport()) {
+      throw new Error('El navegador no soporta acceso a cámara');
+    }
+
+    const constraintsList = this.getConstraintsList(deviceId);
+    
+    let lastError: any = null;
+    for (let i = 0; i < constraintsList.length; i++) {
+      const constraints = constraintsList[i];
+      console.log(`🔄 Intentando configuración ${i + 1}/${constraintsList.length}:`, constraints);
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log(`✅ Configuración ${i + 1} exitosa`);
+        return stream;
+      } catch (error) {
+        console.warn(`❌ Configuración ${i + 1} falló:`, error);
+        lastError = error;
+        
+        // Si no es el último intento, continuar con el siguiente
+        if (i < constraintsList.length - 1) {
+          this.scannerStatus.set(`Probando configuración ${i + 2}...`);
+          continue;
+        }
+      }
+    }
+
+    // Si llegamos aquí, todas las configuraciones fallaron
+    throw lastError || new Error('No se pudo acceder a ninguna cámara');
+  }
+
+  private getConstraintsList(deviceId?: string): MediaStreamConstraints[] {
+    const constraints: MediaStreamConstraints[] = [];
+    
+    if (!deviceId) {
+      // Si no hay deviceId específico, devolver múltiples opciones fallback
+      constraints.push(
+        // Opción 1: Cámara trasera de alta calidad
+        {
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1280, min: 640 },
+            height: { ideal: 720, min: 480 },
+            frameRate: { ideal: 30, min: 15 }
+          }
+        },
+        // Opción 2: Cualquier cámara con calidad media
+        {
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 30 }
+          }
+        },
+        // Opción 3: Configuración mínima
+        { video: true }
+      );
+      return constraints;
+    }
+
+    // Detectar tipo de cámara
+    const cameras = this.availableCameras();
+    const selectedCam = cameras.find(cam => cam.deviceId === deviceId);
+    const cameraInfo = this.analyzeCameraType(selectedCam);
+
+    console.log(`🎥 Configurando cámara ${cameraInfo.type.toUpperCase()}:`, selectedCam?.label);
+
+    // Opción 1: Configuración optimizada según tipo de cámara
+    if (cameraInfo.type === 'front') {
+      constraints.push({
+        video: {
+          deviceId: { exact: deviceId },
+          facingMode: 'user',
+          width: { ideal: 640, min: 320 },
+          height: { ideal: 480, min: 240 },
+          frameRate: { ideal: 30, min: 15 }
+        }
+      });
+    } else if (cameraInfo.type === 'back') {
+      constraints.push({
+        video: {
+          deviceId: { exact: deviceId },
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      });
+    } else {
+      // Cámara externa/USB/webcam
+      constraints.push({
+        video: {
+          deviceId: { exact: deviceId },
+          width: { ideal: 1280, min: 640 },
+          height: { ideal: 720, min: 480 },
+          frameRate: { ideal: 30, min: 15 }
+        }
+      });
+    }
+
+    // Opción 2: Fallback con deviceId pero sin restricciones de tamaño
+    constraints.push({
+      video: {
+        deviceId: { ideal: deviceId },
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      }
+    });
+
+    // Opción 3: Solo deviceId
+    constraints.push({
+      video: { deviceId: deviceId }
+    });
+
+    // Opción 4: Fallback general
+    constraints.push({ video: true });
+
+    return constraints;
+  }
+
+  private analyzeCameraType(camera?: MediaDeviceInfo): { type: 'front' | 'back' | 'external', confidence: number } {
+    if (!camera) return { type: 'external', confidence: 0 };
+
+    const label = camera.label.toLowerCase();
+    let type: 'front' | 'back' | 'external' = 'external';
+    let confidence = 0;
+
+    // Detectar cámara frontal
+    if (label.includes('front') || label.includes('user') || 
+        label.includes('frontal') || label.includes('facing front') ||
+        label.includes('camera2 1') || label.includes('facetime')) {
+      type = 'front';
+      confidence = 90;
+    }
+    // Detectar cámara trasera
+    else if (label.includes('back') || label.includes('rear') || 
+             label.includes('trasera') || label.includes('environment') ||
+             label.includes('camera2 0') || label.includes('main')) {
+      type = 'back';
+      confidence = 90;
+    }
+    // Detectar cámaras externas/USB/webcam
+    else if (label.includes('usb') || label.includes('webcam') || 
+             label.includes('external') || label.includes('integrated') ||
+             label.includes('built-in') || label.includes('logitech') ||
+             label.includes('microsoft')) {
+      type = 'external';
+      confidence = 80;
+    }
+    // Heurística por posición en lista
+    else {
+      const cameras = this.availableCameras();
+      const index = cameras.findIndex(c => c.deviceId === camera.deviceId);
+      if (index === 0) {
+        type = 'back'; // Primera cámara suele ser trasera en móviles
+        confidence = 30;
+      } else if (index === 1) {
+        type = 'front'; // Segunda cámara suele ser frontal
+        confidence = 30;
+      }
+    }
+
+    return { type, confidence };
+  }
+
   async startScanner(videoElement: HTMLVideoElement, canvasElement: HTMLCanvasElement): Promise<void> {
     if (!this.isBrowser) {
       this.setErrorStatus('No se puede acceder a la cámara en este entorno');
@@ -94,32 +319,26 @@ export class ScannerService {
         this.controlStream.getTracks().forEach(track => track.stop());
       }
 
-      // Configurar restricciones
-      let constraints: MediaStreamConstraints = {
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: 'environment'
-        }
-      };
+      // Intentar múltiples configuraciones con fallbacks
+      this.controlStream = await this.tryMultipleConstraints(this.selectedCamera());
 
-      if (this.selectedCamera()) {
-        constraints = {
-          video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-            deviceId: { exact: this.selectedCamera() }
-          }
-        };
-      }
-
-      // Obtener acceso a la cámara
-      this.controlStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-      // Verificar si tiene linterna
+      // Verificar capacidades de la cámara
       const videoTrack = this.controlStream.getVideoTracks()[0];
-      const capabilities = videoTrack.getCapabilities() as any;
-      this.hasTorch.set('torch' in capabilities);
+      if (videoTrack) {
+        const capabilities = videoTrack.getCapabilities() as any;
+        this.hasTorch.set('torch' in capabilities);
+        
+        // Logs informativos sobre la cámara
+        const settings = videoTrack.getSettings();
+        console.log('📷 Cámara configurada:', {
+          deviceId: settings.deviceId,
+          width: settings.width,
+          height: settings.height,
+          frameRate: settings.frameRate,
+          facingMode: settings.facingMode,
+          hasTorch: 'torch' in capabilities
+        });
+      }
 
       // Asignar stream al video
       videoElement.srcObject = this.controlStream;
@@ -127,30 +346,52 @@ export class ScannerService {
       try {
         await videoElement.play();
 
-        // Registrar tamaño
-        videoElement.onloadedmetadata = () => {
-          this.videoWidth.set(videoElement.videoWidth);
-          this.videoHeight.set(videoElement.videoHeight);
+        // Esperar a que se carguen los metadatos del video
+        const setupVideo = () => {
+          if (videoElement.videoWidth && videoElement.videoHeight) {
+            this.videoWidth.set(videoElement.videoWidth);
+            this.videoHeight.set(videoElement.videoHeight);
 
-          // Establecer canvas
-          canvasElement.width = videoElement.videoWidth;
-          canvasElement.height = videoElement.videoHeight;
+            // Configurar canvas con las dimensiones del video
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+
+            console.log(`📐 Video configurado: ${videoElement.videoWidth}x${videoElement.videoHeight}`);
+            
+            // Iniciar escaneo después de un breve delay
+            setTimeout(() => {
+              this.startJsQrScanner(videoElement, canvasElement);
+            }, 500);
+          } else {
+            // Si los metadatos no están listos, esperar
+            videoElement.onloadedmetadata = setupVideo;
+          }
         };
 
-        // Iniciar escaneo
-        setTimeout(() => {
-          this.startJsQrScanner(videoElement, canvasElement);
-        }, 1000);
+        setupVideo();
 
         this.isScanning.set(true);
         this.scannerStatus.set('Listo para escanear');
       } catch (playError) {
         console.error('Error al reproducir video:', playError);
-        this.setErrorStatus('Error al iniciar la cámara');
+        this.setErrorStatus('Error al iniciar la reproducción de video');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al iniciar el escáner:', error);
-      this.setErrorStatus('Error al acceder a la cámara');
+      
+      // Mensaje de error más específico
+      let errorMessage = 'Error al acceder a la cámara';
+      if (error?.name === 'NotAllowedError') {
+        errorMessage = 'Permisos de cámara denegados';
+      } else if (error?.name === 'NotFoundError') {
+        errorMessage = 'No se encontraron cámaras';
+      } else if (error?.name === 'NotReadableError') {
+        errorMessage = 'Cámara en uso por otra aplicación';
+      } else if (error?.name === 'OverconstrainedError') {
+        errorMessage = 'Configuración de cámara no soportada';
+      }
+      
+      this.setErrorStatus(errorMessage);
     }
   }
 
@@ -214,42 +455,129 @@ export class ScannerService {
   async listAvailableCameras(): Promise<void> {
     if (!this.isBrowser) return;
 
+    // Verificar soporte primero
+    if (!this.checkMediaDevicesSupport()) {
+      console.error('❌ No se pueden enumerar cámaras: MediaDevices no soportado');
+      return;
+    }
+
     try {
+      // Primero solicitar permisos para obtener etiquetas completas
+      await this.requestCameraPermissionForLabels();
+      
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+      console.log('📹 Cámaras detectadas:', videoDevices.map(d => ({
+        id: d.deviceId,
+        label: d.label,
+        kind: d.kind
+      })));
 
       this.availableCameras.set(videoDevices);
 
       if (videoDevices.length > 0) {
-        // Buscar cámara trasera o integrada
-        const backCamera = videoDevices.find(
-          device => device.label.toLowerCase().includes('back') ||
-            device.label.toLowerCase().includes('trasera') ||
-            device.label.toLowerCase().includes('rear')
-        );
-
-        const laptopCamera = videoDevices.find(
-          device => device.label.toLowerCase().includes('integrated') ||
-            device.label.toLowerCase().includes('built-in')
-        );
-
-        this.selectedCamera.set(
-          backCamera ? backCamera.deviceId :
-            laptopCamera ? laptopCamera.deviceId :
-              videoDevices[0].deviceId
-        );
+        // Prioridad de selección de cámara mejorada
+        const selectedCamera = this.selectBestCamera(videoDevices);
+        this.selectedCamera.set(selectedCamera);
+        
+        console.log('🎯 Cámara seleccionada por defecto:', 
+          videoDevices.find(d => d.deviceId === selectedCamera)?.label || selectedCamera);
       }
     } catch (error) {
       console.error('Error al enumerar cámaras:', error);
+      this.setErrorStatus('Error al detectar cámaras disponibles');
     }
   }
 
-  onCameraChange(deviceId: string): void {
+  private async requestCameraPermissionForLabels(): Promise<void> {
+    try {
+      // Solicitar permisos temporalmente para obtener etiquetas de dispositivos
+      const tempStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      tempStream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+      // Intentar con configuración más básica
+      try {
+        const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        tempStream.getTracks().forEach(track => track.stop());
+      } catch (fallbackError) {
+        console.warn('No se pudieron obtener permisos para etiquetas de cámara:', fallbackError);
+      }
+    }
+  }
+
+  private selectBestCamera(videoDevices: MediaDeviceInfo[]): string {
+    if (videoDevices.length === 0) return '';
+
+    // Función para evaluar el score de una cámara
+    const getCameraScore = (device: MediaDeviceInfo): number => {
+      const label = device.label.toLowerCase();
+      let score = 0;
+
+      // Priorizar cámaras traseras/environment
+      if (label.includes('back') || label.includes('rear') || 
+          label.includes('trasera') || label.includes('environment')) {
+        score += 100;
+      }
+
+      // Priorizar cámaras principales/primary
+      if (label.includes('main') || label.includes('primary') || 
+          label.includes('principal') || label.includes('0')) {
+        score += 50;
+      }
+
+      // Evitar cámaras frontales como primera opción
+      if (label.includes('front') || label.includes('user') || 
+          label.includes('frontal') || label.includes('1')) {
+        score -= 30;
+      }
+
+      // Priorizar cámaras con mejor resolución (si está en el nombre)
+      if (label.includes('hd') || label.includes('1080') || label.includes('720')) {
+        score += 20;
+      }
+
+      // Para laptops/PCs, priorizar cámaras integradas
+      if (label.includes('integrated') || label.includes('built-in') || 
+          label.includes('webcam') || label.includes('usb')) {
+        score += 30;
+      }
+
+      return score;
+    };
+
+    // Ordenar cámaras por score y seleccionar la mejor
+    const sortedCameras = videoDevices
+      .map(device => ({
+        device,
+        score: getCameraScore(device)
+      }))
+      .sort((a, b) => b.score - a.score);
+
+    console.log('📊 Ranking de cámaras:', sortedCameras.map(c => ({
+      label: c.device.label,
+      score: c.score,
+      id: c.device.deviceId.substring(0, 8) + '...'
+    })));
+
+    return sortedCameras[0].device.deviceId;
+  }
+
+  async onCameraChange(deviceId: string, videoElement?: HTMLVideoElement, canvasElement?: HTMLCanvasElement): Promise<void> {
     this.selectedCamera.set(deviceId);
 
+    // Si el scanner está activo, reiniciar con nueva cámara
     if (this.isScanning()) {
       this.stopScanner();
-      // El componente debe llamar a startScanner después
+
+      // Esperar un momento y reiniciar con nueva cámara
+      setTimeout(async () => {
+        if (videoElement && canvasElement) {
+          await this.startScanner(videoElement, canvasElement);
+        }
+      }, 300);
     }
   }
 
@@ -266,13 +594,74 @@ export class ScannerService {
   private async checkCameraPermission(): Promise<void> {
     if (!this.isBrowser) return;
 
+    // Verificar soporte de MediaDevices primero
+    if (!this.checkMediaDevicesSupport()) {
+      this.setErrorStatus('El navegador no soporta acceso a cámara. Usa HTTPS o un navegador compatible.');
+      return;
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop());
-      this.listAvailableCameras();
-    } catch (error) {
-      console.error('Error de permisos de cámara:', error);
-      this.setErrorStatus('No hay acceso a la cámara');
+      // Verificar si existe la API de permisos
+      if ('permissions' in navigator) {
+        const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        console.log('🔐 Estado de permisos de cámara:', permission.state);
+        
+        if (permission.state === 'denied') {
+          this.setErrorStatus('Permisos de cámara denegados. Habilitarlos en configuración del navegador.');
+          return;
+        }
+      }
+
+      // Intentar acceso temporal para verificar permisos y listar cámaras
+      console.log('🔍 Verificando acceso a cámara...');
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 640 }, 
+          height: { ideal: 480 } 
+        } 
+      });
+      
+      // Verificar que el stream es válido
+      if (stream && stream.getVideoTracks().length > 0) {
+        console.log('✅ Acceso a cámara confirmado');
+        stream.getTracks().forEach(track => track.stop());
+        
+        // Ahora enumerar todas las cámaras disponibles
+        await this.listAvailableCameras();
+      } else {
+        throw new Error('Stream de video no válido');
+      }
+    } catch (error: any) {
+      console.error('❌ Error de permisos de cámara:', error);
+      
+      // Manejar diferentes tipos de errores
+      let errorMessage = 'Error al acceder a la cámara';
+      
+      if (error?.name === 'NotAllowedError') {
+        errorMessage = 'Permisos de cámara denegados. Habilítarlos en el navegador.';
+      } else if (error?.name === 'NotFoundError') {
+        errorMessage = 'No se detectaron cámaras en este dispositivo';
+      } else if (error?.name === 'NotSupportedError') {
+        errorMessage = 'El navegador no soporta acceso a cámara';
+      } else if (error?.name === 'NotReadableError') {
+        errorMessage = 'Cámara en uso por otra aplicación';
+      }
+      
+      this.scannerStatus.set(errorMessage);
+      
+      // Intentar al menos enumerar dispositivos sin stream (sin etiquetas)
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        
+        if (videoDevices.length > 0) {
+          console.log(`📹 Se detectaron ${videoDevices.length} dispositivos de video (sin etiquetas)`);
+          this.availableCameras.set(videoDevices);
+          this.selectedCamera.set(videoDevices[0].deviceId);
+        }
+      } catch (enumError) {
+        console.error('Error al enumerar dispositivos:', enumError);
+      }
     }
   }
 

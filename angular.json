@@ -50,7 +50,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
@@ -63,7 +64,11 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "port": 65469
+            "ssl": true,
+            "sslCert": "ssl/localhost.crt",
+            "sslKey": "ssl/localhost.key",
+            "host": "0.0.0.0",
+            "port": 4200
           },
           "configurations": {
             "production": {

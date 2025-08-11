@@ -1,14 +1,24 @@
 {
   "name": "qr-lector-app-andres-huaral",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Aplicación Angular para escanear códigos QR y registrar asistencia en red local con HTTPS",
+  "keywords": ["angular", "qr-scanner", "attendance", "local-network", "https"],
+  "author": "Andres Huaral",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TU_USUARIO/qr-lector-app-andres-huaral.git"
+  },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --ssl --host 0.0.0.0",
+    "start:dev": "ng serve --host 0.0.0.0 --port 4200",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/common": "^19.2.0",
     "@angular/compiler": "^19.2.0",
@@ -17,6 +27,7 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@angular/service-worker": "^19.2.0",
     "@swimlane/ngx-charts": "^22.0.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
