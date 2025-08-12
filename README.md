@@ -90,6 +90,76 @@ npm run start -- --ssl --host 0.0.0.0 --configuration production
 - Abre en tu navegador: `https://TU_IP:30001`
 - Debe cargar sin errores de certificado
 
+## 🚀 **Despliegue en Producción con Nginx**
+
+### **Windows - Configuración Automática**
+
+```bash
+# Ejecutar como Administrador
+powershell -ExecutionPolicy Bypass -File setup-windows.ps1
+```
+
+**El script automático hace:**
+- ✅ Detecta tu IP actual automáticamente
+- ✅ Genera certificados SSL para HTTPS
+- ✅ Construye la aplicación Angular
+- ✅ Descarga e instala Nginx
+- ✅ Configura Nginx con HTTPS y proxy al backend
+- ✅ Inicia Nginx automáticamente
+
+### **Linux - Configuración Automática**
+
+```bash
+# Dar permisos de ejecución
+chmod +x setup-linux.sh
+
+# Ejecutar como root
+sudo ./setup-linux.sh
+```
+
+**El script automático hace:**
+- ✅ Detecta tu IP actual automáticamente
+- ✅ Genera certificados SSL para HTTPS
+- ✅ Instala Nginx desde repositorios
+- ✅ Configura Nginx con HTTPS y proxy al backend
+- ✅ Configura firewall (UFW)
+- ✅ Inicia Nginx como servicio del sistema
+
+### **Configuración Manual de Nginx**
+
+Si prefieres configurar manualmente, los scripts generan:
+
+**Archivo de configuración:** `/etc/nginx/sites-available/qr-lector-app` (Linux) o `C:\nginx\conf\nginx.conf` (Windows)
+
+**Características:**
+- **HTTPS obligatorio** - HTTP redirige a HTTPS
+- **Proxy al backend** - `/api/` y `/asistencia/` van a puerto 30001
+- **SPA routing** - Maneja rutas de Angular correctamente
+- **Certificados SSL** - Autofirmados para desarrollo local
+
+### **URLs de Producción**
+
+**Después del despliegue con Nginx:**
+- **Frontend:** `https://TU_IP` (redirige automáticamente de HTTP a HTTPS)
+- **Backend:** `https://TU_IP:30001` (proxyeado a través de Nginx)
+
+### **Comandos de Control**
+
+**Windows:**
+```bash
+start-nginx.bat     # Iniciar Nginx
+stop-nginx.bat      # Detener Nginx
+restart-nginx.bat   # Reiniciar Nginx
+```
+
+**Linux:**
+```bash
+sudo systemctl start nginx      # Iniciar Nginx
+sudo systemctl stop nginx       # Detener Nginx
+sudo systemctl restart nginx    # Reiniciar Nginx
+sudo systemctl status nginx     # Estado de Nginx
+```
+
 ## 📱 **Características**
 
 - ✅ **HTTPS habilitado** - Para acceso a la cámara
@@ -97,6 +167,9 @@ npm run start -- --ssl --host 0.0.0.0 --configuration production
 - ✅ **Configuración automática** - Script detecta IP automáticamente
 - ✅ **Certificados SSL** - Generados automáticamente
 - ✅ **Modo desarrollo y producción** - Ambos con HTTPS
+- ✅ **Despliegue con Nginx** - Configuración automática para Windows y Linux
+- ✅ **Proxy al backend** - Conexión automática al puerto 30001
+- ✅ **Sin IPs hardcodeadas** - Siempre detecta la IP actual
 
 ## 🚨 **Solución de Problemas**
 
