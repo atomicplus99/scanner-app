@@ -68,7 +68,7 @@
             "sslCert": "ssl/localhost.crt",
             "sslKey": "ssl/localhost.key",
             "host": "0.0.0.0",
-            "port": 4200
+            "port": 4300
           },
           "configurations": {
             "production": {

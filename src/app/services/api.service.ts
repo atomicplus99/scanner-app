@@ -37,8 +37,8 @@ export class ApiService {
    * Verifica la conexión con el servidor
    * @returns Observable con respuesta del ping
    */
-  checkServerStatus(): Observable<string> {
-    return this.http.get(`${this.apiUrl}/ping`, { responseType: 'text' })
+  checkServerStatus(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ping`)
       .pipe(
         catchError(this.handleError)
       );

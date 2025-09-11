@@ -59,6 +59,21 @@
           <span class="text-xs font-medium text-green-700 dark:text-green-300">Activo</span>
         </div>
 
+        <!-- Indicador del servidor -->
+        <div class="flex items-center space-x-2 px-3 py-2 rounded-lg border transition-all duration-200" 
+             [class]="serverStatus === 'online' ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'">
+          <div class="relative">
+            <div class="w-2.5 h-2.5 rounded-full animate-pulse" 
+                 [class]="serverStatus === 'online' ? 'bg-green-500' : 'bg-red-500'"></div>
+            <div class="absolute inset-0 w-2.5 h-2.5 rounded-full animate-ping opacity-75" 
+                 [class]="serverStatus === 'online' ? 'bg-green-400' : 'bg-red-400'"></div>
+          </div>
+          <span class="text-xs font-medium" 
+                [class]="serverStatus === 'online' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
+            {{ serverStatus === 'online' ? 'Servidor OK' : 'Servidor Off' }}
+          </span>
+        </div>
+
         <!-- Información adicional -->
       
 
