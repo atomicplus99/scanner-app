@@ -76,3 +76,6 @@ jspm_packages/
 # Temporary files
 tmp/
 temp/
+
+# Windows specific files
+bash.exe.stackdump
