@@ -43,4 +43,9 @@ import { Formatters } from '../../../shared/utils/formatter';
     formatStudentName(nombre?: string, apellido?: string): string {
       return Formatters.formatStudentName(nombre || '', apellido || '');
     }
+    
+    onImageError(event: any): void {
+      // Si la imagen falla al cargar, usar la imagen por defecto
+      event.target.src = 'assets/images/user-default.svg';
+    }
   }

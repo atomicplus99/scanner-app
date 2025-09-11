@@ -1,0 +1,444 @@
+================================================================================
+                    GUÍA COMPLETA DE DESPLIEGUE ANGULAR EN DEBIAN VM
+================================================================================
+
+Esta guía te llevará paso a paso para desplegar tu aplicación Angular en una 
+máquina virtual Debian con Nginx y SSL, desde cero hasta funcionando.
+
+================================================================================
+                            REQUISITOS PREVIOS
+================================================================================
+
+1. Máquina virtual Debian instalada
+2. Acceso SSH o terminal a la VM
+3. Tu aplicación Angular en un repositorio Git
+4. VirtualBox (para Guest Additions)
+
+================================================================================
+                    PASO 1: INSTALAR VIRTUALBOX GUEST ADDITIONS
+================================================================================
+
+1.1. Descargar Guest Additions ISO desde VirtualBox
+     - En VirtualBox: Dispositivos > Insertar imagen de CD de complementos de invitado
+
+1.2. Instalar dependencias necesarias:
+     sudo apt update
+     sudo apt install -y build-essential dkms linux-headers-$(uname -r) gcc make perl
+
+1.3. Montar el ISO:
+     sudo mkdir -p /mnt/cdrom
+     sudo mount -o loop VBoxGuestAdditions_7.0.12.iso /mnt/cdrom
+
+1.4. Ejecutar instalador:
+     sudo /mnt/cdrom/VBoxLinuxAdditions.run
+
+1.5. Desmontar ISO:
+     sudo umount /mnt/cdrom
+
+1.6. Reiniciar VM:
+     sudo reboot
+
+1.7. Después del reinicio, agregar usuario al grupo vboxsf:
+     sudo usermod -aG vboxsf vboxuser
+
+1.8. Verificar instalación:
+     lsmod | grep vbox
+     sudo systemctl status vboxadd-service
+
+================================================================================
+                    PASO 2: INSTALAR DEPENDENCIAS BÁSICAS
+================================================================================
+
+2.1. Actualizar sistema:
+     sudo apt update && sudo apt upgrade -y
+
+2.2. Instalar dependencias básicas:
+     sudo apt install -y curl git ufw
+
+2.3. Verificar instalaciones:
+     curl --version
+     git --version
+     ufw --version
+
+================================================================================
+                    PASO 3: INSTALAR Y CONFIGURAR NGINX
+================================================================================
+
+3.1. Instalar Nginx:
+     sudo apt install nginx -y
+
+3.2. Iniciar y habilitar Nginx:
+     sudo systemctl start nginx
+     sudo systemctl enable nginx
+
+3.3. Verificar que está corriendo:
+     sudo systemctl status nginx
+
+3.4. Verificar puerto por defecto:
+     ss -tlnp | grep :80
+
+================================================================================
+                    PASO 4: CONFIGURAR FIREWALL
+================================================================================
+
+4.1. Permitir HTTP y HTTPS:
+     sudo ufw allow 'Nginx Full'
+     sudo ufw allow 22  # SSH
+     sudo ufw allow 3001  # Puerto HTTPS personalizado
+
+4.2. Habilitar firewall:
+     sudo ufw enable
+
+4.3. Verificar reglas:
+     sudo ufw status
+
+================================================================================
+                    PASO 5: INSTALAR NODE.JS
+================================================================================
+
+5.1. Instalar Node.js 18:
+     curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash -
+     sudo apt-get install -y nodejs
+
+5.2. Verificar instalación:
+     node --version
+     npm --version
+
+================================================================================
+                    PASO 6: CLONAR Y CONFIGURAR PROYECTO
+================================================================================
+
+6.1. Ir al directorio home:
+     cd /home/vboxuser
+
+6.2. Clonar tu repositorio:
+     git clone https://github.com/tu-usuario/tu-repositorio.git
+
+6.3. Entrar al proyecto:
+     cd tu-repositorio
+
+6.4. Instalar dependencias:
+     npm install --legacy-peer-deps
+
+6.5. Crear archivo environment.ts (si no existe):
+     nano src/environments/environment.ts
+     
+     Contenido:
+     export const environment = {
+       production: false,
+       apiUrl: 'http://localhost:3000'
+     };
+
+     export const environmentD = {
+       production: false,
+       apiUrlDev: 'http://localhost:3000'
+     };
+
+     export const environmentP = {
+       production: false,
+       apiUrlProd: 'http://localhost:3000'
+     };
+
+6.6. Crear archivo environment.prod.ts:
+     nano src/environments/environment.prod.ts
+     
+     Contenido:
+     export const environment = {
+       production: true,
+       apiUrl: 'https://TU_IP_VM:3001'
+     };
+
+     export const environmentP = {
+       production: true,
+       apiUrlProd: 'https://TU_IP_VM:3001'
+     };
+
+     export const environmentD = {
+       production: true,
+       apiUrlDev: 'https://TU_IP_VM:3001'
+     };
+
+6.7. Verificar angular.json tiene fileReplacements:
+     cat angular.json | grep -A 10 "fileReplacements"
+     
+     Debe contener:
+     "fileReplacements": [
+       {
+         "replace": "src/environments/environment.ts",
+         "with": "src/environments/environment.prod.ts"
+       }
+     ]
+
+6.8. Build de producción:
+     npm run build:prod
+
+6.9. Verificar que se creó la carpeta dist:
+     ls -la dist/tu-proyecto/browser/
+
+================================================================================
+                    PASO 7: CONFIGURAR NGINX PARA LA APLICACIÓN
+================================================================================
+
+7.1. Hacer backup de la configuración por defecto:
+     sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
+
+7.2. Editar configuración de Nginx:
+     sudo nano /etc/nginx/sites-available/default
+
+7.3. Contenido del archivo:
+     # Configuración HTTP (puerto 80)
+     server {
+         listen 80;
+         server_name TU_IP_VM;
+
+         # Ruta a tu aplicación Angular
+         root /home/vboxuser/tu-repositorio/dist/tu-proyecto/browser;
+         index index.html;
+
+         # Configuración para Angular Router
+         location / {
+             try_files $uri $uri/ /index.html;
+         }
+
+         # Configuración para archivos estáticos
+         location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+
+         # Configuración para archivos de assets
+         location /assets/ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+
+         # Configuración para archivos de icons
+         location /icons/ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+     }
+
+     # Configuración HTTPS (puerto 3001)
+     server {
+         listen 3001 ssl http2;
+         server_name TU_IP_VM;
+
+         # Certificados SSL
+         ssl_certificate /etc/nginx/ssl/nginx-selfsigned.crt;
+         ssl_certificate_key /etc/nginx/ssl/nginx-selfsigned.key;
+
+         # Configuración SSL
+         ssl_protocols TLSv1.2 TLSv1.3;
+         ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+         ssl_prefer_server_ciphers off;
+         ssl_session_cache shared:SSL:10m;
+         ssl_session_timeout 10m;
+
+         # Ruta a tu aplicación Angular
+         root /home/vboxuser/tu-repositorio/dist/tu-proyecto/browser;
+         index index.html;
+
+         # Configuración para Angular Router
+         location / {
+             try_files $uri $uri/ /index.html;
+         }
+
+         # Configuración para archivos estáticos
+         location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+
+         # Configuración para archivos de assets
+         location /assets/ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+
+         # Configuración para archivos de icons
+         location /icons/ {
+             expires 1y;
+             add_header Cache-Control "public, immutable";
+         }
+     }
+
+================================================================================
+                    PASO 8: CREAR CERTIFICADOS SSL
+================================================================================
+
+8.1. Crear directorio para certificados:
+     sudo mkdir -p /etc/nginx/ssl
+
+8.2. Generar certificado SSL autofirmado:
+     sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+         -keyout /etc/nginx/ssl/nginx-selfsigned.key \
+         -out /etc/nginx/ssl/nginx-selfsigned.crt \
+         -subj "/C=PE/ST=Lima/L=Lima/O=Escuela/OU=IT/CN=TU_IP_VM"
+
+8.3. Verificar que se crearon los certificados:
+     ls -la /etc/nginx/ssl/
+
+================================================================================
+                    PASO 9: CORREGIR PERMISOS
+================================================================================
+
+9.1. Dar permisos correctos a la carpeta dist:
+     sudo chmod -R 755 /home/vboxuser/tu-repositorio/dist/
+
+9.2. Cambiar propietario a www-data:
+     sudo chown -R www-data:www-data /home/vboxuser/tu-repositorio/dist/
+
+9.3. Dar permisos de ejecución a directorios padres:
+     sudo chmod 755 /home/vboxuser
+     sudo chmod 755 /home/vboxuser/tu-repositorio
+     sudo chmod 755 /home/vboxuser/tu-repositorio/dist
+
+9.4. Verificar permisos:
+     ls -la /home/vboxuser/tu-repositorio/dist/tu-proyecto/browser/
+
+================================================================================
+                    PASO 10: VERIFICAR Y REINICIAR NGINX
+================================================================================
+
+10.1. Verificar que la configuración es correcta:
+      sudo nginx -t
+
+10.2. Reiniciar Nginx para aplicar cambios:
+      sudo systemctl restart nginx
+
+10.3. Verificar que está corriendo:
+      sudo systemctl status nginx
+
+10.4. Verificar que está escuchando en los puertos correctos:
+      ss -tlnp | grep -E ":(80|3001)"
+
+================================================================================
+                    PASO 11: PROBAR LA APLICACIÓN
+================================================================================
+
+11.1. Obtener IP de la VM:
+      ip addr show
+
+11.2. Probar HTTP localmente:
+      curl http://localhost
+
+11.3. Probar HTTPS localmente:
+      curl -k https://localhost:3001
+
+11.4. Probar con la IP de la VM:
+      curl http://TU_IP_VM
+      curl -k https://TU_IP_VM:3001
+
+11.5. Verificar logs de Nginx:
+      sudo tail -f /var/log/nginx/error.log
+
+================================================================================
+                    PASO 12: ACCEDER DESDE RED LOCAL
+================================================================================
+
+12.1. Desde cualquier PC en la red local:
+      - HTTP: http://TU_IP_VM
+      - HTTPS: https://TU_IP_VM:3001
+
+12.2. Aceptar certificado autofirmado:
+      - Aparecerá una advertencia de seguridad
+      - Hacer clic en "Avanzado" y "Continuar"
+
+12.3. Verificar funcionalidad:
+      - La aplicación Angular debería cargar
+      - Las peticiones a la API se harán a https://TU_IP_VM:3001
+
+================================================================================
+                            CONFIGURACIÓN FINAL
+================================================================================
+
+✅ Guest Additions: Instalado y funcionando
+✅ Nginx: Instalado y configurado
+✅ Node.js: Instalado (v18.20.8)
+✅ Aplicación Angular: Compilada y desplegada
+✅ Permisos: Corregidos para www-data
+✅ Firewall: Configurado (puertos 80 y 3001 abiertos)
+✅ SSL: Certificados autofirmados creados
+✅ Servidor web: Funcionando en HTTP y HTTPS
+
+URLs de acceso:
+- HTTP: http://TU_IP_VM (puerto 80)
+- HTTPS: https://TU_IP_VM:3001 (puerto 3001)
+
+================================================================================
+                            COMANDOS ÚTILES
+================================================================================
+
+# Ver estado de Nginx
+sudo systemctl status nginx
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Ver logs de error
+sudo tail -f /var/log/nginx/error.log
+
+# Ver logs de acceso
+sudo tail -f /var/log/nginx/access.log
+
+# Verificar configuración
+sudo nginx -t
+
+# Ver puertos en uso
+ss -tlnp
+
+# Ver reglas de firewall
+sudo ufw status
+
+# Rebuild de la aplicación
+npm run build:prod
+
+# Copiar archivos después del rebuild
+sudo cp -r dist/tu-proyecto/browser/* /home/vboxuser/tu-repositorio/dist/tu-proyecto/browser/
+
+================================================================================
+                            SOLUCIÓN DE PROBLEMAS
+================================================================================
+
+PROBLEMA: Error 500 Internal Server Error
+SOLUCIÓN: Verificar permisos de archivos y directorios
+          sudo chmod -R 755 /home/vboxuser/tu-repositorio/dist/
+          sudo chown -R www-data:www-data /home/vboxuser/tu-repositorio/dist/
+
+PROBLEMA: Permission denied en logs
+SOLUCIÓN: Verificar permisos de directorios padres
+          sudo chmod 755 /home/vboxuser
+          sudo chmod 755 /home/vboxuser/tu-repositorio
+
+PROBLEMA: Certificado SSL no funciona
+SOLUCIÓN: Verificar que los certificados existen
+          ls -la /etc/nginx/ssl/
+          sudo nginx -t
+
+PROBLEMA: Puerto no accesible
+SOLUCIÓN: Verificar firewall
+          sudo ufw allow 3001
+          sudo ufw status
+
+================================================================================
+                            NOTAS IMPORTANTES
+================================================================================
+
+1. Reemplaza "TU_IP_VM" con la IP real de tu máquina virtual
+2. Reemplaza "tu-repositorio" con el nombre real de tu repositorio
+3. Reemplaza "tu-proyecto" con el nombre real de tu proyecto Angular
+4. Los certificados SSL son autofirmados, aparecerá advertencia de seguridad
+5. Para producción real, usar certificados SSL válidos (Let's Encrypt)
+6. El puerto 3001 es personalizable, puedes usar cualquier puerto disponible
+7. Asegúrate de que tu servidor backend esté configurado para HTTPS en el puerto 443
+
+================================================================================
+                            FIN DE LA GUÍA
+================================================================================
+
+Esta guía te llevará desde cero hasta tener tu aplicación Angular funcionando
+en una VM Debian con Nginx y SSL. Sigue los pasos en orden y verifica cada
+paso antes de continuar al siguiente.
+
+¡Éxito en tu despliegue! 🚀

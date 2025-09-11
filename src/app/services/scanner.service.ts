@@ -751,31 +751,48 @@ export class ScannerService {
     // Usar ApiService para enviar el código QR
     this.apiService.scanQrCode(qrCode).subscribe({
       next: (response) => {
-        console.log('Respuesta del servidor:', response);
+        console.log('✅ Respuesta del servidor:', response);
+        console.log('🔍 Estructura de respuesta:', {
+          hasData: !!response.data,
+          hasAsistencia: !!(response.data?.asistencia || response.asistencia),
+          hasAlumno: !!(response.data?.asistencia?.alumno || response.asistencia?.alumno),
+          hasUsuario: !!(response.data?.asistencia?.alumno?.usuario || response.asistencia?.alumno?.usuario),
+          responseKeys: Object.keys(response),
+          dataKeys: response.data ? Object.keys(response.data) : 'no data'
+        });
 
         // Reproducir sonido de éxito
         if (this.scanSuccessSound) {
           this.scanSuccessSound.play().catch(err => console.log('Error de sonido', err));
         }
 
+        // Manejar la estructura real de la respuesta del servidor
+        const asistenciaData = response.data?.asistencia || response.asistencia;
+        
+        // Validar que la respuesta tenga la estructura esperada
+        if (!asistenciaData || !asistenciaData.alumno) {
+          console.error('Respuesta del servidor con estructura inesperada:', response);
+          throw new Error('Estructura de respuesta inválida del servidor');
+        }
+
         // Crear un registro con la respuesta
         const registro: Registro = {
-          id: response.asistencia.id_asistencia,
+          id: asistenciaData.id_asistencia || 'unknown',
           estudiante: {
-            nombre: response.asistencia.alumno.nombre,
-            apellido: response.asistencia.alumno.apellido,
-            codigo: response.asistencia.alumno.codigo,
-            grado: response.asistencia.alumno.grado,
-            seccion: response.asistencia.alumno.seccion,
-            nivel: response.asistencia.alumno.nivel
+            nombre: asistenciaData.alumno.nombre || 'Desconocido',
+            apellido: asistenciaData.alumno.apellido || '',
+            codigo: asistenciaData.alumno.codigo || '',
+            grado: asistenciaData.alumno.grado || 0,
+            seccion: asistenciaData.alumno.seccion || '',
+            nivel: asistenciaData.alumno.nivel || ''
           },
-          hora: Formatters.formatHoraAsistencia(response.asistencia.hora_de_llegada),
-          fecha: Formatters.formatDate(response.asistencia.fecha),
-          tipo: response.asistencia.hora_salida ? 'salida' : 'entrada',
+          hora: Formatters.formatHoraAsistencia(asistenciaData.hora_de_llegada),
+          fecha: Formatters.formatDate(asistenciaData.fecha),
+          tipo: asistenciaData.hora_salida ? 'salida' : 'entrada',
           status: 'success',
-          estado: response.asistencia.estado_asistencia,
-          mensaje: response.mensaje,
-          imgProfile: this.getImageUrl(response.asistencia.alumno.usuario.profile_image)
+          estado: asistenciaData.estado_asistencia || 'DESCONOCIDO',
+          mensaje: response.data?.mensaje || response.mensaje || 'Registro exitoso',
+          imgProfile: this.getImageUrl(asistenciaData.alumno.usuario?.profile_image)
         };
 
         this.updateRegistros(registro);
@@ -853,7 +870,7 @@ export class ScannerService {
 
   // Utilizar ApiService para obtener URLs de imágenes
   getImageUrl(imagePath: string): string {
-    if (!imagePath) return 'assets/images/user-default.png';
+    if (!imagePath) return 'assets/images/user-default.svg';
 
     if (imagePath.startsWith('http')) {
       return imagePath;

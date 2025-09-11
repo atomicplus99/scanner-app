@@ -32,8 +32,23 @@ export interface Alumno {
 }
 
 export interface AsistenciaResponse {
-  mensaje: string;
-  asistencia: {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  data?: {
+    mensaje: string;
+    asistencia: {
+      id_asistencia: string;
+      hora_de_llegada: string;
+      hora_salida: string | null;
+      estado_asistencia: string;
+      fecha: string;
+      alumno: Alumno;
+    };
+  };
+  // Fallback para estructura antigua
+  mensaje?: string;
+  asistencia?: {
     id_asistencia: string;
     hora_de_llegada: string;
     hora_salida: string | null;

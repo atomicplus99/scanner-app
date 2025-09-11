@@ -1,108 +1,142 @@
-<!-- Last Result Component con Tailwind CSS - Textos blancos para mejor visibilidad -->
-<section class="h-full bg-gray-800" *ngIf="lastScanResult()">
-  <!-- Header -->
-  <div class="p-4 border-b border-gray-700">
-    <h2 class="text-lg font-semibold text-white flex items-center space-x-2">
-      <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <span>Último registro</span>
-    </h2>
+<!-- Last Result Component Moderno y Responsive -->
+<section class="h-full" *ngIf="lastScanResult()">
+  <!-- Mensaje de resultado mejorado -->
+  <div class="mb-6 p-4 rounded-2xl border backdrop-blur-sm transition-all duration-300"
+       [class]="lastScanResult()?.status === 'success' ? 'bg-gradient-to-r from-green-50/80 to-emerald-50/80 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200/50 dark:border-green-800/50' : 'bg-gradient-to-r from-red-50/80 to-pink-50/80 dark:from-red-900/20 dark:to-pink-900/20 border-red-200/50 dark:border-red-800/50'">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center"
+           [class]="lastScanResult()?.status === 'success' ? 'bg-green-500/20' : 'bg-red-500/20'">
+        <svg class="w-5 h-5" 
+             [class]="lastScanResult()?.status === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="lastScanResult()?.status === 'success'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <path *ngIf="lastScanResult()?.status !== 'success'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <p class="text-sm font-semibold"
+         [class]="lastScanResult()?.status === 'success' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
+        {{ lastScanResult()?.mensaje }}
+      </p>
+    </div>
   </div>
 
-  <!-- Mensaje de resultado -->
-  <div class="p-4 mx-4 mt-4 rounded-lg border bg-gray-700 border-gray-600">
-    <p class="text-sm font-medium text-white">{{ lastScanResult()?.mensaje }}</p>
-  </div>
-
-  <!-- Card principal -->
-  <div class="m-4 bg-gray-700 rounded-xl border-2 transition-all duration-200"
-       [class.border-green-400]="lastScanResult()?.status === 'success'"
-       [class.border-red-400]="lastScanResult()?.status === 'error'"
-       [class.border-gray-600]="lastScanResult()?.status !== 'success' && lastScanResult()?.status !== 'error'">
+  <!-- Card principal mejorado -->
+  <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden transition-all duration-500 hover:shadow-3xl hover:scale-[1.02]"
+       [class]="lastScanResult()?.status === 'success' ? 'border-green-200/50 dark:border-green-800/50' : 'border-red-200/50 dark:border-red-800/50'">
     
-    <!-- Header del card -->
-    <div class="p-4 border-b border-gray-600">
+    <!-- Header del card mejorado -->
+    <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-white/40 to-gray-50/40 dark:from-gray-800/40 dark:to-gray-900/40">
       <div class="flex items-center justify-between">
-        <span class="px-3 py-1 rounded-full text-xs font-medium text-white"
+        <span class="px-4 py-2 rounded-xl text-sm font-semibold backdrop-blur-sm shadow-lg"
               [ngClass]="getEstadoClass(lastScanResult()?.estado || '')">
           {{ formatEstado(lastScanResult()?.estado || '') }}
         </span>
         
-        <div class="flex items-center space-x-1">
-          <div class="w-2 h-2 rounded-full"
-               [class.bg-green-400]="lastScanResult()?.status === 'success'"
-               [class.bg-red-400]="lastScanResult()?.status === 'error'">
+        <div class="flex items-center space-x-2 px-3 py-2 rounded-xl backdrop-blur-sm"
+             [class]="lastScanResult()?.status === 'success' ? 'bg-green-100/80 dark:bg-green-900/30' : 'bg-red-100/80 dark:bg-red-900/30'">
+          <div class="relative">
+            <div class="w-3 h-3 rounded-full shadow-lg"
+                 [class]="lastScanResult()?.status === 'success' ? 'bg-green-500' : 'bg-red-500'">
+            </div>
+            <div class="absolute inset-0 w-3 h-3 rounded-full animate-ping opacity-75"
+                 [class]="lastScanResult()?.status === 'success' ? 'bg-green-400' : 'bg-red-400'">
+            </div>
           </div>
-          <span class="text-xs text-white">
+          <span class="text-sm font-medium"
+                [class]="lastScanResult()?.status === 'success' ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'">
             {{ lastScanResult()?.status === 'success' ? 'Exitoso' : 'Error' }}
           </span>
         </div>
       </div>
     </div>
 
-    <!-- Cuerpo del card -->
-    <div class="p-4 space-y-4">
-      <!-- Información del estudiante -->
-      <div class="flex items-start space-x-4 p-3 bg-gray-600 rounded-lg">
+    <!-- Cuerpo del card mejorado -->
+    <div class="p-6 space-y-6">
+      <!-- Información del estudiante mejorada -->
+      <div class="flex items-start space-x-4 p-4 bg-white/40 dark:bg-gray-700/40 rounded-2xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-lg">
         <div class="flex-shrink-0">
-          <div class="w-12 h-12 rounded-full overflow-hidden bg-gray-500 border-2 border-gray-400">
+          <div class="relative w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 border-2 border-white/50 dark:border-gray-600/50 shadow-xl">
             <img 
-              [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.png'" 
+              [src]="lastScanResult()?.imgProfile || 'assets/images/user-default.svg'" 
               alt="Foto del estudiante"
               class="w-full h-full object-cover"
+              (error)="onImageError($event)"
             >
+            <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
           </div>
         </div>
         
         <div class="flex-1 min-w-0">
-          <h3 class="text-base font-semibold text-white truncate">
+          <h3 class="text-lg font-bold text-gray-900 dark:text-white truncate">
             {{ lastScanResult()?.estudiante?.nombre }} {{ lastScanResult()?.estudiante?.apellido }}
           </h3>
-          <p class="text-sm text-white mt-1">
+          <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 font-medium">
             {{ lastScanResult()?.estudiante?.codigo }}
           </p>
-          <p class="text-sm text-white">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ formatGradoNivel(lastScanResult()?.estudiante?.nivel, lastScanResult()?.estudiante?.grado, lastScanResult()?.estudiante?.seccion) }}
           </p>
         </div>
       </div>
 
-      <!-- Información de tiempo -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="space-y-1">
-          <span class="text-xs font-medium text-white uppercase tracking-wider">Hora</span>
-          <p class="text-sm font-semibold text-white">{{ lastScanResult()?.hora }}</p>
+      <!-- Información de tiempo mejorada -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="p-4 bg-white/30 dark:bg-gray-700/30 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50">
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="w-6 h-6 bg-blue-500/20 rounded-lg flex items-center justify-center">
+              <svg class="w-3 h-3 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Hora</span>
+          </div>
+          <p class="text-lg font-bold text-gray-900 dark:text-white">{{ lastScanResult()?.hora }}</p>
         </div>
         
-        <div class="space-y-1">
-          <span class="text-xs font-medium text-white uppercase tracking-wider">Fecha</span>
-          <p class="text-sm font-semibold text-white">{{ lastScanResult()?.fecha }}</p>
+        <div class="p-4 bg-white/30 dark:bg-gray-700/30 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50">
+          <div class="flex items-center space-x-2 mb-2">
+            <div class="w-6 h-6 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <svg class="w-3 h-3 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Fecha</span>
+          </div>
+          <p class="text-lg font-bold text-gray-900 dark:text-white">{{ lastScanResult()?.fecha }}</p>
         </div>
         
-        <div class="space-y-1 col-span-2">
-          <span class="text-xs font-medium text-white uppercase tracking-wider">Tipo</span>
-          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white"
-                [class.bg-green-900]="lastScanResult()?.tipo === 'entrada'"
-                [class.bg-orange-900]="lastScanResult()?.tipo !== 'entrada'">
-            <div class="w-2 h-2 rounded-full mr-1"
-                 [class.bg-green-500]="lastScanResult()?.tipo === 'entrada'"
-                 [class.bg-orange-500]="lastScanResult()?.tipo !== 'entrada'">
+        <div class="col-span-2 p-4 bg-white/30 dark:bg-gray-700/30 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50">
+          <div class="flex items-center space-x-2 mb-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center"
+                 [class]="lastScanResult()?.tipo === 'entrada' ? 'bg-green-500/20' : 'bg-orange-500/20'">
+              <svg class="w-3 h-3" 
+                   [class]="lastScanResult()?.tipo === 'entrada' ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path *ngIf="lastScanResult()?.tipo === 'entrada'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                <path *ngIf="lastScanResult()?.tipo !== 'entrada'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+              </svg>
+            </div>
+            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Tipo de registro</span>
+          </div>
+          <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold backdrop-blur-sm shadow-lg"
+                [class]="lastScanResult()?.tipo === 'entrada' ? 'bg-green-100/80 dark:bg-green-900/30 text-green-700 dark:text-green-300' : 'bg-orange-100/80 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'">
+            <div class="w-3 h-3 rounded-full mr-2 shadow-lg"
+                 [class]="lastScanResult()?.tipo === 'entrada' ? 'bg-green-500' : 'bg-orange-500'">
             </div>
             {{ lastScanResult()?.tipo === 'entrada' ? 'Entrada' : 'Salida' }}
           </span>
         </div>
       </div>
 
-      <!-- Botón de detalles -->
+      <!-- Botón de detalles mejorado -->
       <button 
         (click)="showDetails(lastScanResult()!)"
-        class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+        class="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 hover:from-blue-600 hover:via-purple-600 hover:to-indigo-700 text-white rounded-2xl font-semibold transition-all duration-500 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 shadow-2xl hover:shadow-3xl transform hover:scale-[1.02] backdrop-blur-sm"
       >
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        <span>Ver detalles</span>
+        <span class="text-base">Ver detalles completos</span>
       </button>
     </div>
   </div>
