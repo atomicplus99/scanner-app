@@ -17,7 +17,6 @@ export class HeaderComponent implements OnInit {
   serverStatus: 'online' | 'offline' = 'offline';
   
   ngOnInit() {
-    console.log('🚀 HeaderComponent iniciado - Iniciando verificación del servidor...');
     this.checkServerStatus();
     // Verificar cada 30 segundos
     setInterval(() => {
@@ -27,18 +26,13 @@ export class HeaderComponent implements OnInit {
   }
   
   private checkServerStatus() {
-    console.log('🔍 Verificando estado del servidor...');
     
     this.apiService.checkServerStatus().subscribe({
       next: (response) => {
         this.serverStatus = 'online';
-        console.log('✅ Servidor ACTIVO - Respuesta recibida:', response);
-        console.log('🟢 Estado cambiado a: ONLINE');
       },
       error: (error) => {
         this.serverStatus = 'offline';
-        console.error('❌ Servidor INACTIVO - Error de conexión:', error);
-        console.log('🔴 Estado cambiado a: OFFLINE');
       }
     });
   }

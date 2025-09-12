@@ -31,7 +31,6 @@ import { Formatters } from '../../../shared/utils/formatter';
     }
     
     printDetails(): void {
-      console.log('Imprimir detalles del registro:', this.registro);
       window.print();
     }
     

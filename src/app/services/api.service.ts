@@ -18,7 +18,6 @@ export class ApiService {
    * @returns Observable con la respuesta del servidor
    */
   scanQrCode(qrCode: string): Observable<AsistenciaResponse> {
-    console.log('Enviando código QR al servidor:', qrCode);
     const payload = { codigo_qr: qrCode.trim() };
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -85,7 +84,6 @@ export class ApiService {
       }
     }
     
-    console.error('Error en la API:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }
 }

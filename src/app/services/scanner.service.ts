@@ -60,40 +60,27 @@ export class ScannerService {
 
   // Información sobre el entorno de ejecución
   private logEnvironmentInfo(): void {
-    console.log('🌐 Información del entorno:');
-    console.log('  - Protocolo:', window.location.protocol);
-    console.log('  - Host:', window.location.host);
-    console.log('  - URL completa:', window.location.href);
-    console.log('  - User Agent:', navigator.userAgent);
-    console.log('  - MediaDevices disponible:', !!navigator.mediaDevices);
     console.log('  - getUserMedia disponible:', !!(navigator.mediaDevices?.getUserMedia));
     
     if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
-      console.warn('⚠️ ADVERTENCIA: Para acceder a la cámara desde otros dispositivos, se necesita HTTPS');
-      console.warn('💡 Solución: Configura HTTPS o usa localhost para pruebas');
     }
   }
 
   // Verificar soporte de MediaDevices
   private checkMediaDevicesSupport(): boolean {
     if (!navigator) {
-      console.error('❌ Navigator no disponible');
       return false;
     }
 
     if (!navigator.mediaDevices) {
-      console.error('❌ navigator.mediaDevices no disponible');
-      console.warn('💡 Sugerencia: La aplicación debe ejecutarse en HTTPS para acceder a la cámara');
       return false;
     }
 
     if (!navigator.mediaDevices.getUserMedia) {
-      console.error('❌ getUserMedia no disponible');
       return false;
     }
 
     if (!navigator.mediaDevices.enumerateDevices) {
-      console.error('❌ enumerateDevices no disponible');
       return false;
     }
 
@@ -104,15 +91,12 @@ export class ScannerService {
   async retryInitialization(): Promise<void> {
     if (!this.isBrowser) return;
     
-    console.log('🔄 Reintentando inicialización de cámaras...');
     this.scannerError.set(false);
     this.scannerStatus.set('Detectando cámaras...');
     
     try {
       await this.checkCameraPermission();
-      console.log('✅ Reinicialización exitosa');
     } catch (error) {
-      console.error('❌ Error en reinicialización:', error);
       this.setErrorStatus('Error al reinicializar cámaras');
     }
   }
@@ -149,14 +133,11 @@ export class ScannerService {
     let lastError: any = null;
     for (let i = 0; i < constraintsList.length; i++) {
       const constraints = constraintsList[i];
-      console.log(`🔄 Intentando configuración ${i + 1}/${constraintsList.length}:`, constraints);
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log(`✅ Configuración ${i + 1} exitosa`);
         return stream;
       } catch (error) {
-        console.warn(`❌ Configuración ${i + 1} falló:`, error);
         lastError = error;
         
         // Si no es el último intento, continuar con el siguiente
@@ -356,7 +337,6 @@ export class ScannerService {
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
 
-            console.log(`📐 Video configurado: ${videoElement.videoWidth}x${videoElement.videoHeight}`);
             
             // Iniciar escaneo después de un breve delay
             setTimeout(() => {
@@ -373,11 +353,9 @@ export class ScannerService {
         this.isScanning.set(true);
         this.scannerStatus.set('Listo para escanear');
       } catch (playError) {
-        console.error('Error al reproducir video:', playError);
         this.setErrorStatus('Error al iniciar la reproducción de video');
       }
     } catch (error: any) {
-      console.error('Error al iniciar el escáner:', error);
       
       // Mensaje de error más específico
       let errorMessage = 'Error al acceder a la cámara';
@@ -433,7 +411,6 @@ export class ScannerService {
     const capabilities = videoTrack.getCapabilities() as any;
 
     if (!('torch' in capabilities)) {
-      console.log('Linterna no disponible');
       return;
     }
 
@@ -445,10 +422,8 @@ export class ScannerService {
       }).then(() => {
         this.torchEnabled.set(newTorchState);
       }).catch(err => {
-        console.error('Error al cambiar linterna:', err);
       });
     } catch (err) {
-      console.error('Error al acceder a la linterna:', err);
     }
   }
 
@@ -457,7 +432,6 @@ export class ScannerService {
 
     // Verificar soporte primero
     if (!this.checkMediaDevicesSupport()) {
-      console.error('❌ No se pueden enumerar cámaras: MediaDevices no soportado');
       return;
     }
 
@@ -485,7 +459,6 @@ export class ScannerService {
           videoDevices.find(d => d.deviceId === selectedCamera)?.label || selectedCamera);
       }
     } catch (error) {
-      console.error('Error al enumerar cámaras:', error);
       this.setErrorStatus('Error al detectar cámaras disponibles');
     }
   }
@@ -503,7 +476,6 @@ export class ScannerService {
         const tempStream = await navigator.mediaDevices.getUserMedia({ video: true });
         tempStream.getTracks().forEach(track => track.stop());
       } catch (fallbackError) {
-        console.warn('No se pudieron obtener permisos para etiquetas de cámara:', fallbackError);
       }
     }
   }
@@ -604,7 +576,6 @@ export class ScannerService {
       // Verificar si existe la API de permisos
       if ('permissions' in navigator) {
         const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
-        console.log('🔐 Estado de permisos de cámara:', permission.state);
         
         if (permission.state === 'denied') {
           this.setErrorStatus('Permisos de cámara denegados. Habilitarlos en configuración del navegador.');
@@ -613,7 +584,6 @@ export class ScannerService {
       }
 
       // Intentar acceso temporal para verificar permisos y listar cámaras
-      console.log('🔍 Verificando acceso a cámara...');
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
           width: { ideal: 640 }, 
@@ -623,7 +593,6 @@ export class ScannerService {
       
       // Verificar que el stream es válido
       if (stream && stream.getVideoTracks().length > 0) {
-        console.log('✅ Acceso a cámara confirmado');
         stream.getTracks().forEach(track => track.stop());
         
         // Ahora enumerar todas las cámaras disponibles
@@ -632,7 +601,6 @@ export class ScannerService {
         throw new Error('Stream de video no válido');
       }
     } catch (error: any) {
-      console.error('❌ Error de permisos de cámara:', error);
       
       // Manejar diferentes tipos de errores
       let errorMessage = 'Error al acceder a la cámara';
@@ -660,7 +628,6 @@ export class ScannerService {
           this.selectedCamera.set(videoDevices[0].deviceId);
         }
       } catch (enumError) {
-        console.error('Error al enumerar dispositivos:', enumError);
       }
     }
   }
@@ -704,7 +671,6 @@ export class ScannerService {
         });
 
         if (code) {
-          console.log('QR detectado:', code.data);
 
           const currentTime = Date.now();
           const timeSinceLastScan = currentTime - this.lastProcessedTime;
@@ -732,7 +698,6 @@ export class ScannerService {
           }
         }
       } catch (error) {
-        console.error('Error al escanear:', error);
       } finally {
         this.captureInProgress = false;
       }
@@ -751,7 +716,6 @@ export class ScannerService {
     // Usar ApiService para enviar el código QR
     this.apiService.scanQrCode(qrCode).subscribe({
       next: (response) => {
-        console.log('✅ Respuesta del servidor:', response);
         console.log('🔍 Estructura de respuesta:', {
           hasData: !!response.data,
           hasAsistencia: !!(response.data?.asistencia || response.asistencia),
@@ -771,7 +735,6 @@ export class ScannerService {
         
         // Validar que la respuesta tenga la estructura esperada
         if (!asistenciaData || !asistenciaData.alumno) {
-          console.error('Respuesta del servidor con estructura inesperada:', response);
           throw new Error('Estructura de respuesta inválida del servidor');
         }
 
@@ -806,7 +769,6 @@ export class ScannerService {
         }, 2000); // Reducido a 2 segundos
       },
       error: (error: any) => {
-        console.error('Error al procesar código QR:', error);
 
         // Reproducir sonido de error
         if (this.scanErrorSound) {

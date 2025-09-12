@@ -14,9 +14,23 @@
     tailwind.config = {
       darkMode: 'class',
       theme: {
+        screens: {
+          'xs': '475px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
         extend: {
           fontFamily: {
             'roboto': ['Roboto', 'sans-serif'],
+          },
+          maxWidth: {
+            '8xl': '88rem',
+          },
+          height: {
+            '18': '4.5rem',
           }
         }
       }
@@ -230,7 +244,7 @@
     <div class="loader-content">
       <div class="loader-spinner"></div>
       <div class="loader-text">Cargando Aplicación</div>
-      <div class="loader-subtitle">Registro de Asistencia QR</div>
+      <div class="loader-subtitle">Escaner QR</div>
     </div>
   </div>
   

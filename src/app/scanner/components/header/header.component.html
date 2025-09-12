@@ -2,15 +2,15 @@
   <!-- Efecto de fondo con gradiente más oscuro -->
   <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-gray-900/40 to-black/40 dark:from-black/50 dark:via-gray-900/50 dark:to-black/50"></div>
   
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-20">
+  <div class="relative max-w-8xl mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10">
+    <div class="flex items-center justify-between h-16 xs:h-18 sm:h-20">
       <!-- Logo y título -->
-      <div class="flex items-center space-x-6">
+      <div class="flex items-center space-x-3 xs:space-x-4 sm:space-x-6">
         <div class="flex-shrink-0">
-          <div class="relative w-16 h-16 bg-gradient-to-br from-indigo-400 via-purple-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-2xl border-2 border-white/60 dark:border-slate-700/60 backdrop-blur-sm">
+          <div class="relative w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-400 via-purple-400 to-teal-500 rounded-xl xs:rounded-2xl flex items-center justify-center shadow-2xl border-2 border-white/60 dark:border-slate-700/60 backdrop-blur-sm">
             <!-- Efecto de brillo -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
-            <svg class="relative w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="relative w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 3h18v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V3Z"/>
               <path d="M3 11v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V11"/>
               <path d="M7 15h.01"/>
@@ -76,7 +76,7 @@
           <div class="flex flex-col">
             <span class="text-xs font-semibold" 
                   [class]="serverStatus === 'online' ? 'text-emerald-700 dark:text-emerald-300' : 'text-rose-700 dark:text-rose-300'">
-              {{ serverStatus === 'online' ? 'Servidor OK' : 'Servidor Off' }}
+              {{ serverStatus === 'online' ? 'Servidor' : 'Servidor Off' }}
             </span>
             <span class="text-xs opacity-75" 
                   [class]="serverStatus === 'online' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'">
@@ -86,10 +86,7 @@
         </div>
 
         <!-- Información de tiempo real -->
-        <div class="hidden lg:flex items-center space-x-2 px-3 py-2 bg-white/70 dark:bg-slate-800/70 rounded-xl border border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm shadow-lg">
-          <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-          <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Tiempo real</span>
-        </div>
+      
       </div>
     </div>
   </div>

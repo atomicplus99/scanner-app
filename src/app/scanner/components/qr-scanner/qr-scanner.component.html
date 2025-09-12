@@ -4,47 +4,47 @@
   <app-header></app-header>
   
   <!-- Main Content -->
-  <main class="min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8 bg-transparent">
-    <div class="max-w-7xl mx-auto">
+  <main class="min-h-[calc(100vh-80px)] p-2 xs:p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 bg-transparent">
+    <div class="max-w-8xl mx-auto">
       
-      <!-- Layout Móvil (sm y md) -->
-      <div class="block lg:hidden space-y-6">
+      <!-- Layout Móvil (xs, sm, md) -->
+      <div class="block lg:hidden space-y-3 xs:space-y-4 sm:space-y-6">
         
         <!-- Scanner Card Móvil -->
-        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-2xl xs:rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] xs:hover:scale-[1.02]">
           <!-- Header con gradiente animado -->
-          <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 overflow-hidden">
+          <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-4 xs:p-5 sm:p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-indigo-600/50 animate-pulse"></div>
-            <div class="relative flex items-center space-x-4">
-              <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <div class="relative flex items-center space-x-3 xs:space-x-4">
+              <div class="w-10 h-10 xs:w-12 xs:h-12 bg-white/20 backdrop-blur-sm rounded-xl xs:rounded-2xl flex items-center justify-center shadow-lg">
+                <svg class="w-6 h-6 xs:w-7 xs:h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
                   <path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01"></path>
                 </svg>
               </div>
-              <div>
-                <h2 class="text-xl font-bold text-white">Escanear QR</h2>
-                <p class="text-sm text-white/80">Registrar asistencia de alumno</p>
+              <div class="flex-1 min-w-0">
+                <h2 class="text-lg xs:text-xl font-bold text-white truncate">Escanear QR</h2>
+                <p class="text-xs xs:text-sm text-white/80 truncate">Registrar asistencia de alumno</p>
               </div>
             </div>
             <!-- Decoración flotante -->
-            <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-            <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
+            <div class="absolute -top-4 -right-4 w-20 h-20 xs:w-24 xs:h-24 bg-white/10 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-4 -left-4 w-12 h-12 xs:w-16 xs:h-16 bg-white/10 rounded-full blur-lg"></div>
           </div>
           
           <!-- Contenido del scanner -->
-          <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+          <div class="p-4 xs:p-5 sm:p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
             <app-scanner></app-scanner>
           </div>
         </div>
 
         <!-- Last Result Card Móvil -->
-        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
-          <div class="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 overflow-hidden">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-2xl xs:rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] xs:hover:scale-[1.02]">
+          <div class="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-4 xs:p-5 sm:p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/50 via-teal-500/50 to-cyan-500/50 animate-pulse"></div>
-            <div class="relative flex items-center space-x-4">
-              <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <div class="relative flex items-center space-x-3 xs:space-x-4">
+              <div class="w-10 h-10 xs:w-12 xs:h-12 bg-white/20 backdrop-blur-sm rounded-xl xs:rounded-2xl flex items-center justify-center shadow-lg">
+                <svg class="w-6 h-6 xs:w-7 xs:h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M9 12l2 2 4-4"></path>
                   <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
                   <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
@@ -52,20 +52,101 @@
                   <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"></path>
                 </svg>
               </div>
-              <div>
-                <h2 class="text-xl font-bold text-white">Último Registro</h2>
-                <p class="text-sm text-white/80">Resultado del escaneo</p>
+              <div class="flex-1 min-w-0">
+                <h2 class="text-lg xs:text-xl font-bold text-white truncate">Último Registro</h2>
+                <p class="text-xs xs:text-sm text-white/80 truncate">Resultado del escaneo</p>
               </div>
             </div>
-            <div class="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+            <div class="absolute -top-4 -right-4 w-16 h-16 xs:w-20 xs:h-20 bg-white/10 rounded-full blur-xl"></div>
           </div>
-          <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+          <div class="p-4 xs:p-5 sm:p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
             <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
           </div>
         </div>
 
         <!-- History Card Móvil -->
-        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-2xl xs:rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01] xs:hover:scale-[1.02]">
+          <div class="relative bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 p-4 xs:p-5 sm:p-6 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-violet-500/50 via-purple-500/50 to-fuchsia-500/50 animate-pulse"></div>
+            <div class="relative flex items-center justify-between">
+              <div class="flex items-center space-x-3 xs:space-x-4 flex-1 min-w-0">
+                <div class="w-10 h-10 xs:w-12 xs:h-12 bg-white/20 backdrop-blur-sm rounded-xl xs:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                  <svg class="w-6 h-6 xs:w-7 xs:h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M3 3h18v2c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V3Z"></path>
+                    <path d="M3 11v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V11"></path>
+                    <path d="M7 15h.01M11 15h.01M15 15h.01M7 19h.01M11 19h.01M15 19h.01"></path>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h2 class="text-lg xs:text-xl font-bold text-white truncate">Historial</h2>
+                  <p class="text-xs xs:text-sm text-white/80 truncate">Registros recientes</p>
+                </div>
+              </div>
+             
+            </div>
+            <div class="absolute -top-4 -right-4 w-20 h-20 xs:w-24 xs:h-24 bg-white/10 rounded-full blur-xl"></div>
+          </div>
+          <div class="p-4 xs:p-5 sm:p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm max-h-80 xs:max-h-96 overflow-y-auto">
+            <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout Tablet (md) -->
+      <div class="hidden md:block lg:hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <!-- Scanner Card Tablet -->
+          <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
+            <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-indigo-600/50 animate-pulse"></div>
+              <div class="relative flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                  <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="3" width="18" height="18" rx="3" ry="3"></rect>
+                    <path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-white">Escanear QR</h2>
+                  <p class="text-sm text-white/80">Registrar asistencia</p>
+                </div>
+              </div>
+              <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+            </div>
+            <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+              <app-scanner></app-scanner>
+            </div>
+          </div>
+
+          <!-- Last Result Card Tablet -->
+          <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
+            <div class="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/50 via-teal-500/50 to-cyan-500/50 animate-pulse"></div>
+              <div class="relative flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                  <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M9 12l2 2 4-4"></path>
+                    <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
+                    <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
+                    <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"></path>
+                    <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-white">Último Registro</h2>
+                  <p class="text-sm text-white/80">Resultado del escaneo</p>
+                </div>
+              </div>
+              <div class="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+            </div>
+            <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+              <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
+            </div>
+          </div>
+        </div>
+
+        <!-- History Card Tablet (Full Width) -->
+        <div class="mt-6 group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
           <div class="relative bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-violet-500/50 via-purple-500/50 to-fuchsia-500/50 animate-pulse"></div>
             <div class="relative flex items-center justify-between">
@@ -78,12 +159,12 @@
                   </svg>
                 </div>
                 <div>
-                  <h2 class="text-xl font-bold text-white">Historial</h2>
-                  <p class="text-sm text-white/80">Registros recientes</p>
+                  <h2 class="text-xl font-bold text-white">Historial de Registros</h2>
+                  <p class="text-sm text-white/80">Actividad</p>
                 </div>
               </div>
               <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                <span class="text-sm font-medium text-white">Tiempo real</span>
+             
               </div>
             </div>
             <div class="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
@@ -95,10 +176,10 @@
       </div>
 
       <!-- Layout Desktop (lg en adelante) -->
-      <div class="hidden lg:grid lg:grid-cols-12 lg:gap-8 h-full">
+      <div class="hidden lg:grid lg:grid-cols-12 lg:gap-6 xl:gap-8 h-full">
         
         <!-- Columna Izquierda: Scanner y Last Result (5 columnas) -->
-        <div class="lg:col-span-5 space-y-8">
+        <div class="lg:col-span-5 space-y-6 xl:space-y-8">
           
           <!-- Scanner Card Desktop -->
           <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
@@ -119,7 +200,7 @@
               <div class="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
               <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
             </div>
-            <div class="p-8 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+            <div class="p-6 xl:p-8 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
               <app-scanner></app-scanner>
             </div>
           </div>
@@ -145,7 +226,7 @@
               </div>
               <div class="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full blur-2xl"></div>
             </div>
-            <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
+            <div class="p-6 xl:p-8 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
               <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
             </div>
           </div>
@@ -167,12 +248,12 @@
                   </div>
                   <div>
                     <h2 class="text-2xl font-bold text-white">Historial de Registros</h2>
-                    <p class="text-sm text-white/80">Actividad en tiempo real</p>
+                    <p class="text-sm text-white/80">Actividad</p>
                   </div>
                 </div>
                 <div class="flex items-center space-x-3">
                   <div class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <span class="text-sm font-medium text-white">Tiempo real</span>
+                    
                   </div>
                   <div class="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                 </div>

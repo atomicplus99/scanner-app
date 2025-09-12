@@ -42,11 +42,10 @@ export class HelpChatComponent implements OnInit {
 
   // Categorías principales de opciones
   mainOptions: ChatOption[] = [
-    { text: 'Cómo usar el escáner', value: 'scanner-help' },
+    { text: 'Cómo usar el escáner QR', value: 'scanner-help' },
     { text: 'Problemas con el escaneo', value: 'scanner-issues' },
-    { text: 'Significado de los estados', value: 'status-info' },
-    { text: 'Información de horarios', value: 'schedule-info' },
-    { text: 'Otras consultas', value: 'other' }
+    { text: 'Estados de asistencia', value: 'status-info' },
+    { text: 'Horarios del colegio', value: 'schedule-info' },
   ];
 
   // Respuestas predefinidas para cada categoría
@@ -56,9 +55,9 @@ export class HelpChatComponent implements OnInit {
       options: this.mainOptions
     },
 
-    // Categoría: Cómo usar el escáner
+    // Categoría: Cómo usar el escáner - Mensaje actualizado
     'scanner-help': {
-      text: 'El escáner QR permite registrar entradas y salidas de estudiantes. ¿Qué te gustaría saber?',
+      text: 'El escáner QR del Colegio Andrés de los Reyes te permite registrar la asistencia de los estudiantes de forma rápida y eficiente. ¿Qué necesitas saber específicamente?',
       options: [
         { text: 'Pasos para escanear', value: 'scan-steps' },
         { text: 'Posición correcta del QR', value: 'qr-position' },
@@ -66,7 +65,7 @@ export class HelpChatComponent implements OnInit {
       ]
     },
     'scan-steps': {
-      text: 'Para escanear un código QR correctamente:\n\n1. Asegúrate de que la cámara esté habilitada\n2. Coloca el código QR frente a la cámara\n3. Mantén el código estable hasta que el sistema lo reconozca\n4. Verifica el resultado en el panel "Último registro"',
+      text: 'Para registrar la asistencia correctamente:\n\n1. Presiona "Iniciar escáner" para activar la cámara\n2. Coloca el código QR del estudiante frente a la cámara\n3. Mantén el código estable hasta que aparezca el resultado\n4. Verifica el registro en "Último Registro"\n5. El sistema mostrará si el estudiante llegó puntual o tarde',
       options: [
         { text: 'Posición correcta del QR', value: 'qr-position' },
         { text: 'Tengo problemas al escanear', value: 'scanner-issues' },
@@ -77,7 +76,7 @@ export class HelpChatComponent implements OnInit {
       text: 'Para una lectura óptima del código QR:\n\n1. Coloca el código QR a unos 15-20 cm de la cámara\n2. Asegúrate de que el código esté completamente visible en el marco\n3. Evita reflejos o sombras sobre el código\n4. Mantén estable el código durante el escaneo',
       options: [
         { text: 'Tengo problemas al escanear', value: 'scanner-issues' },
-        { text: 'Volver al menú de ayuda del escáner', value: 'scanner-help' },
+        { text: 'Más información del escáner', value: 'scanner-help' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
@@ -123,12 +122,11 @@ export class HelpChatComponent implements OnInit {
       options: [
         { text: 'Estado "Puntual"', value: 'punctual-status' },
         { text: 'Estado "Tardanza"', value: 'late-status' },
-        { text: 'Estado "Falta"', value: 'absent-status' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
     'punctual-status': {
-      text: 'Estado "Puntual" significa que el estudiante llegó dentro del horario establecido. Esto generalmente es antes de los primeros 5-10 minutos del inicio de clases, dependiendo de la configuración del centro educativo.',
+      text: 'Estado "Puntual" significa que el estudiante llegó dentro del horario establecido.',
       options: [
         { text: 'Información de otros estados', value: 'status-info' },
         { text: 'Información de horarios', value: 'schedule-info' },
@@ -136,21 +134,14 @@ export class HelpChatComponent implements OnInit {
       ]
     },
     'late-status': {
-      text: 'Estado "Tardanza" significa que el estudiante llegó después del horario puntual pero antes del límite de tardanza. Esto suele ser entre 5-10 minutos y 30 minutos después del inicio, dependiendo de la configuración del centro.',
+      text: 'Estado "Tardanza" significa que el estudiante llegó después del horario puntual pero antes del límite de tardanza. ',
       options: [
         { text: 'Información de otros estados', value: 'status-info' },
         { text: 'Información de horarios', value: 'schedule-info' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    'absent-status': {
-      text: 'Estado "Falta" significa que el estudiante llegó después del límite de tardanza o no se registró en absoluto. Generalmente, esto ocurre después de los 30 minutos del inicio de clases, aunque puede variar según la configuración.',
-      options: [
-        { text: 'Información de otros estados', value: 'status-info' },
-        { text: 'Información de horarios', value: 'schedule-info' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    },
+
 
     // Categoría: Información de horarios
     'schedule-info': {
@@ -163,29 +154,22 @@ export class HelpChatComponent implements OnInit {
       ]
     },
     'shift-schedule': {
-      text: 'Los horarios están configurados según el turno:\n\n• Turno mañana: 7:30 a 13:00\n• Turno tarde: 13:05 a 18:15\n\nEstos horarios pueden variar según la configuración específica de tu institución.',
+      text: 'Horarios del Colegio Andrés de los Reyes:\n\n• Turno mañana: 7:30 a 13:00\n• Turno tarde: 13:05 a 18:15\n\nEstos horarios pueden variar según la programación académica del colegio.',
       options: [
-        { text: 'Límites de tolerancia', value: 'tolerance-limits' },
+
         { text: 'Registros de salida', value: 'exit-records' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
     'exit-records': {
-      text: 'Sobre los registros de salida:\n\n• Solo pueden registrarse después de la hora oficial de fin del turno\n• Salidas anticipadas deben ser autorizadas por administración\n• Si un estudiante no registra salida, el sistema marca salida automática al final del día',
+      text: 'Sobre los registros de salida:\n\n• Solo pueden registrarse después de la hora oficial de fin del turno\n• Salidas anticipadas deben ser autorizadas por administración\n•',
       options: [
         { text: 'Horarios por turno', value: 'shift-schedule' },
         { text: 'Otros temas de horarios', value: 'schedule-info' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    'tolerance-limits': {
-      text: 'Límites de tolerancia estándar:\n\n• Puntual: Dentro de los primeros 5 minutos del inicio\n• Tardanza: Entre 5 y 30 minutos después del inicio\n• Falta: Más de 30 minutos después del inicio\n\nEstos límites pueden ajustarse en la configuración del sistema.',
-      options: [
-        { text: 'Información de estados', value: 'status-info' },
-        { text: 'Otros temas de horarios', value: 'schedule-info' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    },
+
 
     // Otras opciones
     'system-status': {
@@ -196,42 +180,16 @@ export class HelpChatComponent implements OnInit {
       ]
     },
     'contact-support': {
-      text: 'Para contactar con soporte técnico:\n\n• Email: soporte@sistemaasistencia.com\n• Teléfono: 123-456-789\n• Horario de atención: Lunes a Viernes, 8:00 a 18:00\n\nPor favor, menciona el código de error si lo has recibido.',
+      text: 'Para contactar con soporte técnico del Colegio Andrés de los Reyes:\n\n• Email: abel.ariase.soft@gmail.com\n• Whatsapp: 951057156\n• \nPor favor, menciona el código de error si lo has recibido.',
       options: [
         { text: 'Verificar estado del sistema', value: 'system-status' },
         { text: 'Volver al menú principal', value: 'welcome' }
       ]
     },
-    'other': {
-      text: 'Puedo ayudarte con diversas consultas. Por favor, selecciona una de las siguientes opciones:',
-      options: [
-        { text: 'Exportar registros', value: 'export-records' },
-        { text: 'Configuración del sistema', value: 'system-config' },
-        { text: 'Reportes y estadísticas', value: 'reports' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    },
-    'export-records': {
-      text: 'Para exportar registros:\n\n1. Ve a la sección "Historial de registros"\n2. Utiliza los filtros para seleccionar el período deseado\n3. Haz clic en el botón "Exportar" en la esquina superior derecha\n4. Selecciona el formato deseado (CSV, Excel, PDF)\n5. Confirma la exportación',
-      options: [
-        { text: 'Reportes y estadísticas', value: 'reports' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    },
-    'system-config': {
-      text: 'La configuración del sistema está disponible solo para administradores. Si necesitas realizar cambios en la configuración, contacta al administrador del sistema.',
-      options: [
-        { text: 'Contactar soporte', value: 'contact-support' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    },
-    'reports': {
-      text: 'El sistema ofrece diversos reportes estadísticos:\n\n• Resumen diario de asistencia\n• Reporte mensual por estudiante\n• Estadísticas de puntualidad\n• Tendencias de asistencia\n\nPuedes acceder a ellos desde el panel de estadísticas o el menú de reportes.',
-      options: [
-        { text: 'Exportar registros', value: 'export-records' },
-        { text: 'Volver al menú principal', value: 'welcome' }
-      ]
-    }
+   
+
+
+   
   };
 
   ngOnInit(): void {
@@ -287,7 +245,7 @@ export class HelpChatComponent implements OnInit {
   }
 
   selectOption(value: string): void {
-    // Buscar la opción completa para mostrar su texto
+    // Buscar el texto de la opción para mostrarlo como mensaje del usuario
     let selectedText = '';
 
     // Buscar en todas las opciones disponibles
@@ -335,8 +293,6 @@ export class HelpChatComponent implements OnInit {
   private sendBotMessage(responseKey: string): void {
     const response = this.responseTree[responseKey] || this.responseTree['welcome'];
 
-    console.log('Response:', response);
-    console.log('Options:', response.options);
 
     if (!this.isChatOpen()) {
       this.unreadMessages.update(count => count + 1);

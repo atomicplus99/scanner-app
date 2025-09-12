@@ -45,7 +45,6 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     // Ya no necesitamos ajustar el QR region - Tailwind maneja el layout
     // Solo verificamos que los elementos estén disponibles
-    console.log('Scanner component initialized');
   }
 
   ngOnDestroy(): void {
@@ -65,7 +64,6 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
     // Solo reiniciar el scanner si es necesario para ajustar la cámara
     this.resizeTimeout = setTimeout(() => {
       if (this.isScanning()) {
-        console.log('Window resized, scanner active');
         // El video se ajustará automáticamente con las clases de Tailwind
       }
     }, 200);
@@ -77,7 +75,6 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       // Si el escáner estaba activo, reiniciar para ajustar la vista
       if (this.isScanning()) {
-        console.log('Orientation changed, restarting scanner');
         this.scannerService.stopScanner();
         setTimeout(() => {
           if (this.videoElement && this.canvasElement) {
@@ -102,10 +99,8 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
             this.canvasElement.nativeElement
           );
           
-          console.log('Scanner started successfully');
           // Ya no necesitamos ajustar manualmente - Tailwind se encarga
         } catch (error) {
-          console.error('Error al iniciar el escáner', error);
         }
       }
     }
@@ -187,7 +182,6 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
       document.addEventListener('MSFullscreenChange', this.handleFullscreenChange.bind(this));
       
     } catch (error) {
-      console.error('Error al entrar en pantalla completa:', error);
     }
   }
 
@@ -205,7 +199,6 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fullscreenElement = null;
       
     } catch (error) {
-      console.error('Error al salir de pantalla completa:', error);
     }
   }
 
