@@ -21,6 +21,10 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
   private themeService = inject(ThemeService);
   
   private resizeTimeout: any = null;
+  
+  // Propiedades para pantalla completa
+  isFullscreen = false;
+  fullscreenElement: HTMLElement | null = null;
 
   // Propiedades para plantilla
   get isScanning() { return this.scannerService.isScanning; }
@@ -149,5 +153,81 @@ export class ScannerComponent implements OnInit, AfterViewInit, OnDestroy {
   // Método opcional para debug - puedes llamarlo si necesitas información del video
   getVideoInfo(): void {
     this.logVideoInfo();
+  }
+
+  // Métodos para pantalla completa
+  async toggleFullscreen(): Promise<void> {
+    if (!this.isFullscreen) {
+      await this.enterFullscreen();
+    } else {
+      await this.exitFullscreen();
+    }
+  }
+
+  async enterFullscreen(): Promise<void> {
+    try {
+      const element = this.qrRegionElement?.nativeElement;
+      if (!element) return;
+
+      if (element.requestFullscreen) {
+        await element.requestFullscreen();
+      } else if ((element as any).webkitRequestFullscreen) {
+        await (element as any).webkitRequestFullscreen();
+      } else if ((element as any).msRequestFullscreen) {
+        await (element as any).msRequestFullscreen();
+      }
+
+      this.isFullscreen = true;
+      this.fullscreenElement = element;
+      
+      // Agregar listener para detectar salida de pantalla completa
+      document.addEventListener('fullscreenchange', this.handleFullscreenChange.bind(this));
+      document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange.bind(this));
+      document.addEventListener('mozfullscreenchange', this.handleFullscreenChange.bind(this));
+      document.addEventListener('MSFullscreenChange', this.handleFullscreenChange.bind(this));
+      
+    } catch (error) {
+      console.error('Error al entrar en pantalla completa:', error);
+    }
+  }
+
+  async exitFullscreen(): Promise<void> {
+    try {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        await (document as any).webkitExitFullscreen();
+      } else if ((document as any).msExitFullscreen) {
+        await (document as any).msExitFullscreen();
+      }
+
+      this.isFullscreen = false;
+      this.fullscreenElement = null;
+      
+    } catch (error) {
+      console.error('Error al salir de pantalla completa:', error);
+    }
+  }
+
+  private handleFullscreenChange(): void {
+    const isCurrentlyFullscreen = !!(
+      document.fullscreenElement ||
+      (document as any).webkitFullscreenElement ||
+      (document as any).mozFullScreenElement ||
+      (document as any).msFullscreenElement
+    );
+
+    if (!isCurrentlyFullscreen && this.isFullscreen) {
+      this.isFullscreen = false;
+      this.fullscreenElement = null;
+    }
+  }
+
+  // Listener para tecla ESC para salir de pantalla completa
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent): void {
+    if (this.isFullscreen) {
+      this.exitFullscreen();
+    }
   }
 }

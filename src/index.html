@@ -85,6 +85,135 @@
     .dark ::-webkit-scrollbar-thumb:hover {
       background: rgba(75, 85, 99, 0.8);
     }
+    
+    /* FONDO DEGRADADO OSCURO */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, 
+        #0f172a 0%, 
+        #1e293b 25%, 
+        #334155 50%, 
+        #475569 75%, 
+        #64748b 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
+    /* Animación del degradado */
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    
+    /* Efectos adicionales para el fondo */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(30, 41, 59, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(51, 65, 85, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(71, 85, 105, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* Partículas flotantes en el fondo */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.15), transparent),
+        radial-gradient(1px 1px at 40px 70px, rgba(255, 255, 255, 0.12), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.18), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.15), transparent),
+        radial-gradient(1px 1px at 160px 30px, rgba(255, 255, 255, 0.12), transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: sparkle 25s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* Animación de partículas */
+    @keyframes sparkle {
+      0% {
+        transform: translateY(0px);
+      }
+      100% {
+        transform: translateY(-100px);
+      }
+    }
+    
+    /* LOADER PROFESIONAL */
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .loader-content {
+      text-align: center;
+      color: white;
+    }
+    
+    .loader-spinner {
+      width: 80px;
+      height: 80px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid #667eea;
+      border-right: 3px solid #764ba2;
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+      margin: 0 auto 30px;
+      box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loader-text {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .loader-subtitle {
+      font-size: 16px;
+      opacity: 0.7;
+      font-weight: 300;
+    }
   </style>
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#1976d2">
@@ -96,7 +225,32 @@
   <meta name="theme-color" content="#1976d2">
 </head>
 <body class="select-none font-roboto antialiased">
+  <!-- LOADER -->
+  <div id="loader" class="loader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Cargando Aplicación</div>
+      <div class="loader-subtitle">Registro de Asistencia QR</div>
+    </div>
+  </div>
+  
   <app-root></app-root>
   <noscript>Please enable JavaScript to continue using this application.</noscript>
+  
+  <script>
+    // Ocultar loader cuando la app esté lista
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        const loader = document.getElementById('loader');
+        if (loader) {
+          loader.style.opacity = '0';
+          loader.style.transition = 'opacity 0.5s ease';
+          setTimeout(function() {
+            loader.style.display = 'none';
+          }, 500);
+        }
+      }, 1500); // Mostrar loader por 1.5 segundos mínimo
+    });
+  </script>
 </body>
 </html>

@@ -1,17 +1,17 @@
 <!-- Layout Principal Moderno y Responsive -->
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800 transition-all duration-500" [class.dark]="darkMode()">
+<div class="min-h-screen transition-all duration-500" [class.dark]="darkMode()">
   <!-- Header -->
   <app-header></app-header>
   
   <!-- Main Content -->
-  <main class="min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8">
+  <main class="min-h-[calc(100vh-80px)] p-4 sm:p-6 lg:p-8 bg-transparent">
     <div class="max-w-7xl mx-auto">
       
       <!-- Layout Móvil (sm y md) -->
       <div class="block lg:hidden space-y-6">
         
         <!-- Scanner Card Móvil -->
-        <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
           <!-- Header con gradiente animado -->
           <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-indigo-600/50 animate-pulse"></div>
@@ -33,13 +33,13 @@
           </div>
           
           <!-- Contenido del scanner -->
-          <div class="p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+          <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
             <app-scanner></app-scanner>
           </div>
         </div>
 
         <!-- Last Result Card Móvil -->
-        <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
           <div class="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/50 via-teal-500/50 to-cyan-500/50 animate-pulse"></div>
             <div class="relative flex items-center space-x-4">
@@ -59,13 +59,13 @@
             </div>
             <div class="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
           </div>
-          <div class="p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+          <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
             <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
           </div>
         </div>
 
         <!-- History Card Móvil -->
-        <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
+        <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.02]">
           <div class="relative bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 p-6 overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-r from-violet-500/50 via-purple-500/50 to-fuchsia-500/50 animate-pulse"></div>
             <div class="relative flex items-center justify-between">
@@ -101,7 +101,7 @@
         <div class="lg:col-span-5 space-y-8">
           
           <!-- Scanner Card Desktop -->
-          <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
+          <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
             <div class="relative bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-6 overflow-hidden">
               <div class="absolute inset-0 bg-gradient-to-r from-blue-600/50 via-purple-600/50 to-indigo-600/50 animate-pulse"></div>
               <div class="relative flex items-center space-x-4">
@@ -119,13 +119,13 @@
               <div class="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
               <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
             </div>
-            <div class="p-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <div class="p-8 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
               <app-scanner></app-scanner>
             </div>
           </div>
 
           <!-- Last Result Card Desktop -->
-          <div class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
+          <div class="group relative bg-black/20 dark:bg-gray-900/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/5 dark:border-gray-600/20 overflow-hidden hover:shadow-3xl transition-all duration-500 hover:scale-[1.01]">
             <div class="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 p-6 overflow-hidden">
               <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/50 via-teal-500/50 to-cyan-500/50 animate-pulse"></div>
               <div class="relative flex items-center space-x-4">
@@ -145,7 +145,7 @@
               </div>
               <div class="absolute -top-6 -right-6 w-28 h-28 bg-white/10 rounded-full blur-2xl"></div>
             </div>
-            <div class="p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <div class="p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm">
               <app-last-result (showDetailsEvent)="openDetailsModal($event)"></app-last-result>
             </div>
           </div>
@@ -180,7 +180,7 @@
               <div class="absolute -top-6 -right-6 w-36 h-36 bg-white/10 rounded-full blur-2xl"></div>
               <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
             </div>
-            <div class="flex-1 p-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm overflow-hidden">
+            <div class="flex-1 p-6 bg-black/20 dark:bg-gray-900/40 backdrop-blur-sm overflow-hidden">
               <app-history (showDetailsEvent)="openDetailsModal($event)"></app-history>
             </div>
           </div>
