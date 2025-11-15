@@ -1,249 +1,232 @@
-# 📱 QR Lector App - Andres Huaral
+# app scanner - andres huaral
 
-Aplicación Angular para escanear códigos QR y registrar asistencia, configurada para funcionar en red local con HTTPS para acceso a la cámara.
+aplicacion para registrar asistencia con codigos qr, esta configurada para usar https
 
-## 📋 **Requisitos Previos**
+## requisitos
 
-- Node.js 18+ 
-- npm o yarn
-- Angular CLI
-- PowerShell (Windows) para script automático
+- node.js 18+ 
+- npm 
+- angular cli
 
-## 🚀 **Instalación**
+
+## instalacion
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/TU_USUARIO/qr-lector-app-andres-huaral.git
+# clonar repo
+git clone https://github.com/atomicplus99/qr-lector-app-andres-huaral.git
 cd qr-lector-app-andres-huaral
 
-# Instalar dependencias
+# instalar todo
 npm install
 
-# Instalar Angular CLI globalmente (si no lo tienes)
+# si no tienes angular cli
 npm install -g @angular/cli
 ```
 
-## 🚀 **Configuración Rápida para Nueva Red**
+## configurar para tu red
 
-### **Paso 1: Configurar Environment**
+### paso 1: configurar el environment
 
-1. **Copia el archivo de ejemplo:**
-   ```bash
-   cp src/environments/environment.example.ts src/environments/environment.ts
-   ```
+**forma manual:**
 
-2. **Edita `environment.ts` y cambia `TU_IP` por tu IP real:**
-   ```typescript
-   apiUrl: 'https://192.168.1.108:30001'  // Tu IP real
-   ```
+1. copiar el archivo:
+```bash
+cp src/environments/environment.example.ts src/environments/environment.ts
+```
 
-3. **O usa el script automático (Windows):**
-   ```bash
-   powershell -ExecutionPolicy Bypass -File quick-setup.ps1
-   ```
+2. editar `environment.ts` y poner tu ip:
+```typescript
+apiUrl: 'https://192.168.1.108:30001'  // poner tu ip aqui
+```
 
-**El script automático hace:**
-- ✅ Detecta tu IP actual en la red
-- ✅ Actualiza `environment.ts` con la nueva IP
-- ✅ Genera certificados SSL para HTTPS
-- ✅ Configura todo para funcionar en tu red local
+**forma automatica (windows):**
 
-### **Paso 2: Lanzar Aplicación en Desarrollo**
+```bash
+powershell -ExecutionPolicy Bypass -File quick-setup.ps1
+```
+
+el script hace:
+- detecta tu ip 
+- actualiza environment.ts 
+- genera certificados ssl 
+
+
+### paso 2: correr en desarrollo
 
 ```bash
 npm run start -- --ssl --host 0.0.0.0
 ```
 
-**O usando la ruta completa de Node.js:**
-```bash
-"C:\Program Files\nodejs\node.exe" "C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js" run start -- --ssl --host 0.0.0.0
-```
 
-### **Paso 3: Lanzar Aplicación en Producción**
+### paso 3: correr en produccion
 
 ```bash
-# Construir para producción
+# hacer build
 npm run build -- --configuration production
 
-# Lanzar con HTTPS
+# correr con https
 npm run start -- --ssl --host 0.0.0.0 --configuration production
 ```
 
-## 🌐 **URLs de Acceso**
 
-### **Desarrollo:**
-- **Local:** `https://localhost:4200`
-- **Red local:** `https://TU_IP:4200`
+## configurar backend
 
-### **Producción:**
-- **Local:** `https://localhost:4200`
-- **Red local:** `https://TU_IP:4200`
+importante: el backend tiene que estar en https en el puerto 30001
 
-### **Backend:**
-- **API:** `https://TU_IP:30001`
+para verificar que funciona abre: `https://TU_IP:30001` en el navegador
 
-## 🔧 **Configuración del Backend**
+## deploy con nginx
 
-**IMPORTANTE:** Tu backend debe estar configurado para HTTPS en el puerto 30001.
-
-### **Verificar conectividad:**
-- Abre en tu navegador: `https://TU_IP:30001`
-- Debe cargar sin errores de certificado
-
-## 🚀 **Despliegue en Producción con Nginx**
-
-### **Windows - Configuración Automática**
+### windows 
 
 ```bash
-# Ejecutar como Administrador
+# correr como administrador
 powershell -ExecutionPolicy Bypass -File setup-windows.ps1
 ```
 
-**El script automático hace:**
-- ✅ Detecta tu IP actual automáticamente
-- ✅ Genera certificados SSL para HTTPS
-- ✅ Construye la aplicación Angular
-- ✅ Descarga e instala Nginx
-- ✅ Configura Nginx con HTTPS y proxy al backend
-- ✅ Inicia Nginx automáticamente
+esto hace:
+- detecta tu ip
+- genera certificados ssl
+- hace build de angular
+- instala nginx
+- configura nginx con https
+- inicia nginx
 
-### **Linux - Configuración Automática**
+### linux
 
 ```bash
-# Dar permisos de ejecución
+# dar permisos
 chmod +x setup-linux.sh
 
-# Ejecutar como root
+# correr como root
 sudo ./setup-linux.sh
 ```
 
-**El script automático hace:**
-- ✅ Detecta tu IP actual automáticamente
-- ✅ Genera certificados SSL para HTTPS
-- ✅ Instala Nginx desde repositorios
-- ✅ Configura Nginx con HTTPS y proxy al backend
-- ✅ Configura firewall (UFW)
-- ✅ Inicia Nginx como servicio del sistema
+esto hace:
+- detecta tu ip
+- genera ssl
+- instala nginx
+- configura nginx 
+- configura firewall
+- inicia nginx
 
-### **Configuración Manual de Nginx**
+### si quieres configurar nginx manual
 
-Si prefieres configurar manualmente, los scripts generan:
+los archivos quedan en:
+- linux: `/etc/nginx/sites-available/qr-lector-app`
+- windows: `C:\nginx\conf\nginx.conf`
 
-**Archivo de configuración:** `/etc/nginx/sites-available/qr-lector-app` (Linux) o `C:\nginx\conf\nginx.conf` (Windows)
+caracteristicas:
+- https obligatorio, http redirige a https
+- proxy al backend en `/api/` y `/asistencia/`
+- maneja rutas de angular
+- usa certificados ssl
 
-**Características:**
-- **HTTPS obligatorio** - HTTP redirige a HTTPS
-- **Proxy al backend** - `/api/` y `/asistencia/` van a puerto 30001
-- **SPA routing** - Maneja rutas de Angular correctamente
-- **Certificados SSL** - Autofirmados para desarrollo local
+### urls cuando usas nginx
 
-### **URLs de Producción**
+- frontend: `https://TU_IP` 
+- backend: `https://TU_IP:30001` 
 
-**Después del despliegue con Nginx:**
-- **Frontend:** `https://TU_IP` (redirige automáticamente de HTTP a HTTPS)
-- **Backend:** `https://TU_IP:30001` (proxyeado a través de Nginx)
+### controlar nginx
 
-### **Comandos de Control**
-
-**Windows:**
+**windows:**
 ```bash
-start-nginx.bat     # Iniciar Nginx
-stop-nginx.bat      # Detener Nginx
-restart-nginx.bat   # Reiniciar Nginx
+start-nginx.bat     # iniciar
+stop-nginx.bat      # parar
+restart-nginx.bat   # reiniciar
 ```
 
-**Linux:**
+**linux:**
 ```bash
-sudo systemctl start nginx      # Iniciar Nginx
-sudo systemctl stop nginx       # Detener Nginx
-sudo systemctl restart nginx    # Reiniciar Nginx
-sudo systemctl status nginx     # Estado de Nginx
+sudo systemctl start nginx      
+sudo systemctl stop nginx       
+sudo systemctl restart nginx    
+sudo systemctl status nginx     
 ```
 
-## 📱 **Características**
+## que tiene la app
 
-- ✅ **HTTPS habilitado** - Para acceso a la cámara
-- ✅ **Red local** - Accesible desde cualquier dispositivo en la red
-- ✅ **Configuración automática** - Script detecta IP automáticamente
-- ✅ **Certificados SSL** - Generados automáticamente
-- ✅ **Modo desarrollo y producción** - Ambos con HTTPS
-- ✅ **Despliegue con Nginx** - Configuración automática para Windows y Linux
-- ✅ **Proxy al backend** - Conexión automática al puerto 30001
-- ✅ **Sin IPs hardcodeadas** - Siempre detecta la IP actual
+- https para poder usar camara
+- funciona en red local
+- script detecta ip automaticamente
+- genera certificados ssl
+- funciona en dev y prod
+- nginx configurado automatico
+- proxy al backend en puerto 30001
+- no usa ips hardcoded
 
-## 🚨 **Solución de Problemas**
+## problemas comunes
 
-### **Error "Mixed Content":**
-- **Causa:** Frontend HTTPS intentando conectar a backend HTTP
-- **Solución:** Asegúrate de que tu backend use HTTPS en puerto 30001
+### error mixed content
+- causa: frontend https intenta conectar a backend http
+- solucion: backend tiene que estar en https puerto 30001
 
-### **Cámara no funciona:**
-- **Causa:** Aplicación no está en HTTPS
-- **Solución:** Usa siempre `--ssl` al lanzar
+### camara no funciona
+- causa: no estas usando https
+- solucion: siempre usar `--ssl` 
 
-### **No se puede conectar desde celular:**
-- **Causa:** IP incorrecta o firewall bloqueando
-- **Solución:** Ejecuta `quick-setup.ps1` para detectar IP automáticamente
+### no se conecta desde celular
+- causa: ip mal o firewall
+- solucion: correr `quick-setup.ps1` 
 
-### **Error 404 en endpoints:**
-- **Causa:** Rutas del backend no coinciden
-- **Solución:** Verifica que tu backend tenga las rutas `/asistencia/scan` configuradas
+### error 404 
+- causa: rutas del backend no coinciden
+- solucion: revisar que backend tenga `/asistencia/scan`
 
-## 🔄 **Cuando Cambies de Red WiFi**
+## si cambias de wifi
 
-1. **Ejecuta el script automático:**
-   ```bash
-   powershell -ExecutionPolicy Bypass -File quick-setup.ps1
-   ```
+1. correr:
+```bash
+powershell -ExecutionPolicy Bypass -File quick-setup.ps1
+```
 
-2. **El script detectará automáticamente:**
-   - Tu nueva IP
-   - Actualizará la configuración
-   - Regenerará certificados SSL si es necesario
+2. el script detecta:
+   - nueva ip
+   - actualiza config
+   - regenera ssl si hace falta
 
-3. **Relanza la aplicación:**
-   ```bash
-   npm run start -- --ssl --host 0.0.0.0
-   ```
+3. volver a correr:
+```bash
+npm run start -- --ssl --host 0.0.0.0
+```
 
-## 📋 **Comandos de Verificación**
+## verificar cosas
 
-### **Verificar IP actual:**
+### ver tu ip:
 ```bash
 ipconfig | findstr "IPv4"
 ```
 
-### **Verificar certificados SSL:**
+### ver certificados:
 ```bash
 dir ssl\
 ```
 
-### **Verificar configuración:**
+### ver config:
 ```bash
 type src\environments\environment.ts
 ```
 
-## 🎯 **Resumen de Comandos Principales**
+## comandos principales
 
 ```bash
-# Configuración automática (cada vez que cambies de red)
+# setup automatico
 powershell -ExecutionPolicy Bypass -File quick-setup.ps1
 
-# Desarrollo con HTTPS
+# desarrollo
 npm run start -- --ssl --host 0.0.0.0
 
-# Producción con HTTPS
+# produccion
 npm run build -- --configuration production
 npm run start -- --ssl --host 0.0.0.0 --configuration production
 ```
 
-## 📞 **Soporte**
+## si algo no funciona
 
-Si tienes problemas:
-1. Ejecuta `quick-setup.ps1` para reconfigurar automáticamente
-2. Verifica que tu backend esté en HTTPS en puerto 30001
-3. Asegúrate de usar siempre `--ssl` al lanzar la aplicación
+1. correr `quick-setup.ps1` 
+2. revisar que backend este en https puerto 30001
+3. usar siempre `--ssl` 
 
 ---
 
-**¡Tu aplicación QR está lista para funcionar en cualquier red local con configuración automática!** 🚀📱
+listo, la app funciona en cualquier red local
